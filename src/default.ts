@@ -1,4 +1,3 @@
-
 export const defaultSetting = {
   continuousDialogue: true,
   archiveSession: false,

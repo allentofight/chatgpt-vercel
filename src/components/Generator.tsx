@@ -45,6 +45,11 @@ export default function () {
       if (storage) {
         const parsed = JSON.parse(storage)
         archiveSession = parsed.archiveSession
+        const href: string = window.location.href
+        if (href.includes("codesea")) {
+          defaultSetting.openaiAPIKey = ""
+        }
+
         setSetting({
           ...defaultSetting,
           ...parsed
@@ -154,11 +159,6 @@ export default function () {
     setLoading(true)
     const controller = new AbortController()
     setController(controller)
-    let openaiAPIKey = setting().openaiAPIKey
-    const href: string = window.location.href
-    if (href.includes("codesea")) {
-      openaiAPIKey = ""
-    }
 
     const systemRule = setting().systemRule.trim()
     const message = {
@@ -171,7 +171,7 @@ export default function () {
         messages: setting().continuousDialogue
           ? [...messageList().slice(0, -1), message]
           : [message],
-        key: openaiAPIKey,
+        key: setting().openaiAPIKey,
         temperature: setting().openaiAPITemperature / 100
       }),
       signal: controller.signal
