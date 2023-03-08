@@ -8,6 +8,8 @@ import prompts from "~/prompts"
 import { Fzf } from "fzf"
 import { defaultMessage, defaultSetting } from "~/default"
 import throttle from "just-throttle"
+import { isMobile } from "~/utils"
+// import { mdMessage } from "~/temp"
 
 export interface PromptItem {
   desc: string
@@ -22,9 +24,10 @@ export default function () {
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([
     // {
     //   role: "assistant",
-    //   content: defaultMessage + defaultMessage + defaultMessage + defaultMessage
+    //   content: mdMessage
     // }
-  ])   
+  ])
+  const [inputContent, setInputContent] = createSignal("")
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
@@ -84,9 +87,16 @@ export default function () {
   })
 
   createEffect(() => {
-    messageList().length
+    messageList()
     currentAssistantMessage()
     scrollToBottom()
+  })
+
+  createEffect(() => {
+    if (inputContent() === "") {
+      setHeight("48px")
+      setCompatiblePrompt([])
+    }
   })
 
   const scrollToBottom = throttle(
@@ -112,20 +122,19 @@ export default function () {
       setCurrentAssistantMessage("")
       setLoading(false)
       setController()
-      inputRef.focus()
+      !isMobile() && inputRef.focus()
+      scrollToBottom.flush()
     }
   }
 
   async function handleButtonClick(value?: string) {
-    const inputValue = value ?? inputRef.value
+    const inputValue = value ?? inputContent()
     if (!inputValue) {
       return
     }
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
-    inputRef.value = ""
-    setCompatiblePrompt([])
-    setHeight("48px")
+    setInputContent("")
     if (
       !value ||
       value !==
@@ -202,11 +211,10 @@ export default function () {
     }
   }
 
-  function clear() {
-    inputRef.value = ""
+  function clearSession() {
+    // setInputContent("")
     setMessageList([])
     setCurrentAssistantMessage("")
-    setCompatiblePrompt([])
   }
 
   function stopStreamFetch() {
@@ -225,10 +233,17 @@ export default function () {
   }
 
   function selectPrompt(prompt: string) {
-    inputRef.value = prompt
-    // setHeight("48px")
-    setHeight(inputRef.scrollHeight + "px")
+    setInputContent(prompt)
     setCompatiblePrompt([])
+    const { scrollHeight } = inputRef
+    setHeight(
+      `${
+        scrollHeight > window.innerHeight - 64
+          ? window.innerHeight - 64
+          : scrollHeight
+      }px`
+    )
+    inputRef.focus()
   }
 
   return (
@@ -250,7 +265,7 @@ export default function () {
                 transition: "opacity 0.3s ease-in-out",
                 width: containerWidth(),
                 opacity: 100,
-                "background-color": "var(--bg)"
+                "background-color": "var(--c-bg)"
               }
         }
       >
@@ -258,7 +273,7 @@ export default function () {
           <Setting
             setting={setting}
             setSetting={setSetting}
-            clear={clear}
+            clear={clearSession}
             reAnswer={reAnswer}
           />
         </Show>
@@ -288,11 +303,12 @@ export default function () {
               id="input"
               placeholder="与 ta 对话吧"
               autocomplete="off"
+              value={inputContent()}
               autofocus
               onClick={scrollToBottom}
-              onBlur={() => {
-                setCompatiblePrompt([])
-              }}
+              // onBlur={() => {
+              //   setCompatiblePrompt([])
+              // }}
               onKeyDown={e => {
                 if (compatiblePrompt().length) {
                   if (
@@ -319,7 +335,7 @@ export default function () {
                   }px`
                 )
                 let { value } = e.currentTarget
-                if (value === "") return setCompatiblePrompt([])
+                setInputContent(value)
                 if (value === "/" || value === " ")
                   return setCompatiblePrompt(prompts)
                 const promptKey = value.replace(/^[\/ ](.*)/, "$1")
@@ -332,11 +348,20 @@ export default function () {
                 "border-top-left-radius":
                   compatiblePrompt().length === 0 ? "0.25rem" : 0
               }}
-              class="self-end py-3 resize-none w-full px-3 text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:op-30"
+              class="self-end py-3 resize-none w-full px-3 text-slate-7 dark:text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:text-slate-400 placeholder:op-40"
               rounded-l
             />
+            <Show when={inputContent()}>
+              <button
+                class="i-carbon:add-filled absolute right-3.5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
+                onClick={() => {
+                  setInputContent("")
+                  inputRef.focus()
+                }}
+              />
+            </Show>
             <div
-              class="flex text-slate bg-slate bg-op-15 h-3em items-center rounded-r"
+              class="flex text-slate-7 dark:text-slate bg-slate bg-op-15 text-op-80! hover:text-op-100! h-3em items-center rounded-r"
               style={{
                 "border-top-right-radius":
                   compatiblePrompt().length === 0 ? "0.25rem" : 0
@@ -345,7 +370,7 @@ export default function () {
               <button
                 title="发送"
                 onClick={() => handleButtonClick()}
-                class="i-carbon:send-filled text-5 mx-3 hover:text-slate-2"
+                class="i-carbon:send-filled text-5 mx-3"
               />
             </div>
           </div>
