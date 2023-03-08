@@ -24,7 +24,7 @@ export default function () {
     //   role: "assistant",
     //   content: defaultMessage + defaultMessage + defaultMessage + defaultMessage
     // }
-  ])
+  ])   
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
@@ -41,14 +41,14 @@ export default function () {
     const storage = localStorage.getItem("setting")
     const session = localStorage.getItem("session")
     try {
+      const href: string = window.location.href
+      if (href.includes("codesea")) {
+        defaultSetting.openaiAPIKey = ""
+      }
       let archiveSession = false
       if (storage) {
         const parsed = JSON.parse(storage)
         archiveSession = parsed.archiveSession
-        const href: string = window.location.href
-        if (href.includes("codesea")) {
-          defaultSetting.openaiAPIKey = ""
-        }
 
         setSetting({
           ...defaultSetting,
