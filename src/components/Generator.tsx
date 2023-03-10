@@ -2,9 +2,8 @@ import { createEffect, createSignal, For, onMount, Show } from "solid-js"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import MessageItem from "./MessageItem"
 import type { ChatMessage } from "~/types"
-import Setting from "./Setting"
+import SettingAction from "./SettingAction"
 import PromptList from "./PromptList"
-import prompts from "~/prompts"
 import { Fzf } from "fzf"
 import { defaultMessage, defaultSetting } from "~/default"
 import throttle from "just-throttle"
@@ -18,7 +17,7 @@ export interface PromptItem {
 
 export type Setting = typeof defaultSetting
 
-export default function () {
+export default function (props: { prompts: PromptItem[] }) {
   let inputRef: HTMLTextAreaElement
   let containerRef: HTMLDivElement
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([
@@ -34,10 +33,14 @@ export default function () {
   const [setting, setSetting] = createSignal(defaultSetting)
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
-  const fzf = new Fzf(prompts, { selector: k => `${k.desc} (${k.prompt})` })
+  const fzf = new Fzf(props.prompts, {
+    selector: k => `${k.desc} (${k.prompt})`
+  })
   const [height, setHeight] = createSignal("48px")
 
   onMount(() => {
+    document.querySelector("main")?.classList.remove("before")
+    document.querySelector("main")?.classList.add("after")
     createResizeObserver(containerRef, ({ width, height }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
@@ -248,21 +251,28 @@ export default function () {
 
   return (
     <div mt-6 ref={containerRef!}>
-      <For each={messageList()}>
-        {message => (
-          <MessageItem role={message.role} message={message.content} />
+      <div
+        id="message-container"
+        style={{
+          "background-color": "var(--c-bg)"
+        }}
+      >
+        <For each={messageList()}>
+          {message => (
+            <MessageItem role={message.role} message={message.content} />
+          )}
+        </For>
+        {currentAssistantMessage() && (
+          <MessageItem role="assistant" message={currentAssistantMessage} />
         )}
-      </For>
-      {currentAssistantMessage() && (
-        <MessageItem role="assistant" message={currentAssistantMessage} />
-      )}
+      </div>
       <div
         class="pb-2em fixed bottom-0 z-100 op-0"
         style={
           containerWidth() === "init"
             ? {}
             : {
-                transition: "opacity 0.3s ease-in-out",
+                transition: "opacity 1s ease-in-out",
                 width: containerWidth(),
                 opacity: 100,
                 "background-color": "var(--c-bg)"
@@ -270,11 +280,12 @@ export default function () {
         }
       >
         <Show when={!compatiblePrompt().length && height() === "48px"}>
-          <Setting
+          <SettingAction
             setting={setting}
             setSetting={setSetting}
             clear={clearSession}
             reAnswer={reAnswer}
+            messaages={messageList()}
           />
         </Show>
         <Show
@@ -337,13 +348,14 @@ export default function () {
                 let { value } = e.currentTarget
                 setInputContent(value)
                 if (value === "/" || value === " ")
-                  return setCompatiblePrompt(prompts)
+                  return setCompatiblePrompt(props.prompts)
                 const promptKey = value.replace(/^[\/ ](.*)/, "$1")
                 if (promptKey !== value)
                   setCompatiblePrompt(fzf.find(promptKey).map(k => k.item))
               }}
               style={{
                 height: height(),
+                "border-bottom-right-radius": 0,
                 "border-top-right-radius": height() === "48px" ? 0 : "0.25rem",
                 "border-top-left-radius":
                   compatiblePrompt().length === 0 ? "0.25rem" : 0

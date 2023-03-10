@@ -6,11 +6,13 @@ import "~/styles/global.css"
 import "@unocss/reset/tailwind.css"
 import "katex/dist/katex.min.css"
 import "highlight.js/styles/atom-one-dark.css"
+import { parsePrompts } from "~/utils/parse"
+const prompts = await parsePrompts()
 ---
 
 <Layout title="ChatGPT">
-  <main>
+  <main class="before">
     <Header />
-    <Generator client:load />
+    <Generator prompts={prompts} client:visible />
   </main>
 </Layout>

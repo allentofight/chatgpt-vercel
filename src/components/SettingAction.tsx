@@ -1,20 +1,18 @@
-import {
-  Accessor,
-  children,
-  createSignal,
-  JSXElement,
-  Setter,
-  Show
-} from "solid-js"
+import { Accessor, createSignal, JSXElement, Setter, Show } from "solid-js"
 import type { Setting } from "./Generator"
+import { toJpeg } from "html-to-image"
+import { copyToClipboard, dateFormat } from "~/utils"
+import type { ChatMessage } from "~/types"
 
-export default function Setting(props: {
+export default function SettingAction(props: {
   setting: Accessor<Setting>
   setSetting: Setter<Setting>
   clear: any
   reAnswer: any
+  messaages: ChatMessage[]
 }) {
   const [shown, setShown] = createSignal(false)
+  const [copied, setCopied] = createSignal(false)
   return (
     <div class="text-sm text-slate-7 dark:text-slate mb-2">
       <Show when={shown()}>
@@ -102,7 +100,7 @@ export default function Setting(props: {
         <hr class="mt-2 bg-slate-5 bg-op-15 border-none h-1px"></hr>
       </Show>
       <div class="mt-2 flex items-center justify-between">
-        <ButtonItem
+        <ActionItem
           onClick={() => {
             setShown(!shown())
           }}
@@ -110,12 +108,28 @@ export default function Setting(props: {
           label="设置"
         />
         <div class="flex">
-          <ButtonItem
+          <ActionItem
+            onClick={exportJpg}
+            icon="i-carbon:image"
+            label="导出图片"
+          />
+          <ActionItem
+            label="导出 Markdown"
+            onClick={async () => {
+              await exportMD(props.messaages)
+              setCopied(true)
+              setTimeout(() => setCopied(false), 1000)
+            }}
+            icon={
+              copied() ? "i-ri:check-fill text-yellow" : "i-ri:markdown-line"
+            }
+          />
+          <ActionItem
             onClick={props.reAnswer}
             icon="i-carbon:reset"
             label="重新回答"
           />
-          <ButtonItem
+          <ActionItem
             onClick={props.clear}
             icon="i-carbon:trash-can"
             label="清空对话"
@@ -142,14 +156,39 @@ function SettingItem(props: {
   )
 }
 
-function ButtonItem(props: { onClick: any; icon: string; label: string }) {
+function ActionItem(props: { onClick: any; icon: string; label?: string }) {
   return (
     <div
-      class="flex items-center cursor-pointer p-1 hover:bg-slate hover:bg-op-10 rounded"
+      class="flex items-center cursor-pointer mx-1 p-2 hover:bg-slate hover:bg-op-10 rounded text-1.2em"
       onClick={props.onClick}
     >
-      <button class={props.icon} />
-      <span ml-1>{props.label}</span>
+      <button class={props.icon} title={props.label} />
     </div>
+  )
+}
+
+function exportJpg() {
+  toJpeg(document.querySelector("#message-container") as HTMLElement, {}).then(
+    url => {
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `ChatGPT-${dateFormat(new Date(), "HH-MM-SS")}.jpg`
+      a.click()
+    }
+  )
+}
+
+async function exportMD(messages: ChatMessage[]) {
+  const role = {
+    system: "系统",
+    user: "我",
+    assistant: "ChatGPT"
+  }
+  await copyToClipboard(
+    messages
+      .map(k => {
+        return `### ${role[k.role]}\n\n${k.content.trim()}`
+      })
+      .join("\n\n\n\n")
   )
 }
