@@ -177,17 +177,33 @@ export default function (props: { prompts: PromptItem[] }) {
       role: "user",
       content: systemRule ? systemRule + "\n" + inputValue : inputValue
     }
-    const response = await fetch("/api/stream", {
-      method: "POST",
-      body: JSON.stringify({
-        messages: setting().continuousDialogue
-          ? [...messageList().slice(0, -1), message]
-          : [message],
-        key: setting().openaiAPIKey,
-        temperature: setting().openaiAPITemperature / 100
-      }),
-      signal: controller.signal
-    })
+
+    let response;
+
+    if (setting().openAiDrawing && inputValue.includes('画')) {
+      response = await fetch("/api/image", {
+        method: "POST",
+        body: JSON.stringify({
+          message: inputValue,
+          key: setting().openaiAPIKey,
+        }),
+        signal: controller.signal
+      })
+    } else {
+      response = await fetch("/api/stream", {
+        method: "POST",
+        body: JSON.stringify({
+          messages: setting().continuousDialogue
+            ? [...messageList().slice(0, -1), message]
+            : [message],
+          key: setting().openaiAPIKey,
+          temperature: setting().openaiAPITemperature / 100
+        }),
+        signal: controller.signal
+      })
+    }
+
+    
     if (!response.ok) {
       throw new Error(response.statusText)
     }

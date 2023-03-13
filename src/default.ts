@@ -1,5 +1,6 @@
 export const defaultSetting = {
   continuousDialogue: true,
+  openAiDrawing: true,
   archiveSession: false,
   openaiAPIKey: atob('c2stOWJUQmdSamhhcGZ5VlpDczdRS1pUM0JsYmtGSjBtYkZKT0VzQ0pidWd0TGJQRDZv'),
   openaiAPITemperature: 60,

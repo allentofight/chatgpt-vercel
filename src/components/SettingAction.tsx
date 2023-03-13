@@ -97,6 +97,25 @@ export default function SettingAction(props: {
             <div class="w-9 h-5 bg-slate bg-op-15 peer-focus:outline-none peer-focus:ring-0  rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate"></div>
           </label>
         </SettingItem>
+        <SettingItem
+          icon="i-carbon:draw"
+          label="开启AI绘画"
+        >
+          <label class="relative inline-flex items-center cursor-pointer ml-1">
+            <input
+              type="checkbox"
+              checked={props.setting().openAiDrawing}
+              class="sr-only peer"
+              onChange={e => {
+                props.setSetting({
+                  ...props.setting(),
+                  openAiDrawing: (e.target as HTMLInputElement).checked
+                })
+              }}
+            />
+            <div class="w-9 h-5 bg-slate bg-op-15 peer-focus:outline-none peer-focus:ring-0  rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate"></div>
+          </label>
+        </SettingItem>
         <hr class="mt-2 bg-slate-5 bg-op-15 border-none h-1px"></hr>
       </Show>
       <div class="mt-2 flex items-center justify-between">
