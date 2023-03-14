@@ -32,7 +32,7 @@ export const post: APIRoute = async context => {
   let warningHint = `没有填写 OpenAI API key，请扫码获取体验码<img width="300" src='${url}' />`
   if (isTrialUser) {
     const day = moment(new Date()).format('YYYY-MM-DD')
-    let cacheKey = `trialCnt_${day}`
+    let cacheKey = `trialCnt1_${day}`
     let trialCnt = localStorage.getItem(cacheKey)
     trialCnt++
     localStorage.setItem(cacheKey, trialCnt)
