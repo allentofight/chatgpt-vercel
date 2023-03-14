@@ -8,6 +8,7 @@ import { Fzf } from "fzf"
 import { defaultMessage, defaultSetting } from "~/default"
 import throttle from "just-throttle"
 import { isMobile } from "~/utils"
+import moment from 'moment'
 // import { mdMessage } from "~/temp"
 
 export interface PromptItem {
@@ -181,10 +182,21 @@ export default function (props: { prompts: PromptItem[] }) {
     }
 
     let isTrialUser = false
+    let isTrialAvail = false
     let trialCode = parseInt(setting().experienceCode)
     if (trialCode) {
       let codes = [78923,45678,98123,23456,56789]
       isTrialUser = codes.includes(trialCode)
+      if (isTrialUser) {
+        const day = moment(new Date()).format('YYYY-MM-DD')
+        let cacheKey = `trialCnt2_${day}`
+        let trialCnt = localStorage.getItem(cacheKey)
+        trialCnt++
+        localStorage.setItem(cacheKey, trialCnt)
+        if (trialCnt < 4) {
+          isTrialAvail = true
+        }
+      }
     }
 
     let response;
@@ -195,6 +207,7 @@ export default function (props: { prompts: PromptItem[] }) {
           message: inputValue,
           key: setting().openaiAPIKey,
           isTrialUser,
+          isTrialAvail,
         }),
         signal: controller.signal
       })
@@ -208,6 +221,7 @@ export default function (props: { prompts: PromptItem[] }) {
           key: setting().openaiAPIKey,
           temperature: setting().openaiAPITemperature / 100,
           isTrialUser,
+          isTrialAvail,
         }),
         signal: controller.signal
       })

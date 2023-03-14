@@ -7,8 +7,6 @@ import {
 
 import { defaultSetting } from "~/default"
 
-import moment from 'moment'
-
 
 const localEnv = import.meta.env.OPENAI_API_KEY
 const vercelEnv = process.env.OPENAI_API_KEY
@@ -22,26 +20,19 @@ export const post: APIRoute = async context => {
   const apiKey = apiKeys.length
     ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
     : ""
-  let { messages, key = apiKey, temperature = 0.6, isTrialUser } = body
+  let { messages, key = apiKey, temperature = 0.6, isTrialUser, isTrialAvail } = body
 
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-
   const url = 'https://s2.loli.net/2023/03/14/wjdqIlGUogztABN.png'
   let warningHint = `没有填写 OpenAI API key，请扫码获取体验码<img width="300" src='${url}' />`
   if (isTrialUser) {
-    const day = moment(new Date()).format('YYYY-MM-DD')
-    let cacheKey = `trialCnt1_${day}`
-    let trialCnt = localStorage.getItem(cacheKey)
-    trialCnt++
-    localStorage.setItem(cacheKey, trialCnt)
-    if (trialCnt < 4) {
-      key = defaultSetting.openaiAPIKey
-    } else {
+    if (!isTrialAvail) {
       warningHint = '今天体验次数已用完，如需永久体验，请添加微信: geekoftate 获取 apiKey 哦'
+    } else {
+      key = defaultSetting.openaiAPIKey
     }
-    console.log('trialCnt = ', trialCnt)
   }
 
   if (!key.startsWith("sk-")) key = apiKey
