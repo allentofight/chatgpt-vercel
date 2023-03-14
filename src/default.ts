@@ -4,6 +4,7 @@ export const defaultSetting = {
   archiveSession: false,
   openaiAPIKey: atob('c2stOWJUQmdSamhhcGZ5VlpDczdRS1pUM0JsYmtGSjBtYkZKT0VzQ0pidWd0TGJQRDZv'),
   openaiAPITemperature: 60,
+  experienceCode: "",
   systemRule: ""
 }
 
