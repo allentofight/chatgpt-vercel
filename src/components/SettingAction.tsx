@@ -29,6 +29,18 @@ export default function SettingAction(props: {
             }}
           />
         </SettingItem>
+        <SettingItem icon="i-carbon:chat-bot" label="体验码">
+          <input
+            value={props.setting().experienceCode}
+            class="max-w-150px ml-1em px-1 text-slate-7 dark:text-slate rounded-sm bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none"
+            onInput={e => {
+              props.setSetting({
+                ...props.setting(),
+                experienceCode: (e.target as HTMLInputElement).value
+              })
+            }}
+          />
+        </SettingItem>
         <SettingItem icon="i-carbon:user-online" label="系统角色指令">
           <input
             type="text"

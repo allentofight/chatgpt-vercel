@@ -38,6 +38,8 @@ export default function (props: { prompts: PromptItem[] }) {
   })
   const [height, setHeight] = createSignal("48px")
 
+  const defaultApiKey = defaultSetting.openaiAPIKey
+
   onMount(() => {
     document.querySelector("main")?.classList.remove("before")
     document.querySelector("main")?.classList.add("after")
@@ -178,14 +180,21 @@ export default function (props: { prompts: PromptItem[] }) {
       content: systemRule ? systemRule + "\n" + inputValue : inputValue
     }
 
-    let response;
+    let isTrialUser = false
+    let trialCode = parseInt(setting().experienceCode)
+    if (trialCode) {
+      let codes = [78923,45678,98123,23456,56789]
+      isTrialUser = codes.includes(trialCode)
+    }
 
+    let response;
     if (setting().openAiDrawing && inputValue.includes('画')) {
       response = await fetch("/api/image", {
         method: "POST",
         body: JSON.stringify({
           message: inputValue,
           key: setting().openaiAPIKey,
+          isTrialUser,
         }),
         signal: controller.signal
       })
@@ -197,7 +206,8 @@ export default function (props: { prompts: PromptItem[] }) {
             ? [...messageList().slice(0, -1), message]
             : [message],
           key: setting().openaiAPIKey,
-          temperature: setting().openaiAPITemperature / 100
+          temperature: setting().openaiAPITemperature / 100,
+          isTrialUser,
         }),
         signal: controller.signal
       })

@@ -5,6 +5,8 @@ import {
   ReconnectInterval
 } from "eventsource-parser"
 
+import { defaultSetting } from "~/default"
+
 const localEnv = import.meta.env.OPENAI_API_KEY
 const vercelEnv = process.env.OPENAI_API_KEY
 
@@ -17,14 +19,19 @@ export const post: APIRoute = async context => {
   const apiKey = apiKeys.length
     ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
     : ""
-  let { messages, key = apiKey, temperature = 0.6 } = body
+  let { messages, key = apiKey, temperature = 0.6, isTrialUser } = body
 
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
+  if (isTrialUser) {
+    key = defaultSetting.openaiAPIKey
+  }
+
   if (!key.startsWith("sk-")) key = apiKey
   if (!key) {
-    return new Response("没有填写 OpenAI API key，请加微信: geekoftaste 获取")
+    const url = 'https://s2.loli.net/2023/03/14/wjdqIlGUogztABN.png'
+    return new Response(`没有填写 OpenAI API key，请扫码获取体验码<img width="300" src='${url}' />`)
   }
   if (!messages) {
     return new Response("没有输入任何文字")

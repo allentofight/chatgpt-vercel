@@ -43,7 +43,6 @@ export const post: APIRoute = async ({ request }) => {
       })
     }
   }
-  console.log('result = ', result)
   return {
     body: `<img src='${result.data[0].url}' />`
   }
