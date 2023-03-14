@@ -10,5 +10,5 @@ export const defaultSetting = {
 const url = 'https://s2.loli.net/2023/03/14/wjdqIlGUogztABN.png'
 
 export const defaultMessage = `
-- 本站需填入自己的 apikey 才可使用，如果没有请扫码获取<img width="300" src='${url}' />
+- 本站需填入自己的 apikey 才可使用，如果没有请扫码获取体验码<img width="300" src='${url}' />
 - **Shift+Enter** 换行。开头输入 **/** 或者 **空格** 搜索 Prompt 预设。`
