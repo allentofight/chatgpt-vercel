@@ -29,7 +29,7 @@ export const post: APIRoute = async context => {
   let warningHint = `没有填写 OpenAI API key，请扫码获取体验码<img width="300" src='${url}' />`
   if (isTrialUser) {
     if (!isTrialAvail) {
-      warningHint = '今天体验次数已用完，如需永久体验，请添加微信: geekoftate 获取 apiKey 哦'
+      warningHint = '今天体验次数已用完，如需永久体验，请添加微信: geekoftaste 获取 apiKey 哦'
     } else {
       key = defaultSetting.openaiAPIKey
     }
