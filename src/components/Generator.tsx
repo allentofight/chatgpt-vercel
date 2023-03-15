@@ -230,7 +230,7 @@ export default function (props: {
     let apiKey = setting().openaiAPIKey
     let trialCode = parseInt(setting().experienceCode)
     if (trialCode) {
-      let codes = [78923,45678,98123,23456,56789]
+      let codes = [45972,87641,20354,73289,56812]
       isTrialUser = codes.includes(trialCode)
       if (isTrialUser) {
         const day = moment(new Date()).format('YYYY-MM-DD')
@@ -240,7 +240,7 @@ export default function (props: {
         localStorage.setItem(cacheKey, trialCnt)
         if (trialCnt < 4) {
           isTrialAvail = true
-          apiKey = atob('c2stOWJUQmdSamhhcGZ5VlpDczdRS1pUM0JsYmtGSjBtYkZKT0VzQ0pidWd0TGJQRDZv')
+          apiKey = atob('c2stT2g1amhZcVNoWnQ3VEV1djFnb250M0JsbmtGSkw1QW9TVTlTc2ttZ2hJWVhiMk8=')
         }
       }
     }
