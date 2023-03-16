@@ -225,7 +225,7 @@ export default function (props: {
 
     let isTrialUser = false
     let isTrialAvail = false
-    let apiKey = setting().openaiAPIKey
+
     let trialCode = parseInt(setting().experienceCode)
     if (trialCode) {
       let codes = [45972,87641,20354,73289,56812]
@@ -238,7 +238,6 @@ export default function (props: {
         localStorage.setItem(cacheKey, trialCnt)
         if (trialCnt < 5) {
           isTrialAvail = true
-          apiKey = atob('c2stRDFGQ05KMms3OXpVTGpGcUo3cU5UM0JsYmtGSmI5WFM2aFFGbllTY28ybzFiTGVz')
         }
       }
     }
@@ -249,7 +248,7 @@ export default function (props: {
         method: "POST",
         body: JSON.stringify({
           message: inputValue,
-          key: apiKey,
+          key: setting().openaiAPIKey,
           isTrialUser,
           isTrialAvail,
         }),
