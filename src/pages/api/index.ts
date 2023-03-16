@@ -29,7 +29,7 @@ const maxTokens = Number(
 
 export const post: APIRoute = async context => {
   const body = await context.request.json()
-  const apiKey = apiKeys.length
+  let apiKey = apiKeys.length
     ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
     : ""
   apiKey = 'sk-Po1c73GnKZ' + apiKey
