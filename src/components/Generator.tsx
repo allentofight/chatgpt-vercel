@@ -238,9 +238,9 @@ export default function (props: {
         let trialCnt = localStorage.getItem(cacheKey)
         trialCnt++
         localStorage.setItem(cacheKey, trialCnt)
-        if (trialCnt < 4) {
+        if (trialCnt < 5) {
           isTrialAvail = true
-          apiKey = atob('c2stT2g1amhZcVNoWnQ3VEV1djFnb250M0JsbmtGSkw1QW9TVTlTc2ttZ2hJWVhiMk8=')
+          apiKey = atob('c2stMEtLdE11Tjg5cXhGVldob0oxRWo0Qmxia0ZKUkJzdkRmWU0zU3hoQWZTdW53T1U=')
         }
       }
     }
