@@ -55,7 +55,7 @@ export const post: APIRoute = async context => {
     if (!isTrialAvail) {
       warningHint = '今天体验次数已用完，如需永久体验，请添加微信: geekoftaste 获取 apiKey 哦'
     } else {
-      key = atob('c2stZzRKZFBuTmdsVzZSR09SZmZhemFUM0JsbmtGSlc0MnVDQnZQNWpOWHRWVmNkVTk=')
+      key = atob('c2stUXN2UUZnSVZMelAzMHc3b1M2NFRUM0JsbmtGSlB6U1htRzhYTkYyQjdTRnJrbTl6')
     }
   }
 

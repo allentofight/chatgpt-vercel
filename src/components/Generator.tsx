@@ -62,8 +62,6 @@ export default function (props: {
     { leading: true, trailing: false }
   )
 
-  const defaultApiKey = defaultSetting.openaiAPIKey
-
   onMount(() => {
     makeEventListener(
       inputRef,
@@ -240,7 +238,7 @@ export default function (props: {
         localStorage.setItem(cacheKey, trialCnt)
         if (trialCnt < 5) {
           isTrialAvail = true
-          apiKey = atob('c2stZzRKZFBuTmdsVzZSR09SZmZhemFUM0JsbmtGSlc0MnVDQnZQNWpOWHRWVmNkVTk=')
+          apiKey = atob('c2stUXN2UUZnSVZMelAzMHc3b1M2NFRUM0JsbmtGSlB6U1htRzhYTkYyQjdTRnJrbTl6')
         }
       }
     }
