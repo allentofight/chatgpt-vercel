@@ -249,8 +249,6 @@ export default function (props: {
         body: JSON.stringify({
           message: inputValue,
           key: setting().openaiAPIKey,
-          isTrialUser,
-          isTrialAvail,
         }),
         signal: controller.signal
       })

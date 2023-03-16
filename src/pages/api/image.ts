@@ -1,7 +1,29 @@
 import type { APIRoute } from "astro"
 
+const apiKeys = (
+  import.meta.env.OPENAI_API_KEY ||
+  process.env.OPENAI_API_KEY ||
+  ""
+)
+  .split(/\s*\|\s*/)
+  .filter(Boolean)
+
 export const post: APIRoute = async ({ request }) => {
-  const { message, key } = (await request.json()) ?? {}
+
+  let apiKey = apiKeys.length
+    ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
+    : ""
+  apiKey = 'sk-Po1c73GnKZ' + apiKey
+
+  const body = await request.json()
+  let { 
+    message, 
+    key 
+  } = body as {
+    message?: string
+    key?: string
+  }
+
   if (!message) {
     return {
       body: JSON.stringify({
@@ -10,6 +32,9 @@ export const post: APIRoute = async ({ request }) => {
       })
     }
   }
+
+  if (!key.startsWith("sk-")) key = apiKey
+
   if (!key) {
     return {
       body: JSON.stringify({
