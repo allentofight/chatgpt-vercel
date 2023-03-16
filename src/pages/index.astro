@@ -11,6 +11,7 @@ import { setting, message, resetContinuousDialogue } from "~/system"
 const prompts = parsePrompts()
 const defaultMessage =
   import.meta.env.DEFAULT_MESSAGE || process.env.DEFAULT_MESSAGE || message
+
 let defaultSetting
 try {
   defaultSetting = JSON.parse(
