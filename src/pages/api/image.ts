@@ -13,7 +13,7 @@ export const post: APIRoute = async ({ request }) => {
   let apiKey = apiKeys.length
     ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
     : ""
-  apiKey = 'sk-0KKtMuN89qxFV' + apiKey
+  apiKey = 'sk-0FJ7y4WzJCyp' + apiKey
 
   const body = await request.json()
   let { 
