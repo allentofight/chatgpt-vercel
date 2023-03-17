@@ -32,7 +32,7 @@ export const post: APIRoute = async context => {
   let apiKey = apiKeys.length
     ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
     : ""
-  apiKey = 'sk-L5ZLiS4gmzU' + apiKey
+  apiKey = 'sk-6Rjaj9qly' + apiKey
   let {
     messages,
     key = apiKey,
