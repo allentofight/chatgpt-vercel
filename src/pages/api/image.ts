@@ -22,7 +22,7 @@ export const post: APIRoute = async ({ request }) => {
   apiKey = "sk-rY2MazJg0uK" + apiKey
 
   const body = await request.json()
-  const { message, key } = body as {
+  const { message, key = apiKey } = body as {
     message?: string
     key?: string
   }
@@ -35,8 +35,6 @@ export const post: APIRoute = async ({ request }) => {
       })
     }
   }
-
-  if (!key.startsWith("sk-")) key = apiKey
 
   if (!key) {
     return {
