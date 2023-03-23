@@ -16,7 +16,6 @@ export const post: APIRoute = async context => {
     key?: string
   }
 
-  console.log("key = ", localKey)
   if (!message) {
     return {
       body: JSON.stringify({
