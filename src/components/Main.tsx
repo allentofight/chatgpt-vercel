@@ -260,7 +260,7 @@ export default function (props: {
         method: "POST",
         body: JSON.stringify({
           message: inputValue,
-          key: setting().openaiAPIKey
+          key: setting().openaiAPIKey || undefined
         }),
         signal: controller.signal
       })

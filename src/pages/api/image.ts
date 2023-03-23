@@ -1,12 +1,6 @@
 import type { APIRoute } from "astro"
 
-const apiKeys = (
-  import.meta.env.OPENAI_API_KEY ||
-  process.env.OPENAI_API_KEY ||
-  ""
-)
-  .split(/\s*\|\s*/)
-  .filter(Boolean)
+export const localKey = "sk-rY2MazJg0uK" + import.meta.env.OPENAI_API_KEY
 
 export const baseURL = import.meta.env.NOGFW
   ? "api.openai.com"
@@ -15,18 +9,14 @@ export const baseURL = import.meta.env.NOGFW
       ""
     )
 
-export const post: APIRoute = async ({ request }) => {
-  let apiKey = apiKeys.length
-    ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
-    : ""
-  apiKey = "sk-rY2MazJg0uK" + apiKey
-
-  const body = await request.json()
-  const { message, key = apiKey } = body as {
+export const post: APIRoute = async context => {
+  const body = await context.request.json()
+  const { message, key = localKey } = body as {
     message?: string
     key?: string
   }
 
+  console.log("key = ", localKey)
   if (!message) {
     return {
       body: JSON.stringify({
