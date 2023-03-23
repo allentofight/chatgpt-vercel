@@ -8,11 +8,9 @@ import { Fzf } from "fzf"
 import throttle from "just-throttle"
 import { isMobile } from "~/utils"
 
-import moment from 'moment'
+import moment from "moment"
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
-
-// import { mdMessage } from "~/temp"
 
 export interface PromptItem {
   desc: string
@@ -31,12 +29,7 @@ export default function (props: {
   let containerRef: HTMLDivElement
 
   const { defaultMessage, defaultSetting, resetContinuousDialogue } = props.env
-  const [messageList, setMessageList] = createSignal<ChatMessage[]>([
-    // {
-    //   role: "assistant",
-    //   content: mdMessage
-    // }
-  ])
+  const [messageList, setMessageList] = createSignal<ChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
@@ -44,7 +37,6 @@ export default function (props: {
   const [setting, setSetting] = createSignal(defaultSetting)
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
-  const [messageListLength, setMessageListLength] = createSignal(0)
   const fzf = new Fzf(props.prompts, {
     selector: k => `${k.desc} (${k.prompt})`
   })
@@ -59,7 +51,7 @@ export default function (props: {
       })
     },
     250,
-    { leading: true, trailing: false }
+    { leading: false, trailing: true }
   )
 
   onMount(() => {
@@ -85,7 +77,7 @@ export default function (props: {
     createResizeObserver(containerRef, ({ width, height }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
-    const storage = localStorage.getItem("setting")
+    const setting = localStorage.getItem("setting")
     const session = localStorage.getItem("session")
     try {
       const href: string = window.location.href
@@ -93,8 +85,8 @@ export default function (props: {
         defaultSetting.openaiAPIKey = ""
       }
       let archiveSession = false
-      if (storage) {
-        const parsed = JSON.parse(storage)
+      if (setting) {
+        const parsed = JSON.parse(setting)
         archiveSession = parsed.archiveSession
 
         setSetting({
@@ -104,58 +96,85 @@ export default function (props: {
         })
       }
       if (session && archiveSession) {
-        setMessageList(JSON.parse(session))
-      }
+        const parsed = JSON.parse(session)
+        if (parsed.length > 1) {
+          setMessageList(parsed)
+        } else
+          setMessageList([
+            {
+              role: "assistant",
+              content: defaultMessage
+            }
+          ])
+      } else
+        setMessageList([
+          {
+            role: "assistant",
+            content: defaultMessage
+          }
+        ])
     } catch {
       console.log("Setting parse error")
     }
   })
 
-  createEffect(() => {
-    if (messageList().length === 0) {
-      setMessageList([
-        {
-          role: "assistant",
-          content: defaultMessage
-        }
-      ])
-    } else if (
-      messageList().length > 1 &&
-      messageList()[0].content === defaultMessage
-    ) {
-      setMessageList(messageList().slice(1))
-    }
-    localStorage.setItem("setting", JSON.stringify(setting()))
-    if (setting().archiveSession)
-      localStorage.setItem("session", JSON.stringify(messageList()))
-  })
-
-  createEffect(() => {
-    if (messageList().length > messageListLength()) {
+  createEffect((prev: number | undefined) => {
+    if (prev !== undefined && messageList().length > prev) {
       scrollToBottom()
-      setMessageListLength(messageList().length)
     }
+    return messageList().length
   })
 
   createEffect(() => {
-    currentAssistantMessage()
-    scrollToBottom()
+    if (currentAssistantMessage()) scrollToBottom()
+  })
+
+  createEffect(prev => {
+    messageList()
+    if (prev) {
+      if (messageList().length === 0) {
+        setMessageList([
+          {
+            role: "assistant",
+            content: defaultMessage
+          }
+        ])
+      } else if (
+        messageList().length > 1 &&
+        messageList()[0].content === defaultMessage
+      ) {
+        setMessageList(messageList().slice(1))
+      }
+      if (setting().archiveSession) {
+        localStorage.setItem("session", JSON.stringify(messageList()))
+      }
+    }
+    return true
   })
 
   createEffect(() => {
-    setHeight("48px")
-    if (inputContent() === "") {
-      setCompatiblePrompt([])
-    } else {
-      const { scrollHeight } = inputRef
-      setHeight(
-        `${
-          scrollHeight > window.innerHeight - 64
-            ? window.innerHeight - 64
-            : scrollHeight
-        }px`
-      )
+    localStorage.setItem("setting", JSON.stringify(setting()))
+  })
+
+  createEffect(prev => {
+    inputContent()
+    if (prev) {
+      setHeight("48px")
+      if (inputContent() === "") {
+        setCompatiblePrompt([])
+      } else {
+        const { scrollHeight } = inputRef
+        setHeight(
+          `${
+            scrollHeight > window.innerHeight - 64
+              ? window.innerHeight - 64
+              : scrollHeight
+          }px`
+        )
+      }
+      inputRef.focus()
     }
+    return true
   })
 
   function archiveCurrentMessage() {
@@ -171,7 +190,6 @@ export default function (props: {
       setLoading(false)
       setController()
       !isMobile() && inputRef.focus()
-      scrollToBottom.flush()
     }
   }
 
@@ -200,14 +218,18 @@ export default function (props: {
     }
     try {
       await fetchGPT(inputValue)
-    } catch (error) {
+    } catch (error: any) {
       setLoading(false)
       setController()
-      setCurrentAssistantMessage(
-        String(error).includes("The user aborted a request")
-          ? ""
-          : String(error)
-      )
+      setMessageList([
+        ...messageList(),
+        {
+          role: "error",
+          content: error.message.includes("aborted a request")
+            ? ""
+            : error.message.replace(/(sk-\w{5})\w+/g, "$1")
+        }
+      ])
     }
     archiveCurrentMessage()
   }
@@ -218,37 +240,27 @@ export default function (props: {
     setController(controller)
 
     const systemRule = setting().systemRule.trim()
-    const message = {
-      role: "user",
-      content: systemRule ? systemRule + "\n" + inputValue : inputValue
-    }
 
-    let isTrialUser = false
-    let isTrialAvail = false
-
-    let trialCode = parseInt(setting().experienceCode)
-    if (trialCode) {
-      let codes = [45972,87641,20354,73289,56812]
-      isTrialUser = codes.includes(trialCode)
-      if (isTrialUser) {
-        const day = moment(new Date()).format('YYYY-MM-DD')
-        let cacheKey = `trialCnt2_${day}`
-        let trialCnt = localStorage.getItem(cacheKey)
-        trialCnt++
-        localStorage.setItem(cacheKey, trialCnt)
-        if (trialCnt < 5) {
-          isTrialAvail = true
-        }
+    const message = [
+      {
+        role: "user",
+        content: inputValue
       }
+    ]
+    if (systemRule) {
+      message.push({
+        role: "system",
+        content: systemRule
+      })
     }
 
-    let response;
-    if (setting().openAiDrawing && inputValue.includes('画')) {
+    let response
+    if (setting().openAiDrawing && inputValue.includes("画")) {
       response = await fetch("/api/image", {
         method: "POST",
         body: JSON.stringify({
           message: inputValue,
-          key: setting().openaiAPIKey,
+          key: setting().openaiAPIKey
         }),
         signal: controller.signal
       })
@@ -257,20 +269,21 @@ export default function (props: {
         method: "POST",
         body: JSON.stringify({
           messages: setting().continuousDialogue
-            ? [...messageList().slice(0, -1), message]
-            : [message],
-          key: setting().openaiAPIKey,
+            ? [...messageList().slice(0, -1), ...message].filter(
+                k => k.role !== "error"
+              )
+            : message,
+          key: setting().openaiAPIKey || undefined,
           temperature: setting().openaiAPITemperature / 100,
-          password: setting().password,
-          isTrialUser,
-          isTrialAvail,
+          password: setting().password
         }),
         signal: controller.signal
       })
     }
 
     if (!response.ok) {
-      throw new Error(response.statusText)
+      const res = await response.json()
+      throw new Error(res.error.message)
     }
     const data = response.body
     if (!data) {
@@ -283,7 +296,7 @@ export default function (props: {
     while (!done) {
       const { value, done: readerDone } = await reader.read()
       if (value) {
-        let char = decoder.decode(value)
+        const char = decoder.decode(value)
         if (char === "\n" && currentAssistantMessage().endsWith("\n")) {
           continue
         }
@@ -296,7 +309,6 @@ export default function (props: {
   }
 
   function clearSession() {
-    // setInputContent("")
     setMessageList([])
     setCurrentAssistantMessage("")
   }
@@ -361,36 +373,39 @@ export default function (props: {
       }px`
     )
     if (!compositionend()) return
-    let { value } = inputRef
+    const { value } = inputRef
     setInputContent(value)
     find(value)
   }
 
   return (
-    <div ref={containerRef!}>
-      <div
-        id="message-container"
-        style={{
-          "background-color": "var(--c-bg)"
-        }}
-      >
-        <For each={messageList()}>
-          {(message, index) => (
-            <MessageItem
-              role={message.role}
-              message={message.content}
-              index={index()}
-              setInputContent={setInputContent}
-              setMessageList={setMessageList}
-            />
+    <div ref={containerRef!} class="mt-2">
+      <div class="px-1em mb-6em">
+        <div
+          id="message-container"
+          class="px-1em"
+          style={{
+            "background-color": "var(--c-bg)"
+          }}
+        >
+          <For each={messageList()}>
+            {(message, index) => (
+              <MessageItem
+                role={message.role}
+                message={message.content}
+                index={index()}
+                setInputContent={setInputContent}
+                setMessageList={setMessageList}
+              />
+            )}
+          </For>
+          {currentAssistantMessage() && (
+            <MessageItem role="assistant" message={currentAssistantMessage()} />
           )}
-        </For>
-        {currentAssistantMessage() && (
-          <MessageItem role="assistant" message={currentAssistantMessage()} />
-        )}
+        </div>
       </div>
       <div
-        class="pb-2em fixed bottom-0 z-100 op-0"
+        class="pb-2em px-2em fixed bottom-0 z-100 op-0"
         style={
           containerWidth() === "init"
             ? {}
@@ -479,7 +494,7 @@ export default function (props: {
             />
             <Show when={inputContent()}>
               <button
-                class="i-carbon:add-filled absolute right-3.5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
+                class="i-carbon:add-filled absolute right-5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
                 onClick={() => {
                   setInputContent("")
                   inputRef.focus()

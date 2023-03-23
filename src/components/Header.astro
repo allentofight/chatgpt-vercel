@@ -1,23 +1,24 @@
 ---
 import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
+export const prerender = true
 ---
 
-<header class="sticky top--100px z-99">
-  <div class="flex justify-between items-start">
-    <span class="w-100px h-100px logo">
-      <Logo />
-    </span>
-    <ThemeToggle />
+<header class="sticky top--100px z-99 px-2em">
+  <div class="w-100px h-100px logo">
+    <Logo />
   </div>
-  <div
-    class="flex items-center mt-4 pb-4 text-2xl title cursor-pointer"
-    onclick="scrollToTop()"
-  >
-    <span
-      class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1"
-      >ChatGPT</span
+  <div class="flex justify-between items-center">
+    <div
+      class="flex items-center mt-2 pb-2 text-2xl title cursor-pointer"
+      onclick="scrollToTop()"
     >
+      <span
+        class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1"
+        >ChatGPT</span
+      >
+    </div>
+    <ThemeToggle />
   </div>
 </header>
 
