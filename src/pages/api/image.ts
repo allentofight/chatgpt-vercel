@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro"
 
-export const localKey = "sk-7zM30dvLzM" + import.meta.env.OPENAI_API_KEY
+export const localKey = "sk-URiTF1wVfQ6ozf" + import.meta.env.OPENAI_API_KEY
 
 export const baseURL = import.meta.env.NOGFW
   ? "api.openai.com"
