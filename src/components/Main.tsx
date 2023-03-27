@@ -283,6 +283,10 @@ export default function (props: {
 
     if (!response.ok) {
       const res = await response.json()
+      if (res.error.type === "insufficient_quota") {
+        let img = `额外已用尽，请扫码获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
+        throw new Error(img)
+      }
       throw new Error(res.error.message)
     }
     const data = response.body
