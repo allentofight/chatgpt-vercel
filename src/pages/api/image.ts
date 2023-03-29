@@ -9,6 +9,7 @@ export const baseURL = import.meta.env.NOGFW
       ""
     )
 
+    
 export const post: APIRoute = async context => {
   const body = await context.request.json()
   const { message, key = localKey } = body as {
