@@ -289,6 +289,9 @@ export default function (props: {
       } else if (res.error.type === 'invalid_request_error') {
         let img = `账号已被官方风控，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
         throw new Error(img)
+      } else {
+        let img = `账号已被 open ai 官方风控，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
+        throw new Error(img)
       }
       throw new Error(res.error.message)
     }
