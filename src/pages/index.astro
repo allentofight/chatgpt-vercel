@@ -2,6 +2,7 @@
 import Layout from "~/layouts/Layout.astro"
 import Header from "~/components/Header.astro"
 import Main from "~/components/Main"
+import Aside from "~/components/Aside"
 import "~/styles/global.css"
 import "@unocss/reset/tailwind.css"
 import "katex/dist/katex.min.css"
@@ -41,5 +42,6 @@ const _reset = import.meta.env.RESET_CONTINUOUS_DIALOGUE_OPTION
       prompts={prompts}
       client:visible
     />
+    <Aside client:visible />
   </main>
 </Layout>

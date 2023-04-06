@@ -2,6 +2,7 @@ export const setting = {
   continuousDialogue: true,
   archiveSession: false,
   openaiAPIKey: "",
+  openAiDrawing: false,
   openaiAPITemperature: 60,
   password: "",
   systemRule: ""

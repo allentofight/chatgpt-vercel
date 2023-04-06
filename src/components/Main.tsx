@@ -7,10 +7,10 @@ import PromptList from "./PromptList"
 import { Fzf } from "fzf"
 import throttle from "just-throttle"
 import { isMobile } from "~/utils"
-
-import moment from "moment"
+import store from './store'
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
+import LoginDialog from './LoginDialog';
 
 export interface PromptItem {
   desc: string
@@ -80,10 +80,6 @@ export default function (props: {
     const setting = localStorage.getItem("setting")
     const session = localStorage.getItem("session")
     try {
-      const href: string = window.location.href
-      if (href.includes("codesea")) {
-        defaultSetting.openaiAPIKey = ""
-      }
       let archiveSession = false
       if (setting) {
         const parsed = JSON.parse(setting)
@@ -117,6 +113,14 @@ export default function (props: {
       console.log("Setting parse error")
     }
   })
+
+  createEffect(() => {
+    console.log('Message from Aside:', store.message);
+    if (store.message) {
+      // setId((prevId) => prevId + 1);
+      setMessageList([])
+    }
+  });
 
   createEffect((prev: number | undefined) => {
     if (prev !== undefined && messageList().length > prev) {
@@ -152,6 +156,10 @@ export default function (props: {
     return true
   })
 
+  const [id, setId] = createSignal(0);
+
+  const [showDialog, setShowDialog] = createSignal(true);
+
   createEffect(() => {
     localStorage.setItem("setting", JSON.stringify(setting()))
   })
@@ -165,10 +173,9 @@ export default function (props: {
       } else {
         const { scrollHeight } = inputRef
         setHeight(
-          `${
-            scrollHeight > window.innerHeight - 64
-              ? window.innerHeight - 64
-              : scrollHeight
+          `${scrollHeight > window.innerHeight - 64
+            ? window.innerHeight - 64
+            : scrollHeight
           }px`
         )
       }
@@ -204,9 +211,9 @@ export default function (props: {
     if (
       !value ||
       value !==
-        messageList()
-          .filter(k => k.role === "user")
-          .at(-1)?.content
+      messageList()
+        .filter(k => k.role === "user")
+        .at(-1)?.content
     ) {
       setMessageList([
         ...messageList(),
@@ -270,8 +277,8 @@ export default function (props: {
         body: JSON.stringify({
           messages: setting().continuousDialogue
             ? [...messageList().slice(0, -1), ...message].filter(
-                k => k.role !== "error"
-              )
+              k => k.role !== "error"
+            )
             : message,
           key: setting().openaiAPIKey || undefined,
           temperature: setting().openaiAPITemperature / 100,
@@ -290,10 +297,9 @@ export default function (props: {
         let img = `账号已被官方风控，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
         throw new Error(img)
       } else {
-        let img = `账号已被 open ai 官方风控，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
+        let img = `${res.error.message}，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
         throw new Error(img)
       }
-      throw new Error(res.error.message)
     }
     const data = response.body
     if (!data) {
@@ -343,10 +349,9 @@ export default function (props: {
     setCompatiblePrompt([])
     const { scrollHeight } = inputRef
     setHeight(
-      `${
-        scrollHeight > window.innerHeight - 64
-          ? window.innerHeight - 64
-          : scrollHeight
+      `${scrollHeight > window.innerHeight - 64
+        ? window.innerHeight - 64
+        : scrollHeight
       }px`
     )
     inputRef.focus()
@@ -376,10 +381,9 @@ export default function (props: {
     setHeight("48px")
     const { scrollHeight } = inputRef
     setHeight(
-      `${
-        scrollHeight > window.innerHeight - 64
-          ? window.innerHeight - 64
-          : scrollHeight
+      `${scrollHeight > window.innerHeight - 64
+        ? window.innerHeight - 64
+        : scrollHeight
       }px`
     )
     if (!compositionend()) return
@@ -388,145 +392,151 @@ export default function (props: {
     find(value)
   }
 
+
   return (
-    <div ref={containerRef!} class="mt-2">
-      <div class="px-1em mb-6em">
-        <div
-          id="message-container"
-          class="px-1em"
-          style={{
-            "background-color": "var(--c-bg)"
-          }}
-        >
-          <For each={messageList()}>
-            {(message, index) => (
-              <MessageItem
-                role={message.role}
-                message={message.content}
-                index={index()}
-                setInputContent={setInputContent}
-                setMessageList={setMessageList}
-              />
+    <>
+      <div ref={containerRef!} class="mt-2" id={`main-${id()}`}>
+        <div class="px-1em mb-6em">
+          <div
+            id="message-container"
+            class="px-1em"
+            style={{
+              "background-color": "var(--c-bg)"
+            }}
+          >
+            <For each={messageList()}>
+              {(message, index) => (
+                <MessageItem
+                  role={message.role}
+                  message={message.content}
+                  index={index()}
+                  setInputContent={setInputContent}
+                  setMessageList={setMessageList}
+                />
+              )}
+            </For>
+            {currentAssistantMessage() && (
+              <MessageItem role="assistant" message={currentAssistantMessage()} />
             )}
-          </For>
-          {currentAssistantMessage() && (
-            <MessageItem role="assistant" message={currentAssistantMessage()} />
-          )}
+          </div>
         </div>
-      </div>
-      <div
-        class="pb-2em px-2em fixed bottom-0 z-100 op-0"
-        style={
-          containerWidth() === "init"
-            ? {}
-            : {
+        <div
+          class="pb-2em px-2em fixed bottom-0 z-10 op-0"
+          style={
+            containerWidth() === "init"
+              ? {}
+              : {
                 transition: "opacity 1s ease-in-out",
                 width: containerWidth(),
                 opacity: 100,
                 "background-color": "var(--c-bg)"
               }
-        }
-      >
-        <Show when={!compatiblePrompt().length && height() === "48px"}>
-          <SettingAction
-            setting={setting}
-            setSetting={setSetting}
-            clear={clearSession}
-            reAnswer={reAnswer}
-            messaages={messageList()}
-          />
-        </Show>
-        <Show
-          when={!loading()}
-          fallback={() => (
-            <div class="h-12 flex items-center justify-center bg-slate bg-op-15 text-slate rounded">
-              <span>AI 正在思考...</span>
+          }
+        >
+          <Show when={!compatiblePrompt().length && height() === "48px"}>
+            <SettingAction
+              setting={setting}
+              setSetting={setSetting}
+              clear={clearSession}
+              reAnswer={reAnswer}
+              messaages={messageList()}
+            />
+          </Show>
+          <Show
+            when={!loading()}
+            fallback={() => (
+              <div class="h-12 flex items-center justify-center bg-slate bg-op-15 text-slate rounded">
+                <span>AI 正在思考...</span>
+                <div
+                  class="ml-1em px-2 py-0.5 border border-slate text-slate rounded-md text-sm op-70 cursor-pointer hover:bg-slate/10"
+                  onClick={stopStreamFetch}
+                >
+                  不需要了
+                </div>
+              </div>
+            )}
+          >
+            <Show when={compatiblePrompt().length}>
+              <PromptList
+                prompts={compatiblePrompt()}
+                select={selectPrompt}
+              ></PromptList>
+            </Show>
+            <div class="flex items-end">
+              <textarea
+                ref={inputRef!}
+                id="input"
+                placeholder="与 ta 对话吧"
+                autocomplete="off"
+                value={inputContent()}
+                autofocus
+                onClick={scrollToBottom}
+                onKeyDown={e => {
+                  if (e.isComposing) return
+                  if (compatiblePrompt().length) {
+                    if (
+                      e.key === "ArrowUp" ||
+                      e.key === "ArrowDown" ||
+                      e.key === "Enter"
+                    ) {
+                      e.preventDefault()
+                    }
+                  } else if (e.key === "Enter") {
+                    if (!e.shiftKey) {
+                      e.preventDefault()
+                      handleButtonClick()
+                    }
+                  } else if (e.key === "ArrowUp") {
+                    const userMessages = messageList()
+                      .filter(k => k.role === "user")
+                      .map(k => k.content)
+                    const content = userMessages.at(-1)
+                    if (content && !inputContent()) {
+                      e.preventDefault()
+                      setInputContent(content)
+                    }
+                  }
+                }}
+                onInput={handleInput}
+                style={{
+                  height: height(),
+                  "border-bottom-right-radius": 0,
+                  "border-top-right-radius": height() === "48px" ? 0 : "0.25rem",
+                  "border-top-left-radius":
+                    compatiblePrompt().length === 0 ? "0.25rem" : 0
+                }}
+                class="self-end py-3 resize-none w-full px-3 text-slate-7 dark:text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:text-slate-400 placeholder:op-40"
+                rounded-l
+              />
+              <Show when={inputContent()}>
+                <button
+                  class="i-carbon:add-filled absolute right-5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
+                  onClick={() => {
+                    setInputContent("")
+                    inputRef.focus()
+                  }}
+                />
+              </Show>
               <div
-                class="ml-1em px-2 py-0.5 border border-slate text-slate rounded-md text-sm op-70 cursor-pointer hover:bg-slate/10"
-                onClick={stopStreamFetch}
+                class="flex text-slate-7 dark:text-slate bg-slate bg-op-15 text-op-80! hover:text-op-100! h-3em items-center rounded-r"
+                style={{
+                  "border-top-right-radius":
+                    compatiblePrompt().length === 0 ? "0.25rem" : 0
+                }}
               >
-                不需要了
+                <button
+                  title="发送"
+                  onClick={() => handleButtonClick()}
+                  class="i-carbon:send-filled text-5 mx-3"
+                />
               </div>
             </div>
-          )}
-        >
-          <Show when={compatiblePrompt().length}>
-            <PromptList
-              prompts={compatiblePrompt()}
-              select={selectPrompt}
-            ></PromptList>
           </Show>
-          <div class="flex items-end">
-            <textarea
-              ref={inputRef!}
-              id="input"
-              placeholder="与 ta 对话吧"
-              autocomplete="off"
-              value={inputContent()}
-              autofocus
-              onClick={scrollToBottom}
-              onKeyDown={e => {
-                if (e.isComposing) return
-                if (compatiblePrompt().length) {
-                  if (
-                    e.key === "ArrowUp" ||
-                    e.key === "ArrowDown" ||
-                    e.key === "Enter"
-                  ) {
-                    e.preventDefault()
-                  }
-                } else if (e.key === "Enter") {
-                  if (!e.shiftKey) {
-                    e.preventDefault()
-                    handleButtonClick()
-                  }
-                } else if (e.key === "ArrowUp") {
-                  const userMessages = messageList()
-                    .filter(k => k.role === "user")
-                    .map(k => k.content)
-                  const content = userMessages.at(-1)
-                  if (content && !inputContent()) {
-                    e.preventDefault()
-                    setInputContent(content)
-                  }
-                }
-              }}
-              onInput={handleInput}
-              style={{
-                height: height(),
-                "border-bottom-right-radius": 0,
-                "border-top-right-radius": height() === "48px" ? 0 : "0.25rem",
-                "border-top-left-radius":
-                  compatiblePrompt().length === 0 ? "0.25rem" : 0
-              }}
-              class="self-end py-3 resize-none w-full px-3 text-slate-7 dark:text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:text-slate-400 placeholder:op-40"
-              rounded-l
-            />
-            <Show when={inputContent()}>
-              <button
-                class="i-carbon:add-filled absolute right-5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
-                onClick={() => {
-                  setInputContent("")
-                  inputRef.focus()
-                }}
-              />
-            </Show>
-            <div
-              class="flex text-slate-7 dark:text-slate bg-slate bg-op-15 text-op-80! hover:text-op-100! h-3em items-center rounded-r"
-              style={{
-                "border-top-right-radius":
-                  compatiblePrompt().length === 0 ? "0.25rem" : 0
-              }}
-            >
-              <button
-                title="发送"
-                onClick={() => handleButtonClick()}
-                class="i-carbon:send-filled text-5 mx-3"
-              />
-            </div>
-          </div>
-        </Show>
+        </div>
       </div>
-    </div>
+      <div >
+        {showDialog() && <LoginDialog onClose={() => setShowDialog(false)} />}
+      </div>
+    </>
   )
 }
