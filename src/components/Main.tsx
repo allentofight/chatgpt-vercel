@@ -535,7 +535,7 @@ export default function (props: {
         </div>
       </div>
       <div >
-        {showDialog() && <LoginDialog onClose={() => setShowDialog(false)} />}
+        {showDialog() && <LoginDialog />}
       </div>
     </>
   )

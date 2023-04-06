@@ -1,25 +1,42 @@
 // src/components/LoginDialog.tsx
 import { createSignal } from 'solid-js';
+import toast, { Toaster } from 'solid-toast';
 
-interface LoginDialogProps {
-  onClose: () => void;
-}
-
-export default function LoginDialog(props: LoginDialogProps) {
+export default function LoginDialog() {
 
   const [email, setEmail] = createSignal('');
   const [password, setPassword] = createSignal('');
 
   const handleSubmit = (e: Event) => {
     e.preventDefault();
-    console.log('Email:', email());
-    console.log('Password:', password());
     // Add your login logic here
+  };
+
+  const handleForgotPasswordClick = async () => {
+    if (!email()) {
+      toast.error("请先输入邮箱");
+      return;
+    }
+
+    // Send a request to your server to trigger the password reset email
+    const response = await fetch('/api/send-reset-password-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: email() }),
+    });
+
+    if (response.ok) {
+      toast.success("Reset password email sent");
+    } else {
+      toast.error("Error sending reset password email");
+    }
   };
 
   return (
     <>
-      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40" onClick={props.onClose}>
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
         <div class="bg-gray-100 border border-gray-300 rounded-lg p-6 w-full max-w-md mx-auto">
           <h2 class="mb-4 text-center">Login</h2>
           <form onSubmit={handleSubmit} class="space-y-4">
@@ -46,8 +63,10 @@ export default function LoginDialog(props: LoginDialogProps) {
               />
             </div>
             <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-md font-bold uppercase">Login</button>
+            <button type="button" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md font-bold uppercase mt-2" onClick={handleForgotPasswordClick}>Forgot Password?</button>
           </form>
         </div>
+        <Toaster position="top-center" />
       </div>
     </>
   );
