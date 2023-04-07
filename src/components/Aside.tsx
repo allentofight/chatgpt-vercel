@@ -5,6 +5,7 @@ import ChatEdit from './ChatEdit'
 import ChatConfirm from './ChatConfirm'
 import DeleteConfirm from './DeleteConfirm'
 
+
 import store from './store'
 
 interface Chat {
@@ -20,8 +21,14 @@ export default function ChatContainer() {
   ]);
 
   const initialItem: Chat = chats().length > 0 ? chats()[0] : { id: 0, name: "Empty chat" }
+
+  const [showLoginDialog, setShowLoginDialog] = createSignal(false);
+
   const [selectedChat, setSelectedChat] = createSignal<Chat>(initialItem);
 
+  const toggleLoginDialog = () => {
+    setShowLoginDialog(!showLoginDialog());
+  };
 
   const [page, setPage] = createSignal<number>(1);
   const [loading, setLoading] = createSignal<boolean>(false);
