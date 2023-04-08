@@ -287,10 +287,10 @@ export default function (props: {
         let img = `额度已用尽，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
         throw new Error(img)
       } else if (res.error.type === 'invalid_request_error') {
-        let img = `${res.error}，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
+        let img = `${JSON.stringify(res.error)}，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
         throw new Error(img)
       } else {
-        let img = `${res.error}，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
+        let img = `${JSON.stringify(res.error)}，请微信扫码重新获取 API KEY <img width="300" src="https://s2.loli.net/2023/03/28/MRG9Ni1twsLOlva.png" />`
         throw new Error(img)
       }
       throw new Error(res.error.message)
