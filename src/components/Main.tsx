@@ -10,7 +10,6 @@ import { isMobile } from "~/utils"
 import store from './store'
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
-import LoginDialog from './LoginDialog';
 
 export interface PromptItem {
   desc: string
@@ -37,6 +36,7 @@ export default function (props: {
   const [setting, setSetting] = createSignal(defaultSetting)
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
+
   const fzf = new Fzf(props.prompts, {
     selector: k => `${k.desc} (${k.prompt})`
   })
@@ -54,7 +54,7 @@ export default function (props: {
     { leading: false, trailing: true }
   )
 
-  onMount(() => {
+  onMount(async () => {
     makeEventListener(
       inputRef,
       "compositionend",
@@ -157,8 +157,6 @@ export default function (props: {
   })
 
   const [id, setId] = createSignal(0);
-
-  const [showDialog, setShowDialog] = createSignal(true);
 
   createEffect(() => {
     localStorage.setItem("setting", JSON.stringify(setting()))
@@ -533,9 +531,6 @@ export default function (props: {
             </div>
           </Show>
         </div>
-      </div>
-      <div >
-        {showDialog() && <LoginDialog />}
       </div>
     </>
   )

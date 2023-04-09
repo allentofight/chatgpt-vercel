@@ -8,5 +8,16 @@
       "path": "/api/cron",
       "schedule": "0 12 * * *"
     }
+  ],
+  "headers": [
+    {
+      "source": "(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, s-maxage=43200, max-age=43200"
+        }
+      ]
+    }
   ]
 }

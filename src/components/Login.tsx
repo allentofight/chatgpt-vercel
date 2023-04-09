@@ -1,18 +1,61 @@
 // src/components/LoginDialog.tsx
-import { createSignal } from 'solid-js';
+import { createSignal, onMount, Show } from 'solid-js';
 import toast, { Toaster } from 'solid-toast';
 const apiHost = import.meta.env.PUBLIC_API_HOST;
-
 
 export default function LoginDialog() {
 
   const [email, setEmail] = createSignal('');
   const [password, setPassword] = createSignal('');
   const [resetPasswordMode, setResetPasswordMode] = createSignal(false);
+  const [resetPassword, setResetPassword] = createSignal(false);
+  const [isResetPasswordConfirm, setIsResetPasswordConfirm] = createSignal(false);
   const [confirmPassword, setConfirmPassword] = createSignal('');
   const [isSignUp, setIsSignUp] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
   const [confirmationMessage, setConfirmationMessage] = createSignal('');
+
+  onMount(async () => {
+    const queryParams = new URLSearchParams(window.location.search);
+    let token = queryParams.get('token')
+    let type = queryParams.get('type')
+    setResetPassword(type === 'resetpwd')
+    if (type === 'signup' && token) {
+      const response = await fetch(`${apiHost}/api/auth/confirmEmail?token=${token}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json()
+      if (response.status !== 200) {
+        toast.error(result.message);
+      } else {
+        toast.success('恭喜你，注册通过，欢迎体验 GPT 网站!', {
+          duration: 3000
+        });
+        localStorage.setItem('sessionId', result.sessionId)
+        setTimeout(() => { window.location.href = '/' }, 3000)
+
+      }
+    } else if (type === 'resetpwd' && token) {
+      const response = await fetch(`${apiHost}/api/auth/validateToken?token=${token}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json()
+      if (response.status !== 200) {
+        toast.error(result.message);
+      } else {
+        setIsResetPasswordConfirm(true)
+        setEmail(result.email)
+      }
+    }
+  })
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
@@ -58,7 +101,7 @@ export default function LoginDialog() {
           body: JSON.stringify({ email: email(), password: password() }),
         });
 
-        if (response.status !== 200) {
+        if (response.status !== 201) {
           setIsLoading(false)
           const error = await response.json()
           toast.error(error.message);
@@ -66,7 +109,7 @@ export default function LoginDialog() {
         }
         setIsSignUp(false)
         setIsLoading(false)
-        setConfirmationMessage('注册成功！验证邮箱就可以登录啦');
+        setConfirmationMessage('注册成功！');
         // Handle success
         toast.success('注册成功！验证邮箱就可以登录啦');
       } catch (error) {
@@ -76,7 +119,48 @@ export default function LoginDialog() {
       }
 
     } else if (resetPasswordMode()) {
+      const response = await fetch(`${apiHost}/api/auth/resetPwd`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email() }),
+      });
+
+      if (response.status !== 200) {
+        setIsLoading(false)
+        toast.error('发送失败，请重试')
+        return
+      }
+      toast.success('请点击我们发送你的邮件来重置密码')
       // 重置密码
+      setConfirmationMessage('重置密码邮件发送成功!');
+      setIsLoading(false)
+    } else if (isResetPasswordConfirm()) {
+      // 修改密码
+      const response = await fetch(`${apiHost}/api/auth/modifyPwd`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email(), password: password() }),
+      });
+
+      const result = await response.json()
+      if (response.status !== 200) {
+        setIsLoading(false)
+        toast.error(result.message, {
+          duration: 4000,
+        });
+        return
+      }
+
+      toast.success('修改密码成功!请登录后体验GPT', {
+        duration: 4000
+      });
+      setIsLoading(false)
+      setResetPassword(false)
+      setIsResetPasswordConfirm(false)
     } else {
       // 登录
       const response = await fetch(`${apiHost}/api/auth/signIn`, {
@@ -87,14 +171,18 @@ export default function LoginDialog() {
         body: JSON.stringify({ email: email(), password: password() }),
       });
 
+      const result = await response.json()
       if (response.status !== 200) {
         setIsLoading(false)
-        const error = await response.json()
-        toast.error(error.message, {
-          duration: 5000,
+        toast.error(result.message, {
+          duration: 4000,
         });
         return
       }
+      localStorage.setItem('sessionId', result.sessionId)
+      toast.success('登录成功，欢迎体验^_^');
+      window.location.href = '/'
+      setIsLoading(false)
     }
 
   };
@@ -128,7 +216,9 @@ export default function LoginDialog() {
   function getButtonText(): string {
     if (isSignUp()) {
       return '注册';
-    } else if (!resetPasswordMode()) {
+    } else if (resetPassword() || isResetPasswordConfirm()) {
+      return '确认';
+    } if (!resetPasswordMode()) {
       return '登录';
     } else {
       return '确认';
@@ -138,7 +228,7 @@ export default function LoginDialog() {
   function getTitle() {
     if (isSignUp()) {
       return '注册';
-    } else if (resetPasswordMode()) {
+    } else if (resetPasswordMode() || resetPassword() || isResetPasswordConfirm()) {
       return '重置密码';
     } else {
       return '登录';
@@ -195,16 +285,17 @@ export default function LoginDialog() {
         {confirmationMessage() ? (
           <div class="bg-white border border-gray-300 rounded-lg p-6 w-full max-w-sm mx-2.5 md:mx-auto md:max-w-md">
             <h2 class="mb-4 text-center text-xl font-bold text-gray-700">{confirmationMessage()}</h2>
-            <p class="text-center text-gray-600">请查收邮件，按照指示完成邮箱验证。</p>
+            <p class="text-center text-gray-600">我们发了一封验证邮件到你的邮箱，请在30分钟内点击确认哦</p>
             <button
               class="bg-green-500 text-white py-2 px-4 rounded-md font-bold uppercase w-full mt-4"
               onClick={() => handleConfirmationButtonClick()}
             >
-              知道了
+              前往验证&gt;
             </button>
           </div>
         ) : (<div class="bg-gray-100 border border-gray-300 rounded-lg p-6 w-full max-w-sm mx-2.5 md:mx-auto md:max-w-md relative">
-          {(isSignUp() || resetPasswordMode()) && (
+
+          <Show when={isSignUp() || resetPasswordMode()}>
             <button
               class="absolute top-4 left-4 text-gray-600"
               onClick={handleBackClick}
@@ -225,7 +316,8 @@ export default function LoginDialog() {
                 />
               </svg>
             </button>
-          )}
+          </Show>
+
           <h2 class="mb-4 text-center">
             {getTitle()}
           </h2>
@@ -233,6 +325,7 @@ export default function LoginDialog() {
             <div>
               <label for="email" class="block text-sm font-medium mb-2">邮箱:</label>
               <input
+                disabled={isResetPasswordConfirm()}
                 type="email"
                 id="email"
                 value={email()}
@@ -242,7 +335,7 @@ export default function LoginDialog() {
                 required
               />
             </div>
-            {!resetPasswordMode() && (
+            <Show when={!resetPasswordMode()}>
               <div>
                 <label for="password" class="block text-sm font-medium mb-2">
                   密码:
@@ -258,8 +351,8 @@ export default function LoginDialog() {
                   required
                 />
               </div>
-            )}
-            {isSignUp() && (
+            </Show>
+            <Show when={isSignUp() || resetPassword() || isResetPasswordConfirm()}>
               <div>
                 <label
                   for="confirm-password"
@@ -283,7 +376,8 @@ export default function LoginDialog() {
                   minlength="6"
                 />
               </div>
-            )}
+            </Show>
+
             <div class="flex justify-between">
               <button
                 type="submit"
@@ -299,7 +393,7 @@ export default function LoginDialog() {
                   getButtonText()
                 )}
               </button>
-              {!isSignUp() && !resetPasswordMode() && (
+              <Show when={!isSignUp() && !resetPasswordMode() && !resetPassword() && !isResetPasswordConfirm()}>
                 <button
                   type="button"
                   class="bg-blue-500 text-white py-2 px-4 rounded-md font-bold uppercase"
@@ -309,10 +403,10 @@ export default function LoginDialog() {
                 >
                   注册
                 </button>
-              )}
+              </Show>
             </div>
           </form>
-          {!isSignUp() && !resetPasswordMode() && (
+          <Show when={!isSignUp() && !resetPasswordMode() && !resetPassword() && !isResetPasswordConfirm()}>
             <div class="text-right mt-2">
               <button
                 class="text-blue-500 underline hover:text-blue-700 focus:outline-none focus:underline"
@@ -324,7 +418,7 @@ export default function LoginDialog() {
                 忘记密码?
               </button>
             </div>
-          )}
+          </Show>
         </div>)}
         <Toaster position="top-center" />
       </div>
