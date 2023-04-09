@@ -49,6 +49,7 @@
     "markdown-it-kbd": "^2.2.2",
     "moment": "^2.29.4",
     "solid-js": "^1.6.15",
+    "solid-start": "^0.2.26",
     "solid-toast": "^0.5.0"
   },
   "devDependencies": {

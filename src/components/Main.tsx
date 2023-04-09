@@ -10,6 +10,8 @@ import { isMobile } from "~/utils"
 import store from './store'
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
+import LoginGuideDialog from './LoginGuideDialog';
+import { useAuth } from "~/utils/useAuth"
 
 export interface PromptItem {
   desc: string
@@ -36,6 +38,7 @@ export default function (props: {
   const [setting, setSetting] = createSignal(defaultSetting)
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
+  const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false);
 
   const fzf = new Fzf(props.prompts, {
     selector: k => `${k.desc} (${k.prompt})`
@@ -199,6 +202,14 @@ export default function (props: {
   }
 
   async function handleButtonClick(value?: string) {
+
+    const { showLogin } = useAuth()
+
+    if (showLogin()) {
+      setShowLoginDirectDialog(true)
+      return
+    }
+
     const inputValue = value ?? inputContent()
     if (!inputValue) {
       return
@@ -236,7 +247,22 @@ export default function (props: {
         }
       ])
     }
+    increaseTheExprienceCnt()
     archiveCurrentMessage()
+  }
+
+  function increaseTheExprienceCnt() {
+    // Define the key used for storing the value in localStorage
+    const storageKey = 'cnt_of_experience';
+    // Retrieve the value from localStorage, or use 0 as a default value if it's not set
+    const currentValue = parseInt(localStorage.getItem(storageKey) || '0');
+    if (currentValue > 5) {
+      return
+    }
+    // Increment the value
+    const incrementedValue = currentValue + 1;
+    // Store the updated value back in localStorage
+    localStorage.setItem(storageKey, incrementedValue.toString());
   }
 
   async function fetchGPT(inputValue: string) {
@@ -535,6 +561,9 @@ export default function (props: {
             </div>
           </Show>
         </div>
+        <Show when={showLoginDirectDialog()}>
+          <LoginGuideDialog />
+        </Show>
       </div>
     </>
   )
