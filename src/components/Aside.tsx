@@ -1,4 +1,4 @@
-import { createEffect, createSignal, Show, onCleanup } from 'solid-js';
+import { createEffect, createSignal, Show, onMount } from 'solid-js';
 
 import ChatIcon from './ChatIcon'
 import ChatEdit from './ChatEdit'
@@ -6,20 +6,20 @@ import ChatConfirm from './ChatConfirm'
 import DeleteConfirm from './DeleteConfirm'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore } from './store'
+const apiHost = import.meta.env.PUBLIC_API_HOST;
 
 interface Chat {
   id: number;
-  name: string;
+  title: string;
+  gmtModified: Date;
 }
 
 export default function ChatContainer() {
-  const [chats, setChats] = createSignal<Chat[]>([
-    { id: 1, name: 'Div shows last characters.' },
-    { id: 2, name: 'Chat 1' },
-    { id: 3, name: 'Chat 2' },
-  ]);
+  const [chats, setChats] = createSignal<Chat[]>([]);
 
-  const initialItem: Chat = chats().length > 0 ? chats()[0] : { id: 0, name: "Empty chat" }
+  const defaultChat = { id: 0, title: "Empty chat", gmtModified: new Date() }
+
+  const initialItem: Chat = chats().length > 0 ? chats()[0] : defaultChat
 
   const [selectedChat, setSelectedChat] = createSignal<Chat>(initialItem);
 
@@ -37,12 +37,15 @@ export default function ChatContainer() {
   const [isEditable, setIsEditable] = createSignal(false);
   const [isDeletable, setIsDeletable] = createSignal(false);
 
+  onMount(() => {
+    fetchChats()
+  })
+
   function edit() {
     setIsEditable(!isEditable());
   }
 
   function del() {
-    // setSelectedChat({ id: 0, name: "Empty chat" })
     setIsDeletable(true)
   }
 
@@ -51,7 +54,7 @@ export default function ChatContainer() {
       return item.id !== selectedChat().id
     })
     setChats(filteredChats)
-    setSelectedChat({ id: 0, name: "Empty chat" })
+    setSelectedChat(defaultChat)
     setIsDeletable(false)
   }
 
@@ -86,7 +89,7 @@ export default function ChatContainer() {
     setIsEditable(false);
     const newName = inputRef.value || '';
     if (newName !== '') {
-      selectedChat().name = newName
+      selectedChat().title = newName
     }
   }
 
@@ -96,7 +99,7 @@ export default function ChatContainer() {
 
       const newName = inputRef.value || '';
       if (newName !== '') {
-        selectedChat().name = newName
+        selectedChat().title = newName
       }
       inputRef.blur();
     }
@@ -119,27 +122,46 @@ export default function ChatContainer() {
       return
     }
 
-    setSelectedChat({ id: 0, name: "Empty chat" })
+    setSelectedChat(defaultChat)
   };
 
-  const fetchChats = async (pageNum: number) => {
-    setLoading(true);
-    // Replace this with your actual API call
-    const response = await new Promise<{ data: Chat[] }>((resolve) =>
-      setTimeout(
-        () =>
-          resolve({
-            data: Array.from({ length: 10 }, (_, i) => ({
-              id: i + 1 + (pageNum - 1) * 10,
-              name: `Chat ${i + 1 + (pageNum - 1) * 10}`,
-            })),
-          }),
-        500
-      )
-    );
+  const fetchChats = async () => {
 
-    setChats([...chats(), ...response.data]);
-    setLoading(false);
+    let sessionId = localStorage.getItem('sessionId')
+    if (!sessionId) {
+      return
+    }
+
+    setLoading(true);
+    let clientGmtModified = '';
+    if (chats.length) {
+      clientGmtModified = `?clientGmtModified=${chats()[chats.length - 1].gmtModified}`
+    }
+
+    fetch(`${apiHost}/api/chat/list${clientGmtModified}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`
+      },
+    }).then((response) => {
+      // Check if the response status is OK (200)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+      .then((data) => {
+        console.log('data = ', data)
+        setChats([...chats(), ...data.chats]);
+        setLoading(false);
+        // Handle the data
+      })
+      .catch((error) => {
+        console.error('Error fetching chat:', error);
+      });
+
   };
 
   const loadMoreChats = () => {
@@ -219,7 +241,7 @@ export default function ChatContainer() {
                         }}>
                           <ChatIcon />
                           <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-                            {chat.name}
+                            {chat.title}
                             <div class="absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-gray-900 group-hover:from-[#2A2B32]"></div>
                           </div></a>
                       </Show>
@@ -232,7 +254,7 @@ export default function ChatContainer() {
                                 ref={(el) => (divRef = el)}
                                 class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative"
                               >
-                                {selectedChat().name}
+                                {selectedChat().title}
                               </div>
                               <div class="absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-gray-800" contenteditable={false}></div>
                               <ChatEdit
@@ -249,7 +271,7 @@ export default function ChatContainer() {
                                 <line x1="14" y1="11" x2="14" y2="17"></line>
                               </svg>
                               <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
-                                Delete &quot;{selectedChat().name}&quot;?
+                                Delete &quot;{selectedChat().title}&quot;?
                                 <div class="absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-gray-800"></div>
                               </div>
                               <DeleteConfirm
@@ -268,7 +290,7 @@ export default function ChatContainer() {
                               onBlur={handleBlur}
                               ref={(el) => (inputRef = el)}
                               type="text" class="input-field text-sm border-none bg-transparent p-0 m-0 w-full mr-0"
-                              value={selectedChat()?.name} />
+                              value={selectedChat()?.title} />
                             <ChatConfirm
                               cancel={cancelChatEdit}
                               edit={confirmChatEdit} />
