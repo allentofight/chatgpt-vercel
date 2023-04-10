@@ -6,12 +6,8 @@ export interface Message {
   info: string;
 }
 
-// Define your store's initial state
 const initialState = {
-  message: {
-    type: '123',
-    info: 'Hello, world!',
-  } as Message,
+  message: null as Message | null,
 };
 
 // Create the store

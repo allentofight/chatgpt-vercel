@@ -70,7 +70,6 @@ export default function ChatContainer() {
     }
   });
 
-
   createEffect(() => {
     if (contentRef) {
       setHasScrollbar(contentRef.scrollHeight > contentContainerRef.clientHeight);
@@ -79,24 +78,20 @@ export default function ChatContainer() {
 
   function handleBlur() {
     setIsEditable(false);
-    const newName = divRef.textContent || '';
-    if (newName === '') {
-      divRef.textContent = selectedChat().name;
-    } else {
-      const updatedChats = chats().map((chat) =>
-        chat.id === selectedChat().id
-          ? { ...chat, name: newName }
-          : chat
-      );
-      setChats(updatedChats);
+    const newName = inputRef.value || '';
+    if (newName !== '') {
+      selectedChat().name = newName
     }
-    divRef.focus();
-    divRef.scrollLeft = 0;
   }
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter') {
       e.preventDefault();
+
+      const newName = inputRef.value || '';
+      if (newName !== '') {
+        selectedChat().name = newName
+      }
       inputRef.blur();
     }
   }

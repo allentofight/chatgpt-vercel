@@ -1,13 +1,26 @@
----
-import Layout from "~/layouts/Layout.astro"
-import Header from "~/components/Header.astro"
-import "~/styles/global.css"
-import "@unocss/reset/tailwind.css"
----
 
-<Layout title="404">
-  <main>
-    <Header />
-    <a href="/" class="text-2xl font-extrabold text-slate-7 dark:text-slate" >迷路了，点我回主页吧</a>
-  </main>
-</Layout>
+
+I use the following code in my tsx file: 
+
+```
+<div class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer hover:pr-14 break-all pr-14 bg-gray-800 hover:bg-gray-800">
+   <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 flex-shrink-0" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+   </svg>
+   <input type="text" class="input-field text-sm border-none bg-transparent p-0 m-0 w-full mr-0" />
+   <!--#-->
+   <div class="absolute flex right-1 text-gray-300 visible z-30">
+    <button class="p-1 hover:text-white">
+     <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+      <polyline points="20 6 9 17 4 12"></polyline>
+     </svg></button>
+    <button class="p-1 hover:text-white">
+     <svg stroke="currentColor" fill="none" stroke-width="2" viewbox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+      <line x1="18" y1="6" x2="6" y2="18"></line>
+      <line x1="6" y1="6" x2="18" y2="18"></line>
+     </svg></button>
+   </div>
+   <!--/-->
+  </div>
+  ```
+   use solid-js,no React in this file,But when the input become focus, the button click not work, why

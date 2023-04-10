@@ -1,48 +1,52 @@
 import { createEffect, createSignal, For, onMount, Show } from "solid-js"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import MessageItem from "./MessageItem"
-import type { ChatMessage } from "~/types"
+import type { ChatMessage, PromptItem } from "~/types"
 import SettingAction from "./SettingAction"
 import PromptList from "./PromptList"
 import { Fzf } from "fzf"
 import throttle from "just-throttle"
 import { isMobile } from "~/utils"
-import { sharedStore } from './store'
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
-import LoginGuideDialog from './LoginGuideDialog';
+import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
-
-export interface PromptItem {
-  desc: string
-  prompt: string
-}
+import { sharedStore } from './store'
 
 export default function (props: {
   prompts: PromptItem[]
   env: {
-    defaultSetting: Setting
-    defaultMessage: string
+    setting: Setting
+    message: string
     resetContinuousDialogue: boolean
   }
+  question?: string
 }) {
   let inputRef: HTMLTextAreaElement
   let containerRef: HTMLDivElement
 
-  const { defaultMessage, defaultSetting, resetContinuousDialogue } = props.env
+  const {
+    message: _message,
+    setting: _setting,
+    resetContinuousDialogue: _resetContinuousDialogue
+  } = props.env
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
-  const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
-  const [setting, setSetting] = createSignal(defaultSetting)
+  const [setting, setSetting] = createSignal(_setting)
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
-  const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false);
-
+  const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
+  const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
+  const defaultMessage: ChatMessage = {
+    role: "assistant",
+    content: _message,
+    special: "default"
+  }
   const fzf = new Fzf(props.prompts, {
-    selector: k => `${k.desc} (${k.prompt})`
+    selector: k => `${k.desc}||${k.prompt}`
   })
   const [height, setHeight] = createSignal("48px")
   const [compositionend, setCompositionend] = createSignal(true)
@@ -58,7 +62,7 @@ export default function (props: {
     { leading: false, trailing: true }
   )
 
-  onMount(async () => {
+  onMount(() => {
     makeEventListener(
       inputRef,
       "compositionend",
@@ -88,31 +92,23 @@ export default function (props: {
       if (setting) {
         const parsed = JSON.parse(setting)
         archiveSession = parsed.archiveSession
-
         setSetting({
-          ...defaultSetting,
+          ..._setting,
           ...parsed,
-          ...(resetContinuousDialogue ? { continuousDialogue: false } : {})
+          ...(_resetContinuousDialogue ? { continuousDialogue: false } : {})
         })
       }
-      if (session && archiveSession) {
-        const parsed = JSON.parse(session)
-        if (parsed.length > 1) {
-          setMessageList(parsed)
-        } else
-          setMessageList([
-            {
-              role: "assistant",
-              content: defaultMessage
-            }
-          ])
-      } else
-        setMessageList([
-          {
-            role: "assistant",
-            content: defaultMessage
-          }
-        ])
+      if (props.question) {
+        window.history.replaceState(undefined, "ChatGPT", "/")
+        sendMessage(props.question)
+      } else {
+        if (session && archiveSession) {
+          const parsed = JSON.parse(session) as ChatMessage[]
+          if (parsed.length === 1 && parsed[0].special === "default") {
+            setMessageList([defaultMessage])
+          } else setMessageList(parsed)
+        } else setMessageList([defaultMessage])
+      }
     } catch {
       console.log("Setting parse error")
     }
@@ -143,26 +139,18 @@ export default function (props: {
     messageList()
     if (prev) {
       if (messageList().length === 0) {
-        setMessageList([
-          {
-            role: "assistant",
-            content: defaultMessage
-          }
-        ])
+        setMessageList([defaultMessage])
       } else if (
         messageList().length > 1 &&
-        messageList()[0].content === defaultMessage
+        messageList()[0].special === "default"
       ) {
         setMessageList(messageList().slice(1))
-      }
-      if (setting().archiveSession) {
+      } else if (setting().archiveSession) {
         localStorage.setItem("session", JSON.stringify(messageList()))
       }
     }
     return true
   })
-
-  const [id, setId] = createSignal(0);
 
   createEffect(() => {
     localStorage.setItem("setting", JSON.stringify(setting()))
@@ -175,13 +163,14 @@ export default function (props: {
       if (inputContent() === "") {
         setCompatiblePrompt([])
       } else {
-        const { scrollHeight } = inputRef
-        setHeight(
-          `${scrollHeight > window.innerHeight - 64
-            ? window.innerHeight - 64
-            : scrollHeight
-          }px`
-        )
+        const scrollHeight = inputRef?.scrollHeight
+        if (scrollHeight)
+          setHeight(
+            `${scrollHeight > window.innerHeight - 64
+              ? window.innerHeight - 64
+              : scrollHeight
+            }px`
+          )
       }
       inputRef.focus()
     }
@@ -194,7 +183,8 @@ export default function (props: {
         ...messageList(),
         {
           role: "assistant",
-          content: currentAssistantMessage().trim()
+          content: currentAssistantMessage().trim(),
+          id: Date.now()
         }
       ])
       setCurrentAssistantMessage("")
@@ -204,7 +194,7 @@ export default function (props: {
     }
   }
 
-  async function handleButtonClick(value?: string) {
+  async function sendMessage(value?: string) {
 
     const { showLogin } = useAuth()
 
@@ -231,7 +221,8 @@ export default function (props: {
         ...messageList(),
         {
           role: "user",
-          content: inputValue
+          content: inputValue,
+          id: Date.now()
         }
       ])
     }
@@ -240,80 +231,44 @@ export default function (props: {
     } catch (error: any) {
       setLoading(false)
       setController()
-      setMessageList([
-        ...messageList(),
-        {
-          role: "error",
-          content: error.message.includes("aborted a request")
-            ? ""
-            : error.message.replace(/(sk-\w{5})\w+/g, "$1")
-        }
-      ])
+      if (!error.message.includes("abort"))
+        setMessageList([
+          ...messageList(),
+          {
+            role: "error",
+            content: error.message.replace(/(sk-\w{5})\w+/g, "$1"),
+            id: Date.now()
+          }
+        ])
     }
-    increaseTheExprienceCnt()
     archiveCurrentMessage()
-  }
-
-  function increaseTheExprienceCnt() {
-    // Define the key used for storing the value in localStorage
-    const storageKey = 'cnt_of_experience';
-    // Retrieve the value from localStorage, or use 0 as a default value if it's not set
-    const currentValue = parseInt(localStorage.getItem(storageKey) || '0');
-    if (currentValue > 5) {
-      return
-    }
-    // Increment the value
-    const incrementedValue = currentValue + 1;
-    // Store the updated value back in localStorage
-    localStorage.setItem(storageKey, incrementedValue.toString());
   }
 
   async function fetchGPT(inputValue: string) {
     setLoading(true)
     const controller = new AbortController()
     setController(controller)
-
     const systemRule = setting().systemRule.trim()
-
-    const message = [
-      {
-        role: "user",
-        content: inputValue
-      }
-    ]
-    if (systemRule) {
-      message.push({
-        role: "system",
-        content: systemRule
-      })
+    const message = {
+      role: "user",
+      content: inputValue
     }
-
-    let response
-    if (setting().openAiDrawing && inputValue.includes("画")) {
-      response = await fetch("/api/image", {
-        method: "POST",
-        body: JSON.stringify({
-          message: inputValue,
-          key: setting().openaiAPIKey || undefined
-        }),
-        signal: controller.signal
-      })
-    } else {
-      response = await fetch("/api", {
-        method: "POST",
-        body: JSON.stringify({
-          messages: setting().continuousDialogue
-            ? [...messageList().slice(0, -1), ...message].filter(
-              k => k.role !== "error"
-            )
-            : message,
-          key: setting().openaiAPIKey || undefined,
-          temperature: setting().openaiAPITemperature / 100,
-          password: setting().password
-        }),
-        signal: controller.signal
-      })
-    }
+    if (systemRule) message.content += "。\n\n" + systemRule
+    const response = await fetch("/api", {
+      method: "POST",
+      body: JSON.stringify({
+        messages: setting().continuousDialogue
+          ? [...messageList().slice(0, -1), message].filter(
+            k => k.role !== "error"
+          )
+          : [...messageList().filter(k => k.special === "locked"), message],
+        key: setting().openaiAPIKey || undefined,
+        temperature: setting().openaiAPITemperature / 100,
+        password: setting().password,
+        model: setting().model
+      }),
+      signal: controller.signal
+    })
 
     if (!response.ok) {
       const res = await response.json()
@@ -332,6 +287,7 @@ export default function (props: {
         }
       }
     }
+
     const data = response.body
     if (!data) {
       throw new Error("没有返回数据")
@@ -356,7 +312,7 @@ export default function (props: {
   }
 
   function clearSession() {
-    setMessageList([])
+    setMessageList(messages => messages.filter(k => k.special === "locked"))
     setCurrentAssistantMessage("")
   }
 
@@ -367,38 +323,32 @@ export default function (props: {
     }
   }
 
-  function reAnswer() {
-    handleButtonClick(
-      messageList()
-        .filter(k => k.role === "user")
-        .at(-1)?.content
-    )
-  }
-
   function selectPrompt(prompt: string) {
     setInputContent(prompt)
     setCompatiblePrompt([])
-    const { scrollHeight } = inputRef
-    setHeight(
-      `${scrollHeight > window.innerHeight - 64
-        ? window.innerHeight - 64
-        : scrollHeight
-      }px`
-    )
+
+    const scrollHeight = inputRef?.scrollHeight
+    if (scrollHeight)
+      setHeight(
+        `${scrollHeight > window.innerHeight - 64
+          ? window.innerHeight - 64
+          : scrollHeight
+        }px`
+      )
     inputRef.focus()
   }
 
-  const find = throttle(
+  const findPrompts = throttle(
     (value: string) => {
       if (value === "/" || value === " ")
-        return setCompatiblePrompt(props.prompts.slice(0, 20))
+        return setCompatiblePrompt(props.prompts)
       const query = value.replace(/^[\/ ](.*)/, "$1")
       if (query !== value)
         setCompatiblePrompt(
-          fzf
-            .find(query)
-            .map(k => k.item)
-            .slice(0, 20)
+          fzf.find(query).map(k => ({
+            ...k.item,
+            positions: k.positions
+          }))
         )
     },
     250,
@@ -410,66 +360,76 @@ export default function (props: {
 
   async function handleInput() {
     setHeight("48px")
-    const { scrollHeight } = inputRef
-    setHeight(
-      `${scrollHeight > window.innerHeight - 64
-        ? window.innerHeight - 64
-        : scrollHeight
-      }px`
-    )
+    const scrollHeight = inputRef?.scrollHeight
+    if (scrollHeight)
+      setHeight(
+        `${scrollHeight > window.innerHeight - 64
+          ? window.innerHeight - 64
+          : scrollHeight
+        }px`
+      )
     if (!compositionend()) return
     const { value } = inputRef
     setInputContent(value)
-    find(value)
+    findPrompts(value)
   }
 
-
   return (
-    <>
-      <div ref={containerRef!} class="mt-2" id={`main-${id()}`}>
-        <div class="px-1em mb-6em">
-          <div
-            id="message-container"
-            class="px-1em"
-            style={{
-              "background-color": "var(--c-bg)"
-            }}
-          >
-            <For each={messageList()}>
-              {(message, index) => (
-                <MessageItem
-                  role={message.role}
-                  message={message.content}
-                  index={index()}
-                  setInputContent={setInputContent}
-                  setMessageList={setMessageList}
-                />
-              )}
-            </For>
-            {currentAssistantMessage() && (
-              <MessageItem role="assistant" message={currentAssistantMessage()} />
-            )}
-          </div>
-        </div>
+    <div ref={containerRef!} class="mt-4">
+      <div class="px-1em mb-6em">
         <div
-          class="pb-2em px-2em fixed bottom-0 z-10 op-0"
-          style={
-            containerWidth() === "init"
-              ? {}
-              : {
-                transition: "opacity 1s ease-in-out",
-                width: containerWidth(),
-                opacity: 100,
-                "background-color": "var(--c-bg)"
-              }
-          }
+          id="message-container"
+          class="px-1em"
+          style={{
+            "background-color": "var(--c-bg)"
+          }}
         >
-          <Show when={!compatiblePrompt().length && height() === "48px"}>
+          <For each={messageList()}>
+            {(message, index) => (
+              <MessageItem
+                message={message}
+                hiddenAction={loading() || message.special === "default"}
+                index={index()}
+                setInputContent={setInputContent}
+                sendMessage={sendMessage}
+                setMessageList={setMessageList}
+              />
+            )}
+          </For>
+          {currentAssistantMessage() && (
+            <MessageItem
+              hiddenAction={true}
+              message={{
+                role: "assistant",
+                content: currentAssistantMessage(),
+                special: "temporary"
+              }}
+            />
+          )}
+        </div>
+      </div>
+      <div
+        class="pb-2em px-2em fixed bottom-0 z-10"
+        style={{
+          "background-color": "var(--c-bg)",
+          width: containerWidth() === "init" ? "100%" : containerWidth()
+        }}
+      >
+        <div
+          style={{
+            transition: "opacity 1s ease-in-out",
+            opacity: containerWidth() === "init" ? 0 : 100
+          }}
+        >
+          <Show
+            when={
+              !loading() && !compatiblePrompt().length && height() === "48px"
+            }
+          >
             <SettingAction
               setting={setting}
               setSetting={setSetting}
               clear={clearSession}
-              reAnswer={reAnswer}
               messaages={messageList()}
             />
           </Show>
@@ -508,14 +468,14 @@ export default function (props: {
                     if (
                       e.key === "ArrowUp" ||
                       e.key === "ArrowDown" ||
-                      e.key === "Enter"
+                      e.keyCode === 13
                     ) {
                       e.preventDefault()
                     }
-                  } else if (e.key === "Enter") {
+                  } else if (e.keyCode === 13) {
                     if (!e.shiftKey) {
                       e.preventDefault()
-                      handleButtonClick()
+                      sendMessage()
                     }
                   } else if (e.key === "ArrowUp") {
                     const userMessages = messageList()
@@ -532,7 +492,8 @@ export default function (props: {
                 style={{
                   height: height(),
                   "border-bottom-right-radius": 0,
-                  "border-top-right-radius": height() === "48px" ? 0 : "0.25rem",
+                  "border-top-right-radius":
+                    height() === "48px" ? 0 : "0.25rem",
                   "border-top-left-radius":
                     compatiblePrompt().length === 0 ? "0.25rem" : 0
                 }}
@@ -557,17 +518,17 @@ export default function (props: {
               >
                 <button
                   title="发送"
-                  onClick={() => handleButtonClick()}
+                  onClick={() => sendMessage()}
                   class="i-carbon:send-filled text-5 mx-3"
                 />
               </div>
             </div>
           </Show>
         </div>
-        <Show when={showLoginDirectDialog()}>
-          <LoginGuideDialog title={loginGuideTitle()} />
-        </Show>
       </div>
-    </>
+      <Show when={showLoginDirectDialog()}>
+        <LoginGuideDialog title={loginGuideTitle()} />
+      </Show>
+    </div>
   )
 }
