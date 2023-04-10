@@ -4,9 +4,8 @@ import ChatIcon from './ChatIcon'
 import ChatEdit from './ChatEdit'
 import ChatConfirm from './ChatConfirm'
 import DeleteConfirm from './DeleteConfirm'
-
-
-import store from './store'
+import { useAuth } from "~/utils/useAuth"
+import { setSharedStore } from './store'
 
 interface Chat {
   id: number;
@@ -22,13 +21,7 @@ export default function ChatContainer() {
 
   const initialItem: Chat = chats().length > 0 ? chats()[0] : { id: 0, name: "Empty chat" }
 
-  const [showLoginDialog, setShowLoginDialog] = createSignal(false);
-
   const [selectedChat, setSelectedChat] = createSignal<Chat>(initialItem);
-
-  const toggleLoginDialog = () => {
-    setShowLoginDialog(!showLoginDialog());
-  };
 
   const [page, setPage] = createSignal<number>(1);
   const [loading, setLoading] = createSignal<boolean>(false);
@@ -110,7 +103,6 @@ export default function ChatContainer() {
 
   function confirmChatEdit() {
     console.log('confirmChatEdit....')
-    store.updateMessage('Element clicked in Aside' + new Date());
   }
 
   function cancelChatEdit() {
@@ -118,7 +110,16 @@ export default function ChatContainer() {
   }
 
   const createChat = () => {
-    toggleLoginDialog()
+
+    const { isLogin } = useAuth()
+
+    if (!isLogin()) {
+      setSharedStore('message', { type: 'loginRequired' })
+      return
+    }
+
+
+
     const newChat: Chat = {
       id: chats().length + 1,
       name: `Chat ${chats().length + 1}`,

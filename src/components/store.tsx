@@ -1,15 +1,21 @@
+
 import { createStore } from 'solid-js/store';
 
-interface Store {
-  message: string;
-  updateMessage: (newMessage: string) => void;
+export interface Message {
+  type: string;
+  info: string;
 }
 
-const [store, setStore] = createStore<Store>({
-  message: '',
-  updateMessage: (newMessage: string) => {
-    setStore('message', newMessage);
-  },
-});
+// Define your store's initial state
+const initialState = {
+  message: {
+    type: '123',
+    info: 'Hello, world!',
+  } as Message,
+};
 
-export default store;
+// Create the store
+const [sharedStore, setSharedStore] = createStore(initialState);
+
+// Export the shared store and setSharedStore function
+export { sharedStore, setSharedStore };

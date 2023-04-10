@@ -1,7 +1,6 @@
 
 export const useAuth = () => {
 
-
   const showLogin = () => {
     const storageKey = 'cnt_of_experience';
     const currentValue = parseInt(localStorage.getItem(storageKey) || '0');
@@ -18,5 +17,13 @@ export const useAuth = () => {
 
   };
 
-  return { showLogin };
+  const isLogin = () => {
+    let sessionId = localStorage.getItem('sessionId')
+    if (!sessionId) {
+      return false
+    }
+    return true
+  };
+
+  return { showLogin, isLogin };
 };

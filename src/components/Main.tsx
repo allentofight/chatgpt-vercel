@@ -7,7 +7,7 @@ import PromptList from "./PromptList"
 import { Fzf } from "fzf"
 import throttle from "just-throttle"
 import { isMobile } from "~/utils"
-import store from './store'
+import { sharedStore } from './store'
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog';
@@ -32,6 +32,7 @@ export default function (props: {
   const { defaultMessage, defaultSetting, resetContinuousDialogue } = props.env
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
+  const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
@@ -118,10 +119,12 @@ export default function (props: {
   })
 
   createEffect(() => {
-    console.log('Message from Aside:', store.message);
-    if (store.message) {
-      // setId((prevId) => prevId + 1);
-      setMessageList([])
+    if (sharedStore.message?.type === 'loginRequired') {
+      setShowLoginDirectDialog(true)
+      setLoginGuideTitle('登录后可拥有保存会话功能')
+      console.log(`Message: ${JSON.stringify(sharedStore.message)}`);
+    } else {
+      console.log('Message is not set');
     }
   });
 
@@ -562,7 +565,7 @@ export default function (props: {
           </Show>
         </div>
         <Show when={showLoginDirectDialog()}>
-          <LoginGuideDialog />
+          <LoginGuideDialog title={loginGuideTitle()} />
         </Show>
       </div>
     </>
