@@ -113,14 +113,11 @@ export default function ChatContainer() {
       return
     }
 
+    setSelectedChat({ id: 0, name: "Empty chat" })
 
+    setSharedStore('message', { type: 'newChat' })
 
-    const newChat: Chat = {
-      id: chats().length + 1,
-      name: `Chat ${chats().length + 1}`,
-    };
-    setChats([...chats(), newChat]);
-    setHasScrollbar(contentRef.scrollHeight > contentContainerRef.clientHeight);
+    // setHasScrollbar(contentRef.scrollHeight > contentContainerRef.clientHeight);
   };
 
   const fetchChats = async (pageNum: number) => {
