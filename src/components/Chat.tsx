@@ -13,6 +13,8 @@ import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
 import { sharedStore } from './store'
 
+const apiHost = import.meta.env.PUBLIC_API_HOST;
+
 export default function (props: {
   prompts: PromptItem[]
   env: {
@@ -32,6 +34,7 @@ export default function (props: {
   } = props.env
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
+  const [currentChatId, setCurrentChatId] = createSignal(0)
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
@@ -119,10 +122,22 @@ export default function (props: {
       setShowLoginDirectDialog(true)
       setLoginGuideTitle('登录后可拥有保存会话功能')
       console.log(`Message: ${JSON.stringify(sharedStore.message)}`);
-    } else if (sharedStore.message?.type === 'newChat') {
-      setMessageList([])
+    } else if (sharedStore.message?.type === 'selectedChat') {
+      console.log('selectedChat...')
+      let id = parseInt(sharedStore.message?.info)
+      setCurrentChatId(id)
+      if (!id) {
+        setMessageList([])
+      }
     }
   });
+
+  function delChat() {
+    const fn = throttle(() => {
+      uploadChatList()
+    }, 1000);
+    fn()
+  }
 
   createEffect((prev: number | undefined) => {
     if (prev !== undefined && messageList().length > prev) {
@@ -187,11 +202,51 @@ export default function (props: {
           id: Date.now()
         }
       ])
+
       setCurrentAssistantMessage("")
       setLoading(false)
       setController()
       !isMobile() && inputRef.focus()
+      uploadChatList()
     }
+  }
+
+  function uploadChatList() {
+    let sessionId = localStorage.getItem('sessionId')
+    if (!sessionId) {
+      return
+    }
+
+    let result = messageList().filter(
+      k => k.role !== "error"
+    )
+
+    fetch(`${apiHost}/api/chat/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`
+      },
+      body: JSON.stringify({
+        id: currentChatId(),
+        title: messageList()[0].content.slice(0, 10),
+        body: JSON.stringify(result)
+      }),
+    }).then((response) => {
+      // Check if the response status is OK (200)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+      .then((data) => {
+        // Handle the data
+        setCurrentChatId(data.id)
+      })
+      .catch((error) => {
+        console.error('Error fetching chat:', error);
+      });
   }
 
   async function sendMessage(value?: string) {
@@ -227,7 +282,7 @@ export default function (props: {
       ])
     }
     try {
-      await fetchGPT(inputValue)
+      await fetchGPT(getPassedMessageList(inputValue))
     } catch (error: any) {
       setLoading(false)
       setController()
@@ -244,24 +299,33 @@ export default function (props: {
     archiveCurrentMessage()
   }
 
-  async function fetchGPT(inputValue: string) {
-    setLoading(true)
-    const controller = new AbortController()
-    setController(controller)
+  function getPassedMessageList(inputValue: string) {
     const systemRule = setting().systemRule.trim()
     const message = {
       role: "user",
       content: inputValue
     }
-    if (systemRule) message.content += "。\n\n" + systemRule
+    if (systemRule) {
+      message.content += "。\n\n" + systemRule
+    }
+
+    return setting().continuousDialogue
+      ? [...messageList().slice(0, -1), message].filter(
+        k => k.role !== "error"
+      )
+      : [...messageList().filter(k => k.special === "locked"), message]
+  }
+
+  type Message = { role: string; content: string };
+  async function fetchGPT(messages: Message[]) {
+    setLoading(true)
+    const controller = new AbortController()
+    setController(controller)
+
     const response = await fetch("/api", {
       method: "POST",
       body: JSON.stringify({
-        messages: setting().continuousDialogue
-          ? [...messageList().slice(0, -1), message].filter(
-            k => k.role !== "error"
-          )
-          : [...messageList().filter(k => k.special === "locked"), message],
+        messages,
         key: setting().openaiAPIKey || undefined,
         temperature: setting().openaiAPITemperature / 100,
         password: setting().password,
@@ -388,6 +452,7 @@ export default function (props: {
           <For each={messageList()}>
             {(message, index) => (
               <MessageItem
+                delChat={delChat}
                 message={message}
                 hiddenAction={loading() || message.special === "default"}
                 index={index()}
@@ -399,6 +464,7 @@ export default function (props: {
           </For>
           {currentAssistantMessage() && (
             <MessageItem
+              delChat={delChat}
               hiddenAction={true}
               message={{
                 role: "assistant",

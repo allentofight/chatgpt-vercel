@@ -8,12 +8,14 @@ import { copyToClipboard } from "~/utils"
 import vercel from "/assets/vercel.svg?raw"
 import openai from "/assets/openai.svg?raw"
 import md from "~/markdown-it"
+import { setSharedStore, sharedStore } from './store'
 
 interface Props {
   message: ChatMessage
   hiddenAction: boolean
   index?: number
   sendMessage?: (message?: string) => void
+  delChat: () => void
   setInputContent?: Setter<string>
   setMessageList?: Setter<ChatMessage[]>
 }
@@ -49,6 +51,7 @@ export default (props: Props) => {
         }
         return messages.filter((_, i) => i !== props.index)
       })
+      props.delChat()
     }
   }
 
@@ -119,9 +122,8 @@ export default (props: Props) => {
       }}
     >
       <div
-        class={`shrink-0 w-7 h-7 mt-4 rounded-full op-80 flex items-center justify-center cursor-pointer ${
-          roleClass[props.message.role]
-        }`}
+        class={`shrink-0 w-7 h-7 mt-4 rounded-full op-80 flex items-center justify-center cursor-pointer ${roleClass[props.message.role]
+          }`}
         onClick={lockMessage}
       >
         <Show when={props.message.special === "locked"}>

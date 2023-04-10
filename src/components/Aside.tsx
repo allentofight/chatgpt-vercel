@@ -59,6 +59,12 @@ export default function ChatContainer() {
     setIsDeletable(false)
   }
 
+  createEffect(() => {
+    if (selectedChat()) {
+      setSharedStore('message', { type: 'selectedChat', info: selectedChat().id.toString() })
+    }
+  })
+
 
   createEffect(() => {
     if (isEditable() && inputRef) {
@@ -114,10 +120,6 @@ export default function ChatContainer() {
     }
 
     setSelectedChat({ id: 0, name: "Empty chat" })
-
-    setSharedStore('message', { type: 'newChat' })
-
-    // setHasScrollbar(contentRef.scrollHeight > contentContainerRef.clientHeight);
   };
 
   const fetchChats = async (pageNum: number) => {
