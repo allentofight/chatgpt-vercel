@@ -133,35 +133,37 @@ export default function ChatContainer() {
     const newName = inputRef.value || '';
     if (newName !== '') {
       selectedChat().title = newName
-
-      let sessionId = localStorage.getItem('sessionId')
-      fetch(`${apiHost}/api/chat/createOrUpdate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${sessionId}`
-        },
-        body: JSON.stringify({
-          id: selectedChat().id,
-          title: newName,
-        }),
-      }).then((response) => {
-        // Check if the response status is OK (200)
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        // Parse the response as JSON
-        return response.json();
-      })
-        .then((data) => {
-          // Handle the data
-        })
-        .catch((error) => {
-          console.error('Error fetching chat:', error);
-        });
+      updateChatTitle()
     }
   }
 
+  function updateChatTitle() {
+    let sessionId = localStorage.getItem('sessionId')
+    fetch(`${apiHost}/api/chat/createOrUpdate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`
+      },
+      body: JSON.stringify({
+        id: selectedChat().id,
+        title: selectedChat().title,
+      }),
+    }).then((response) => {
+      // Check if the response status is OK (200)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Parse the response as JSON
+      return response.json();
+    })
+      .then((data) => {
+        // Handle the data
+      })
+      .catch((error) => {
+        console.error('Error fetching chat:', error);
+      });
+  }
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter') {
@@ -180,11 +182,11 @@ export default function ChatContainer() {
   }
 
   function confirmChatEdit() {
-    console.log('confirmChatEdit....')
+    updateChatTitle()
   }
 
   function cancelChatEdit() {
-    console.log('cancelChatEdit....')
+    updateChatTitle()
   }
 
   const createChat = () => {
@@ -229,7 +231,6 @@ export default function ChatContainer() {
       .then((data) => {
         setHasMore(data.hasMore)
         setChats([...chats(), ...data.chats]);
-        console.log('result...')
         setLoading(false);
         // Handle the data
       })
