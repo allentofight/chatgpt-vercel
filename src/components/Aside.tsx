@@ -5,23 +5,26 @@ import ChatEdit from './ChatEdit'
 import ChatConfirm from './ChatConfirm'
 import DeleteConfirm from './DeleteConfirm'
 import { useAuth } from "~/utils/useAuth"
-import { setSharedStore } from './store'
+import { setSharedStore, sharedStore } from './store'
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 
 interface Chat {
-  id: number;
+  id: string;
   title: string;
+  body?: string;
   gmtModified: Date;
 }
 
 export default function ChatContainer() {
   const [chats, setChats] = createSignal<Chat[]>([]);
 
-  const defaultChat = { id: 0, title: "Empty chat", gmtModified: new Date() }
+  const defaultChat = { id: '0', title: "Empty chat", gmtModified: new Date() }
 
   const initialItem: Chat = chats().length > 0 ? chats()[0] : defaultChat
 
   const [selectedChat, setSelectedChat] = createSignal<Chat>(initialItem);
+
+  const [hasMore, setHasMore] = createSignal(false);
 
   const [page, setPage] = createSignal<number>(1);
   const [loading, setLoading] = createSignal<boolean>(false);
@@ -53,9 +56,34 @@ export default function ChatContainer() {
     let filteredChats = chats().filter(item => {
       return item.id !== selectedChat().id
     })
-    setChats(filteredChats)
-    setSelectedChat(defaultChat)
-    setIsDeletable(false)
+
+    let sessionId = localStorage.getItem('sessionId')
+    fetch(`${apiHost}/api/chat/delete`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`
+      },
+      body: JSON.stringify({
+        id: selectedChat().id,
+      }),
+    }).then((response) => {
+      // Check if the response status is OK (200)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Parse the response as JSON
+      return { message: 'deleteSuccess' };
+    })
+      .then((data) => {
+        console.log('删除成功!')
+        setChats(filteredChats)
+        setSelectedChat(defaultChat)
+        setIsDeletable(false)
+      })
+      .catch((error) => {
+        console.error('Error delete chat:', error);
+      });
   }
 
   function cancelDel() {
@@ -64,9 +92,24 @@ export default function ChatContainer() {
 
   createEffect(() => {
     if (selectedChat()) {
-      setSharedStore('message', { type: 'selectedChat', info: selectedChat().id.toString() })
+      setSharedStore('message', { type: 'selectedChat', info: selectedChat() })
     }
   })
+
+  createEffect(() => {
+    if (sharedStore.message?.type === 'addChat') {
+      let originChats = JSON.parse(JSON.stringify(chats()))
+      let chat = sharedStore.message?.info as Chat
+      originChats.unshift({
+        id: chat.id,
+        title: chat.title,
+        body: chat.body,
+      } as Chat);
+      setChats(originChats)
+      setSharedStore('message', { type: 'none' })
+      setSelectedChat(chats()[0])
+    }
+  });
 
 
   createEffect(() => {
@@ -90,8 +133,35 @@ export default function ChatContainer() {
     const newName = inputRef.value || '';
     if (newName !== '') {
       selectedChat().title = newName
+
+      let sessionId = localStorage.getItem('sessionId')
+      fetch(`${apiHost}/api/chat/createOrUpdate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionId}`
+        },
+        body: JSON.stringify({
+          id: selectedChat().id,
+          title: newName,
+        }),
+      }).then((response) => {
+        // Check if the response status is OK (200)
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        // Parse the response as JSON
+        return response.json();
+      })
+        .then((data) => {
+          // Handle the data
+        })
+        .catch((error) => {
+          console.error('Error fetching chat:', error);
+        });
     }
   }
+
 
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Enter') {
@@ -103,6 +173,10 @@ export default function ChatContainer() {
       }
       inputRef.blur();
     }
+  }
+
+  function loadMore() {
+    fetchChats()
   }
 
   function confirmChatEdit() {
@@ -134,8 +208,8 @@ export default function ChatContainer() {
 
     setLoading(true);
     let clientGmtModified = '';
-    if (chats.length) {
-      clientGmtModified = `?clientGmtModified=${chats()[chats.length - 1].gmtModified}`
+    if (chats().length) {
+      clientGmtModified = `?clientGmtModified=${chats()[chats().length - 1].gmtModified}`
     }
 
     fetch(`${apiHost}/api/chat/list${clientGmtModified}`, {
@@ -153,12 +227,14 @@ export default function ChatContainer() {
       return response.json();
     })
       .then((data) => {
-        console.log('data = ', data)
+        setHasMore(data.hasMore)
         setChats([...chats(), ...data.chats]);
+        console.log('result...')
         setLoading(false);
         // Handle the data
       })
       .catch((error) => {
+        setLoading(false);
         console.error('Error fetching chat:', error);
       });
 
@@ -236,8 +312,7 @@ export default function ChatContainer() {
                     <>
                       <Show when={chat.id !== selectedChat().id}>
                         <a class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group" onClick={() => {
-                          let selectedChats = chats().filter(item => item.id === chat.id)
-                          setSelectedChat(selectedChats[0])
+                          setSelectedChat(chat)
                         }}>
                           <ChatIcon />
                           <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
@@ -300,10 +375,10 @@ export default function ChatContainer() {
                     </>
                   ))}
 
-                  <Show when={hasScrollbar()}>
-                    <button class="btn relative btn-dark btn-small m-auto mb-2">
+                  <Show when={hasMore()}>
+                    <button class="btn relative btn-dark btn-small m-auto mb-2" onClick={loadMore} disabled={loading()}>
                       <div class="flex w-full items-center justify-center gap-2">
-                        Show more
+                        加载更多
                       </div></button>
                   </Show>
                 </div>

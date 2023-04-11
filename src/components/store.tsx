@@ -3,7 +3,7 @@ import { createStore } from 'solid-js/store';
 
 export interface Message {
   type: string;
-  info: string;
+  info: Object;
 }
 
 const initialState = {

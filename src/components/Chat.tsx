@@ -11,7 +11,7 @@ import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
-import { sharedStore } from './store'
+import { setSharedStore, sharedStore } from './store'
 
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 
@@ -34,7 +34,7 @@ export default function (props: {
   } = props.env
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
-  const [currentChatId, setCurrentChatId] = createSignal(0)
+  const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '' })
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
@@ -123,11 +123,12 @@ export default function (props: {
       setLoginGuideTitle('登录后可拥有保存会话功能')
       console.log(`Message: ${JSON.stringify(sharedStore.message)}`);
     } else if (sharedStore.message?.type === 'selectedChat') {
-      console.log('selectedChat...')
-      let id = parseInt(sharedStore.message?.info)
-      setCurrentChatId(id)
-      if (!id) {
+      let chat = sharedStore.message?.info as { id: string, title: string, body: string }
+      setCurrentChat(chat)
+      if (!parseInt(chat.id)) {
         setMessageList([])
+      } else {
+        setMessageList(JSON.parse(chat.body))
       }
     }
   });
@@ -193,6 +194,7 @@ export default function (props: {
   })
 
   function archiveCurrentMessage() {
+
     if (currentAssistantMessage()) {
       setMessageList([
         ...messageList(),
@@ -221,17 +223,19 @@ export default function (props: {
       k => k.role !== "error"
     )
 
-    fetch(`${apiHost}/api/chat/create`, {
+    let isCreatingChat = currentChat().id.length < 3
+    let postChat = {
+      id: currentChat().id,
+      title: isCreatingChat ? messageList()[0].content.slice(0, 10) : currentChat().title,
+      body: JSON.stringify(result)
+    }
+    fetch(`${apiHost}/api/chat/createOrUpdate`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${sessionId}`
       },
-      body: JSON.stringify({
-        id: currentChatId(),
-        title: messageList()[0].content.slice(0, 10),
-        body: JSON.stringify(result)
-      }),
+      body: JSON.stringify(postChat),
     }).then((response) => {
       // Check if the response status is OK (200)
       if (!response.ok) {
@@ -242,7 +246,11 @@ export default function (props: {
     })
       .then((data) => {
         // Handle the data
-        setCurrentChatId(data.id)
+        if (isCreatingChat) {
+          console.log('creating....')
+          setCurrentChat({ ...postChat, id: data.id })
+          setSharedStore('message', { type: 'addChat', info: currentChat() })
+        }
       })
       .catch((error) => {
         console.error('Error fetching chat:', error);
