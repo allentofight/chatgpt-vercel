@@ -24,5 +24,14 @@ export const useAuth = () => {
     return true
   };
 
-  return { showLogin, isLogin };
+  const isExpired = () => {
+    let expireDate = localStorage.getItem('expireDay')
+    if (!expireDate) {
+      return true
+    } else {
+      let date = new Date(parseInt(expireDate))
+      return date < new Date()
+    }
+  }
+  return { showLogin, isLogin, isExpired };
 };

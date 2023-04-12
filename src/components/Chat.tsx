@@ -13,6 +13,7 @@ import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './store'
+import toast, { Toaster } from 'solid-toast';
 
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 
@@ -255,7 +256,6 @@ export default function (props: {
       .then((data) => {
         // Handle the data
         if (isCreatingChat) {
-          console.log('creating....')
           setCurrentChat({ ...postChat, id: data.id })
           setSharedStore('message', { type: 'addChat', info: currentChat() })
         }
@@ -265,12 +265,40 @@ export default function (props: {
       });
   }
 
+  function fetchUserInfo() {
+    let sessionId = localStorage.getItem('sessionId')
+    fetch(`${apiHost}/api/auth/getUserInfo`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`
+      },
+    }).then((response) => {
+      // Check if the response status is OK (200)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Parse the response as JSON
+      return response.json();
+    }).then((data) => {
+      localStorage.setItem('expireDay', data.expiredDay.toString())
+    }).catch((error) => {
+      console.error('Error delete chat:', error);
+    });
+  }
+
   async function sendMessage(value?: string) {
 
-    const { showLogin } = useAuth()
+    const { showLogin, isExpired } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
+      return
+    }
+
+    if (isExpired()) {
+      toast.error('VIP 会员已过期，请及时充值哦');
+      setShowChargeDialog(true)
       return
     }
 
@@ -278,6 +306,8 @@ export default function (props: {
     if (!inputValue) {
       return
     }
+
+    fetchUserInfo()
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
     setInputContent("")
@@ -615,6 +645,7 @@ export default function (props: {
       <Show when={showChargeDialog()}>
         <ChargeDialog closeDialog={closeChargeDialog} />
       </Show>
+      <Toaster position="top-center" />
     </div>
   )
 }
