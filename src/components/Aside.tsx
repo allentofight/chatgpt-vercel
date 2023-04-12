@@ -6,6 +6,7 @@ import ChatConfirm from './ChatConfirm'
 import DeleteConfirm from './DeleteConfirm'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './store'
+import InviteDialog from './InviteDialog'
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 
 interface Chat {
@@ -26,7 +27,8 @@ export default function ChatContainer() {
 
   const [hasMore, setHasMore] = createSignal(false);
 
-  const [page, setPage] = createSignal<number>(1);
+  const [showInviteDialog, setShowInviteDialog] = createSignal(false);
+
   const [loading, setLoading] = createSignal<boolean>(false);
 
   const [hasScrollbar, setHasScrollbar] = createSignal(false);
@@ -50,6 +52,10 @@ export default function ChatContainer() {
 
   function del() {
     setIsDeletable(true)
+  }
+
+  function closeInviteDialog() {
+    setShowInviteDialog(false)
   }
 
   function confirmDel() {
@@ -280,7 +286,7 @@ export default function ChatContainer() {
           }
         `}
       </style>
-      <aside class="dark left-0 top-0 h-full hidden bg-gray-900 md:fixed md:inset-y-0 md:flex md:w-[260px] md:flex-col">
+      <aside class="dark left-0 top-0 h-full hidden bg-gray-900 md:fixed md:inset-y-0 md:flex md:w-[260px] md:flex-col z-40">
         <div class="flex h-full min-h-0 flex-col ">
           <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
             <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
@@ -372,27 +378,34 @@ export default function ChatContainer() {
                 </div>
               </div>
               <Show when={useAuth().isLogin()}>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                  setShowInviteDialog(true)
+                }}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                  </svg>清空所有对话</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+                    <circle cx="10" cy="7" r="4"></circle>
+                    <circle cx="14" cy="7" r="4"></circle>
+                    <path d="M9 15v4"></path>
+                    <path d="M15 15v4"></path>
+                    <path d="M6 19h6"></path>
+                    <path d="M12 19h6"></path>
+                  </svg>邀请好友享 VIP 权益</a>
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                  setSharedStore('message', { type: 'showCharge' })
+                  setSharedStore('message', { type: 'none' })
+                }}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
-                  </svg>My account</a>
-                <a href="https://help.openai.com/en/collections/3742473-chatgpt" target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+                  </svg>我的账号信息</a>
+                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                     <polyline points="15 3 21 3 21 9"></polyline>
                     <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>Updates &amp; FAQ</a>
+                  </svg>FAQ</a>
                 <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
                   localStorage.removeItem('sessionId')
-                  window.location.href = '/'
+                  window.location.href = '/login'
                 }}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -400,10 +413,12 @@ export default function ChatContainer() {
                     <line x1="21" y1="12" x2="9" y2="12"></line>
                   </svg>Log out</a>
               </Show>
-
             </nav>
           </div>
         </div>
+        <Show when={showInviteDialog()}>
+          <InviteDialog closeDialog={closeInviteDialog} />
+        </Show>
       </aside >
     </>
   );

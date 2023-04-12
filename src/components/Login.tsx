@@ -2,10 +2,12 @@
 import { createSignal, onMount, Show } from 'solid-js';
 import toast, { Toaster } from 'solid-toast';
 const apiHost = import.meta.env.PUBLIC_API_HOST;
+import { useAuth } from "~/utils/useAuth"
 
 export default function LoginDialog() {
 
   const [email, setEmail] = createSignal('');
+  const [inviteCode, setInviteCode] = createSignal('');
   const [password, setPassword] = createSignal('');
   const [resetPasswordMode, setResetPasswordMode] = createSignal(false);
   const [resetPassword, setResetPassword] = createSignal(false);
@@ -14,11 +16,24 @@ export default function LoginDialog() {
   const [isSignUp, setIsSignUp] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
   const [confirmationMessage, setConfirmationMessage] = createSignal('');
+  let isInviteCodeConfirmed = false
 
   onMount(async () => {
+    const { isLogin } = useAuth()
+    if (isLogin()) {
+      window.location.href = '/'
+      return
+    }
+
     const queryParams = new URLSearchParams(window.location.search);
     let token = queryParams.get('token')
     let type = queryParams.get('type')
+    let inviteCode = queryParams.get('inviteCode')
+    if (inviteCode) {
+      isInviteCodeConfirmed = true
+      setInviteCode(inviteCode)
+      setIsSignUp(true)
+    }
     setResetPassword(type === 'resetpwd')
     if (type === 'signup' && token) {
       const response = await fetch(`${apiHost}/api/auth/confirmEmail?token=${token}`, {
@@ -36,7 +51,7 @@ export default function LoginDialog() {
           duration: 3000
         });
         localStorage.setItem('sessionId', result.sessionId)
-        setTimeout(() => { window.location.href = '/' }, 3000)
+        // setTimeout(() => { window.location.href = '/' }, 3000)
 
       }
     } else if (type === 'resetpwd' && token) {
@@ -98,7 +113,7 @@ export default function LoginDialog() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email: email(), password: password() }),
+          body: JSON.stringify({ email: email(), password: password(), inviteCode: inviteCode() }),
         });
 
         if (response.status !== 201) {
@@ -180,6 +195,7 @@ export default function LoginDialog() {
         return
       }
       localStorage.setItem('sessionId', result.sessionId)
+      localStorage.setItem('inviteCode', result.inviteCode)
       toast.success('登录成功，欢迎体验^_^');
       window.location.href = '/'
       setIsLoading(false)
@@ -235,32 +251,17 @@ export default function LoginDialog() {
     }
   }
 
-  const handleForgotPasswordClick = async () => {
-    if (!email()) {
-      toast.error("请先输入邮箱");
-      return;
-    }
-
-    // Send a request to your server to trigger the password reset email
-    const response = await fetch('/api/send-reset-password-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: email() }),
-    });
-
-    if (response.ok) {
-      toast.success("Reset password email sent");
-    } else {
-      toast.error("Error sending reset password email");
-    }
-  };
-
   return (
     <>
       <style>
         {`
+          label.required::before {
+            content: "*";
+            color: red;
+            margin-right: 0.25em;
+          }
+          
+        
           .spinner {
             display: inline-block;
             border: 2px solid rgba(255, 255, 255, 0.2);
@@ -323,7 +324,7 @@ export default function LoginDialog() {
           </h2>
           <form onSubmit={handleSubmit} class="space-y-4" novalidate>
             <div>
-              <label for="email" class="block text-sm font-medium mb-2">邮箱:</label>
+              <label for="email" class="required block text-sm font-medium mb-2">邮箱:</label>
               <input
                 disabled={isResetPasswordConfirm()}
                 type="email"
@@ -337,7 +338,7 @@ export default function LoginDialog() {
             </div>
             <Show when={!resetPasswordMode()}>
               <div>
-                <label for="password" class="block text-sm font-medium mb-2">
+                <label for="password" class="required block text-sm font-medium mb-2">
                   密码:
                 </label>
                 <input
@@ -356,7 +357,7 @@ export default function LoginDialog() {
               <div>
                 <label
                   for="confirm-password"
-                  class="block text-sm font-medium mb-2"
+                  class="required block text-sm font-medium mb-2"
                 >
                   确认密码:
                 </label>
@@ -374,6 +375,20 @@ export default function LoginDialog() {
                   required
                   title="Confirm password must match the password"
                   minlength="6"
+                />
+              </div>
+            </Show>
+
+            <Show when={isSignUp()}>
+              <div>
+                <label for="inviteCode" class="block text-sm font-medium mb-2">邀请码:</label>
+                <input
+                  id="inviteCode"
+                  disabled={isInviteCodeConfirmed}
+                  placeholder="选填"
+                  value={inviteCode()}
+                  onInput={(e: Event) => setInviteCode((e.target as HTMLInputElement).value)}
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md"
                 />
               </div>
             </Show>

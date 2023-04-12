@@ -1,6 +1,7 @@
 import { createEffect, createSignal, For, onMount, Show } from "solid-js"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import MessageItem from "./MessageItem"
+import ChargeDialog from "./ChargeDialog"
 import type { ChatMessage, PromptItem } from "~/types"
 import SettingAction from "./SettingAction"
 import PromptList from "./PromptList"
@@ -42,6 +43,7 @@ export default function (props: {
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
+  const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const defaultMessage: ChatMessage = {
     role: "assistant",
@@ -130,14 +132,20 @@ export default function (props: {
       } else {
         setMessageList(JSON.parse(chat.body))
       }
+    } else if (sharedStore.message?.type === 'showCharge') {
+      setShowChargeDialog(true)
     }
-  });
+  })
 
   function delChat() {
     const fn = throttle(() => {
       uploadChatList()
     }, 1000);
     fn()
+  }
+
+  function closeChargeDialog() {
+    setShowChargeDialog(false)
   }
 
   createEffect((prev: number | undefined) => {
@@ -603,6 +611,9 @@ export default function (props: {
       </div>
       <Show when={showLoginDirectDialog()}>
         <LoginGuideDialog title={loginGuideTitle()} />
+      </Show>
+      <Show when={showChargeDialog()}>
+        <ChargeDialog closeDialog={closeChargeDialog} />
       </Show>
     </div>
   )
