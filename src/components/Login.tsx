@@ -51,8 +51,7 @@ export default function LoginDialog() {
           duration: 3000
         });
         localStorage.setItem('sessionId', result.sessionId)
-        // setTimeout(() => { window.location.href = '/' }, 3000)
-
+        setTimeout(() => { window.location.href = '/' }, 3000)
       }
     } else if (type === 'resetpwd' && token) {
       const response = await fetch(`${apiHost}/api/auth/validateToken?token=${token}`, {

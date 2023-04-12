@@ -45,7 +45,7 @@ const InviteDialog = (props: {
             </button>
           )}
           {inviteSuccess() && (
-            <div class="text-green-500 font-semibold">邀请链接已复制，可以分享给好友啦！</div>
+            <div class="text-green-500 font-semibold">邀请链接已复制到剪切板，可以分享给好友啦！</div>
           )}
         </div>
       </div>
