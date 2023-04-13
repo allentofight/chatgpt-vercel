@@ -79,7 +79,7 @@ const ChargeDialog = (props: ChargeDialogProps) => {
           <Show when={!isExpired()}>
             <span class="text-lg">VIP 到期时间：</span>
             <Show when={endDate() != null}>
-              <span class="text-lg font-bold text-indigo-600">{dateformat(endDate()!, 'yyyy-mm-dd hh:MM')}</span>
+              <span class="text-lg font-bold text-indigo-600">{dateformat(endDate()!, 'yyyy-mm-dd HH:MM')}</span>
             </Show>
           </Show>
 
