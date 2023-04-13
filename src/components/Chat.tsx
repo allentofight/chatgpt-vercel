@@ -69,6 +69,10 @@ export default function (props: {
   )
 
   onMount(() => {
+    const { isLogin } = useAuth()
+    if (isLogin()) {
+      fetchUserInfo()
+    }
     makeEventListener(
       inputRef,
       "compositionend",
@@ -282,6 +286,7 @@ export default function (props: {
       return response.json();
     }).then((data) => {
       localStorage.setItem('expireDay', data.expiredDay.toString())
+      localStorage.setItem('inviteCode', data.inviteCode)
     }).catch((error) => {
       console.error('Error delete chat:', error);
     });
@@ -289,14 +294,14 @@ export default function (props: {
 
   async function sendMessage(value?: string) {
 
-    const { showLogin, isExpired } = useAuth()
+    const { showLogin, isExpired, isLogin } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
       return
     }
 
-    if (isExpired()) {
+    if (isLogin() && isExpired()) {
       toast.error('VIP 会员已过期，请及时充值哦');
       setShowChargeDialog(true)
       return
@@ -307,7 +312,10 @@ export default function (props: {
       return
     }
 
-    fetchUserInfo()
+    let storageKey = 'cnt_of_experience'
+    const currentValue = parseInt(localStorage.getItem(storageKey) || '0') + 1;
+    localStorage.setItem(storageKey, currentValue.toString())
+
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
     setInputContent("")

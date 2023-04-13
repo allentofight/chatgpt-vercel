@@ -10,7 +10,6 @@ specifiers:
   '@iconify-json/ri': ^1.1.5
   '@solid-primitives/event-listener': ^2.2.8
   '@solid-primitives/resize-observer': ^2.0.12
-  '@steamship/client': ^2.3.8
   '@types/dateformat': ^5.0.0
   '@types/markdown-it': ^12.2.3
   '@typescript-eslint/eslint-plugin': ^5.36.2
@@ -55,7 +54,6 @@ dependencies:
   '@astrojs/vercel': 3.2.1_astro@2.1.3+react@18.2.0
   '@solid-primitives/event-listener': 2.2.8_solid-js@1.6.15
   '@solid-primitives/resize-observer': 2.0.12_solid-js@1.6.15
-  '@steamship/client': 2.3.8
   '@unocss/reset': 0.50.6
   array-keyed-map: 2.1.3
   astro: 2.1.3_@types+node@14.18.33
@@ -1972,19 +1970,6 @@ packages:
       solid-js: ^1.6.0
     dependencies:
       solid-js: 1.6.15
-    dev: false
-
-  /@steamship/client/2.3.8:
-    resolution: {integrity: sha512-gN/Z5sdOxVIa6bDZaBbpoV6W9H0gwkauJjYTZF9p4dDf3R2Wj355IciST+jmu8R/jP7MEt+P7DqWRMRNcrAb8g==}
-    engines: {node: '>=10'}
-    dependencies:
-      '@babel/runtime': 7.21.0
-      axios: 1.3.5
-      form-data: 4.0.0
-      regenerator-runtime: 0.13.11
-      tslog: 3.3.4
-    transitivePeerDependencies:
-      - debug
     dev: false
 
   /@surma/rollup-plugin-off-main-thread/2.2.3:
