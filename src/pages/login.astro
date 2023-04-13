@@ -6,26 +6,9 @@ import "@unocss/reset/tailwind.css"
 import "katex/dist/katex.min.css"
 import "highlight.js/styles/atom-one-dark.css"
 import { parsePrompts } from "~/utils/parse"
-import { setting, message, resetContinuousDialogue } from "~/system"
-const prompts = parsePrompts()
-
-const defaultMessage = import.meta.env.DEFAULT_MESSAGE || message
-let defaultSetting = setting
-if (import.meta.env.DEFAULT_SETTING) {
-  try {
-    defaultSetting = {
-      ...setting,
-      ...JSON.parse(import.meta.env.DEFAULT_SETTING)
-    }
-  } catch (e) {
-    console.error("Error parsing DEFAULT_SETTING:", e)
-  }
-}
-
-const _reset = import.meta.env.RESET_CONTINUOUS_DIALOGUE_OPTION
 ---
 
-<Layout title="ChatGPT虎虎">
+<Layout title="ChatGPT登录">
   <main class="before sm:pt-8em py-2em">
     <Login client:visible />
   </main>
