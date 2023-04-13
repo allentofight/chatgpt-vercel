@@ -415,14 +415,15 @@ export default function (props: {
       } else if (res.error.type === 'invalid_request_error') {
         let img = `${res.error.message}，${imgHint}`
         throw new Error(img)
+      } else if (res.error.message === 'The operation was aborted') {
+        throw new Error('官方请求繁忙，请稍后重试')
+      } else if (res.error.message.includes('请清除部分内容后重试')) {
+        throw new Error(res.error.message)
       } else {
-        if (res.error.message === 'The operation was aborted') {
-          throw new Error('官方请求繁忙，请稍后重试')
-        } else {
-          let img = `${res.error.message}，${imgHint}`
-          throw new Error(img)
-        }
+        let img = `${res.error.message}，${imgHint}`
+        throw new Error(img)
       }
+
     }
 
     const data = response.body
