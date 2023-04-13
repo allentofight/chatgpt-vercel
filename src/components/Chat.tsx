@@ -229,6 +229,11 @@ export default function (props: {
   }
 
   function uploadChatList() {
+
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+
     let sessionId = localStorage.getItem('sessionId')
     if (!sessionId) {
       return
@@ -318,6 +323,10 @@ export default function (props: {
 
     const inputValue = value ?? inputContent()
     if (!inputValue) {
+      return
+    }
+
+    if (!isLocalStorageAvailable()) {
       return
     }
 

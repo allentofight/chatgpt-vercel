@@ -1,7 +1,12 @@
+import { isLocalStorageAvailable } from './localStorageCheck'
 
 export const useAuth = () => {
 
   const showLogin = () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+
     const storageKey = 'cnt_of_experience';
     const currentValue = parseInt(localStorage.getItem(storageKey) || '0');
     if (currentValue < 10) {
@@ -17,6 +22,9 @@ export const useAuth = () => {
   };
 
   const isLogin = () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
     let sessionId = localStorage.getItem('sessionId')
     if (!sessionId) {
       return false
@@ -25,6 +33,9 @@ export const useAuth = () => {
   };
 
   const isExpired = () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
     let expireDate = localStorage.getItem('expireDay')
     if (!expireDate) {
       return true

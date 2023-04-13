@@ -1,5 +1,6 @@
 import { createEffect, createSignal } from 'solid-js';
 const apiHost = import.meta.env.PUBLIC_API_HOST;
+import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 const InviteDialog = (props: {
   closeDialog: () => void
@@ -8,6 +9,11 @@ const InviteDialog = (props: {
 
 
   const handleInvite = async () => {
+
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+
     setInviteSuccess(true);
     let inviteCode = localStorage.getItem('inviteCode')
     const inviteLink = `https://codesea.makechat.help/login?inviteCode=${inviteCode}`;

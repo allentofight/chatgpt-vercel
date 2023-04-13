@@ -60,6 +60,11 @@ export default function ChatContainer() {
   }
 
   function confirmDel() {
+
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+
     let filteredChats = chats().filter(item => {
       return item.id !== selectedChat().id
     })
@@ -144,6 +149,10 @@ export default function ChatContainer() {
   }
 
   function updateChatTitle() {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+
     let sessionId = localStorage.getItem('sessionId')
     fetch(`${apiHost}/api/chat/createOrUpdate`, {
       method: 'POST',
