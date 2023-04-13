@@ -13,7 +13,6 @@ const ChargeDialog = (props: ChargeDialogProps) => {
   let date = null
   if (expireDate) {
     date = new Date(parseInt(expireDate))
-    console.log('date = ', date)
   }
 
   const [endDate, setEndDate] = createSignal<Date | null>(date);
@@ -24,8 +23,6 @@ const ChargeDialog = (props: ChargeDialogProps) => {
 
   function isLessThanFiveDays(date1: Date, date2: Date) {
     const millisecondsPerDay = 1000 * 60 * 60 * 24;
-    console.log('date1 = ', date1)
-    console.log('date2 = ', date2)
     const differenceInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
     const differenceInDays = differenceInMilliseconds / millisecondsPerDay;
     return differenceInDays < 5;
