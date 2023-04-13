@@ -394,7 +394,6 @@ export default function LoginDialog() {
 
             <div class="flex justify-between">
               <button
-                type="submit"
                 disabled={isLoading()}
                 class={`bg-green-500 text-white py-2 px-4 rounded-md font-bold uppercase flex-1 mr-2 ${isLoading() ? 'bg-opacity-50 cursor-not-allowed' : ''}`}
               >
@@ -409,7 +408,6 @@ export default function LoginDialog() {
               </button>
               <Show when={!isSignUp() && !resetPasswordMode() && !resetPassword() && !isResetPasswordConfirm()}>
                 <button
-                  type="button"
                   class="bg-blue-500 text-white py-2 px-4 rounded-md font-bold uppercase"
                   onClick={() => {
                     setIsSignUp(true);
@@ -424,7 +422,6 @@ export default function LoginDialog() {
             <div class="text-right mt-2">
               <button
                 class="text-blue-500 underline hover:text-blue-700 focus:outline-none focus:underline"
-                type="button"
                 onClick={() => {
                   setResetPasswordMode(true)
                 }}
