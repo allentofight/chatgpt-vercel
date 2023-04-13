@@ -8,6 +8,7 @@ import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './store'
 import InviteDialog from './InviteDialog'
 const apiHost = import.meta.env.PUBLIC_API_HOST;
+import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 interface Chat {
   id: string;
@@ -207,6 +208,9 @@ export default function ChatContainer() {
   };
 
   const fetchChats = async () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
 
     let sessionId = localStorage.getItem('sessionId')
     if (!sessionId) {

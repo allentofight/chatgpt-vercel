@@ -15,6 +15,8 @@ import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './store'
 import toast, { Toaster } from 'solid-toast';
 
+import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
+
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 
 export default function (props: {
@@ -270,26 +272,33 @@ export default function (props: {
   }
 
   function fetchUserInfo() {
-    let sessionId = localStorage.getItem('sessionId')
-    fetch(`${apiHost}/api/auth/getUserInfo`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionId}`
-      },
-    }).then((response) => {
-      // Check if the response status is OK (200)
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      // Parse the response as JSON
-      return response.json();
-    }).then((data) => {
-      localStorage.setItem('expireDay', data.expiredDay.toString())
-      localStorage.setItem('inviteCode', data.inviteCode)
-    }).catch((error) => {
-      console.error('Error delete chat:', error);
-    });
+    if (isLocalStorageAvailable()) {
+      let sessionId = localStorage.getItem('sessionId')
+      fetch(`${apiHost}/api/auth/getUserInfo`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${sessionId}`,
+        },
+      })
+        .then((response) => {
+          // Check if the response status is OK (200)
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          // Parse the response as JSON
+          return response.json();
+        })
+        .then((data) => {
+          localStorage.setItem('expireDay', data.expiredDay.toString());
+          localStorage.setItem('inviteCode', data.inviteCode);
+        })
+        .catch((error) => {
+          console.error('Error fetching user info:', error);
+        });
+    } else {
+      console.error('LocalStorage is not available.');
+    }
   }
 
   async function sendMessage(value?: string) {
