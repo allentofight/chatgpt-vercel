@@ -419,6 +419,8 @@ export default function (props: {
         throw new Error('官方请求繁忙，请稍后重试')
       } else if (res.error.message.includes('请清除部分内容后重试')) {
         throw new Error(res.error.message)
+      } else if (res.msg) {
+        throw new Error(`openai 官网繁忙， GPT4 暂时无法体验`)
       } else {
         let img = `${res.error.message}，${imgHint}`
         throw new Error(img)
