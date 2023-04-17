@@ -285,7 +285,7 @@ export default function LoginDialog() {
         {confirmationMessage() ? (
           <div class="bg-white border border-gray-300 rounded-lg p-6 w-full max-w-sm mx-2.5 md:mx-auto md:max-w-md">
             <h2 class="mb-4 text-center text-xl font-bold text-gray-700">{confirmationMessage()}</h2>
-            <p class="text-center text-gray-600">我们发了一封验证邮件到你的邮箱，请在30分钟内点击确认哦</p>
+            <p class="text-center text-gray-600">我们发了一封验证邮件到你的邮箱，请在30分钟内点击确认哦（如果没收到请查看是否在垃圾箱里）</p>
             <button
               class="bg-green-500 text-white py-2 px-4 rounded-md font-bold uppercase w-full mt-4"
               onClick={() => handleConfirmationButtonClick()}
@@ -384,7 +384,7 @@ export default function LoginDialog() {
                 <input
                   id="inviteCode"
                   disabled={isInviteCodeConfirmed}
-                  placeholder="选填"
+                  placeholder="选填,可以不填"
                   value={inviteCode()}
                   onInput={(e: Event) => setInviteCode((e.target as HTMLInputElement).value)}
                   class="w-full px-4 py-2 border border-gray-300 rounded-md"
