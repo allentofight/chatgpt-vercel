@@ -41,7 +41,7 @@ const InviteDialog = (props: {
             <CloseIcon />
           </button>
           <h2 class="text-2xl font-bold mb-4">邀请好友享 VIP 权益</h2>
-          <p class="mb-6">每邀请一位好友，可增加 6 天 VIP 体验期！上不封顶!</p>
+          <p class="mb-6">每邀请一位好友，可增加 7 天 VIP 体验期！上不封顶!</p>
           {!inviteSuccess() && (
             <button
               class="font-bold py-2 px-4 rounded-md w-full bg-indigo-500 text-white"
