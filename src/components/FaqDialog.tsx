@@ -14,10 +14,17 @@ export default function FAQDialog(props: {
       </>
     ))
   }, {
+    question: '网站是怎么收费的',
+    answer: createMemo(() => (
+      <>
+        非常合理，目前市面上多数按字数收费，多数在 5000 字 28 元左右, 而我们网站是包月<span style="color:red;">不限次数</span>！市面上可以说是独此一家了，目前是试运营阶段，包月不限次数很可能会超支，后期可能会涨价，提前续费后期也可以不限字数哦
+      </>
+    ))
+  }, {
     question: '可以一直免费体验 VIP 权限吗',
     answer: '可以，点击左下角的邀请好友享收益，每邀请一人可延长 7 天 VIP 权益!'
   }, {
-    question: '网站是怎么收费的',
+    question: '收费合理吗',
     answer: createMemo(() => (
       <>
         目前网站收费有以下几种形式:<br />
@@ -27,9 +34,6 @@ export default function FAQDialog(props: {
         &nbsp;&nbsp;&nbsp;&nbsp;4.包年450
       </>
     ))
-  }, {
-    question: '收费合理吗',
-    answer: '非常合理，目前市面上多数按字数收费，如 1.4w 字 40 元, 而我们网站是包月不限次数！市面上可以说是独此一家了，目前是试运营阶段，包月不限次数很可能会超支，后期可能会涨价，提前续费后期也可以不限字数哦'
   },
   {
     question: '官方是怎么收费的',
