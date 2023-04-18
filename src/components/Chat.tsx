@@ -398,7 +398,7 @@ export default function (props: {
       method: "POST",
       body: JSON.stringify({
         messages,
-        key: setting().openaiAPIKey || undefined,
+        key: undefined,
         temperature: setting().openaiAPITemperature / 100,
         password: setting().password,
         model: setting().model
