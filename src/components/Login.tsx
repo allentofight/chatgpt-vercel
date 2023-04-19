@@ -378,7 +378,7 @@ export default function LoginDialog() {
               </div>
             </Show>
 
-            <Show when={isSignUp()}>
+            <Show when={isInviteCodeConfirmed}>
               <div>
                 <label for="inviteCode" class="block text-sm font-medium mb-2">邀请码:</label>
                 <input
