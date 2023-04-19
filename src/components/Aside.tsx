@@ -37,6 +37,7 @@ export default function ChatContainer() {
 
   const [hasScrollbar, setHasScrollbar] = createSignal(false);
 
+  const { isLogin } = useAuth()
 
   let divRef: HTMLDivElement;
   let contentRef: HTMLDivElement;
@@ -211,12 +212,16 @@ export default function ChatContainer() {
     updateChatTitle()
   }
 
-  const createChat = () => {
-
-    const { isLogin } = useAuth()
-
+  function showLogin() {
     if (!isLogin()) {
       setSharedStore('message', { type: 'loginRequired' })
+      return true
+    }
+  }
+
+  const createChat = () => {
+
+    if (showLogin()) {
       return
     }
 
@@ -404,34 +409,42 @@ export default function ChatContainer() {
                   </Show>
                 </div>
               </div>
-              <Show when={useAuth().isLogin()}>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
-                  setShowInviteDialog(true)
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="10" cy="7" r="4"></circle>
-                    <circle cx="14" cy="7" r="4"></circle>
-                    <path d="M9 15v4"></path>
-                    <path d="M15 15v4"></path>
-                    <path d="M6 19h6"></path>
-                    <path d="M12 19h6"></path>
-                  </svg>邀请好友享 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
-                  setSharedStore('message', { type: 'showCharge' })
-                  setSharedStore('message', { type: 'none' })
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>我的账号信息</a>
-                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
-                  setShowFaqDialog(true)
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>FAQ</a>
+
+              <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                if (showLogin()) {
+                  return
+                }
+                setShowInviteDialog(true)
+              }}>
+                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="7" r="4"></circle>
+                  <circle cx="14" cy="7" r="4"></circle>
+                  <path d="M9 15v4"></path>
+                  <path d="M15 15v4"></path>
+                  <path d="M6 19h6"></path>
+                  <path d="M12 19h6"></path>
+                </svg>邀请好友享 VIP 权益</a>
+              <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                if (showLogin()) {
+                  return
+                }
+
+                setSharedStore('message', { type: 'showCharge' })
+                setSharedStore('message', { type: 'none' })
+              }}>
+                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>我的账号信息</a>
+              <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                setShowFaqDialog(true)
+              }}>
+                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>FAQ</a>
+              <Show when={isLogin()}>
                 <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
                   localStorage.removeItem('sessionId')
                   window.location.href = '/login'
