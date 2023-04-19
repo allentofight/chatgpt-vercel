@@ -221,6 +221,13 @@ export default function ChatContainer() {
     }
 
     setSelectedChat(defaultChat)
+
+    /**
+    const selectOptionEvent = new CustomEvent('selectOption', {
+      detail: { title: 'GPT-4-8k', description: 'This is the GPT-4-8k option' },
+    });
+    window.dispatchEvent(selectOptionEvent);
+     */
   };
 
   const fetchChats = async () => {
@@ -306,7 +313,7 @@ export default function ChatContainer() {
           }
         `}
       </style>
-      <aside class="dark left-0 top-0 h-full hidden bg-gray-900 md:fixed md:inset-y-0 md:flex md:w-[260px] md:flex-col z-40">
+      <aside class="dark left-0 top-0 h-full hidden bg-gray-900 md:fixed md:inset-y-0 md:flex md:flex-col z-40">
         <div class="flex h-full min-h-0 flex-col ">
           <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
             <nav class="flex h-full flex-1 flex-col space-y-1 p-2">

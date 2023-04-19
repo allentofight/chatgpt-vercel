@@ -8,7 +8,6 @@ import { copyToClipboard } from "~/utils"
 import vercel from "/assets/vercel.svg?raw"
 import openai from "/assets/openai.svg?raw"
 import md from "~/markdown-it"
-import { setSharedStore, sharedStore } from './store'
 
 interface Props {
   message: ChatMessage
