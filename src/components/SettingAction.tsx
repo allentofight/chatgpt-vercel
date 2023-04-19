@@ -24,20 +24,6 @@ export default function SettingAction(props: {
     >
       <Show when={shown()}>
         <div class="<sm:max-h-10em max-h-14em overflow-y-auto">
-
-          <SettingItem icon="i-carbon:api" label="OpenAI Key">
-            <input
-              type="password"
-              value={props.setting().openaiAPIKey}
-              class="max-w-150px ml-1em px-1 text-slate-7 dark:text-slate rounded-sm bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none"
-              onInput={e => {
-                props.setSetting({
-                  ...props.setting(),
-                  openaiAPIKey: (e.target as HTMLInputElement).value
-                })
-              }}
-            />
-          </SettingItem>
           <SettingItem
             icon="i-carbon:machine-learning-model"
             label="OpenAI 模型"
