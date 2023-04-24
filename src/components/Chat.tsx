@@ -300,6 +300,7 @@ export default function (props: {
           localStorage.setItem('sessionId', data.token);
         })
         .catch((error) => {
+          toast.error('登录状态已过期，请退出重新登录~')
           console.error('Error fetching user info:', error);
         });
     } else {
