@@ -3,6 +3,7 @@ import { createSignal, onMount, Show } from 'solid-js';
 import toast, { Toaster } from 'solid-toast';
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 import { useAuth } from "~/utils/useAuth"
+import FansDialog from './FansDialog'
 
 export default function LoginDialog() {
 
@@ -15,6 +16,7 @@ export default function LoginDialog() {
   const [confirmPassword, setConfirmPassword] = createSignal('');
   const [isSignUp, setIsSignUp] = createSignal(false);
   const [isLoading, setIsLoading] = createSignal(false);
+  const [showFansDialog, setShowFansDialog] = createSignal(false);
   const [confirmationMessage, setConfirmationMessage] = createSignal('');
   let isInviteCodeConfirmed = false
 
@@ -51,7 +53,8 @@ export default function LoginDialog() {
           duration: 3000
         });
         localStorage.setItem('sessionId', result.sessionId)
-        setTimeout(() => { window.location.href = '/' }, 3000)
+
+        setShowFansDialog(true)
       }
     } else if (type === 'resetpwd' && token) {
       const response = await fetch(`${apiHost}/api/auth/validateToken?token=${token}`, {
@@ -432,6 +435,9 @@ export default function LoginDialog() {
           </Show>
         </div>)}
         <Toaster position="top-center" />
+        <Show when={showFansDialog()}>
+          <FansDialog onClick={() => window.location.href = '/'} />
+        </Show>
       </div>
     </>
   );
