@@ -297,6 +297,7 @@ export default function (props: {
         .then((data) => {
           localStorage.setItem('expireDay', data.expiredDay.toString());
           localStorage.setItem('inviteCode', data.inviteCode);
+          localStorage.setItem('sessionId', data.token);
         })
         .catch((error) => {
           console.error('Error fetching user info:', error);
