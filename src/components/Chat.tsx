@@ -11,6 +11,8 @@ import { isMobile } from "~/utils"
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
+import ExchangeDialog from './ExchangeDialog'
+
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './store'
 import toast, { Toaster } from 'solid-toast';
@@ -47,6 +49,7 @@ export default function (props: {
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
+  const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const defaultMessage: ChatMessage = {
     role: "assistant",
@@ -320,9 +323,13 @@ export default function (props: {
     }
 
     if (isLogin() && isExpired()) {
-      toast.error('VIP 会员已过期，请及时充值哦');
-      setShowChargeDialog(true)
+      toast.error('VIP 会员已过期，请及时充值或观看广告兑换 VIP 权限哦');
+      setShowExchangeDialog(true)
       return
+    }
+
+    if (isLogin()) {
+      fetchUserInfo()
     }
 
     const inputValue = value ?? inputContent()
@@ -677,6 +684,9 @@ export default function (props: {
       </Show>
       <Show when={showChargeDialog()}>
         <ChargeDialog closeDialog={closeChargeDialog} />
+      </Show>
+      <Show when={showExchangeDialog()}>
+        <ExchangeDialog onClick={() => setShowExchangeDialog(false)} />
       </Show>
       <Toaster position="top-center" />
     </div>
