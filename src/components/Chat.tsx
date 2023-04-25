@@ -119,7 +119,9 @@ export default function (props: {
           if (parsed.length === 1 && parsed[0].special === "default") {
             setMessageList([defaultMessage])
           } else setMessageList(parsed)
-        } else setMessageList([defaultMessage])
+        } else {
+          setMessageList([defaultMessage])
+        }
       }
     } catch {
       console.log("Setting parse error")
@@ -135,7 +137,7 @@ export default function (props: {
       let chat = sharedStore.message?.info as { id: string, title: string, body: string }
       setCurrentChat(chat)
       if (!parseInt(chat.id)) {
-        setMessageList([])
+        setMessageList([defaultMessage])
       } else {
         setMessageList(JSON.parse(chat.body))
       }
