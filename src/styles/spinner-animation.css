@@ -1,0 +1,13 @@
+@keyframes spinner-line-fade-custom {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.spinner-line-fade-custom .spinner-line {
+  animation-name: spinner-line-fade-custom;
+}

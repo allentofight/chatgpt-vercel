@@ -2,8 +2,7 @@
 import Layout from "~/layouts/Layout.astro"
 import Header from "~/components/Header.astro"
 
-import Aside from "~/components/Aside"
-import Chat from "~/components/Chat"
+import MjChat from "~/components/MjChat"
 
 import "~/styles/global.css"
 import "@unocss/reset/tailwind.css"
@@ -15,8 +14,8 @@ import {
   defaultSetting
 } from "~/system"
 import { parsePrompts } from "~/utils/parse"
-const prompts = parsePrompts('gpt')
-const message = import.meta.env.DEFAULT_MESSAGE || defaultMessage
+const prompts = parsePrompts('mj')
+const message = import.meta.env.DEFAULT_MJ_MESSAGE || defaultMessage
 let setting = defaultSetting
 
 if (import.meta.env.DEFAULT_SETTING) {
@@ -42,7 +41,7 @@ const question = Astro.url.searchParams.get("q")
 <Layout title="ChatGPT">
   <main class="before sm:pt-8em py-2em">
     <Header />
-    <Chat
+    <MjChat
       env={{
         setting,
         message,
@@ -52,6 +51,5 @@ const question = Astro.url.searchParams.get("q")
       prompts={prompts}
       client:visible
     />
-    <Aside client:visible />
   </main>
 </Layout>

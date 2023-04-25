@@ -20,6 +20,7 @@ interface Props {
 }
 
 export default (props: Props) => {
+  console.log('props= ', props)
   useCopyCode()
   const roleClass = {
     error: "bg-gradient-to-r from-red-400 to-red-700",

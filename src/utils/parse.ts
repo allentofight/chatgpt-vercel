@@ -1,8 +1,19 @@
 import * as md from "../../prompts.md"
 
-export function parsePrompts() {
-  return md
-    .rawContent()
+import * as mjmd from "../../mjprompts.md"
+
+export function parsePrompts(type: string) {
+
+  let content = ''
+  if (type === 'gpt') {
+    content = md
+      .rawContent()
+  } else {
+    content = mjmd
+      .rawContent()
+  }
+
+  return content
     .split(/^## (.+)$/m)
     .filter(k => k.trim())
     .reduce(
