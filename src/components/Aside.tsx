@@ -10,6 +10,7 @@ import InviteDialog from './InviteDialog'
 import FaqDialog from './FaqDialog'
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
+import ExchangeDialog from './ExchangeDialog'
 
 interface Chat {
   id: string;
@@ -28,6 +29,8 @@ export default function ChatContainer() {
   const [selectedChat, setSelectedChat] = createSignal<Chat>(initialItem);
 
   const [hasMore, setHasMore] = createSignal(false);
+
+  const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
 
   const [showInviteDialog, setShowInviteDialog] = createSignal(false);
 
@@ -414,6 +417,16 @@ export default function ChatContainer() {
                 if (showLogin()) {
                   return
                 }
+                setShowExchangeDialog(true)
+              }}>
+                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 30" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>小程序中获取 VIP 权益</a>
+              <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                if (showLogin()) {
+                  return
+                }
                 setShowInviteDialog(true)
               }}>
                 <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -463,6 +476,12 @@ export default function ChatContainer() {
         </Show>
         <Show when={showFaqDialog()}>
           <FaqDialog closeDialog={closeFaqDialog} />
+        </Show>
+        <Show when={showExchangeDialog()}>
+          <ExchangeDialog
+            successClick={() => setShowExchangeDialog(false)}
+            showTitle={false}
+            onClick={() => setShowExchangeDialog(false)} />
         </Show>
       </aside >
     </>

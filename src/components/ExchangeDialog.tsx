@@ -7,7 +7,9 @@ const apiHost = import.meta.env.PUBLIC_API_HOST;
 import toast, { Toaster } from 'solid-toast';
 
 export default function ExchangeDialog(props: {
+  showTitle: boolean,
   onClick: () => void
+  successClick: () => void
 }) {
 
   const [exchangeCode, setExchangeCode] = createSignal('');
@@ -48,7 +50,6 @@ export default function ExchangeDialog(props: {
       toast.success('兑换成功，恭喜获得 VIP 使用期一天，每天领取后可24小时内享有 VIP 权限哦', {
         duration: 3000
       })
-      console.log('res.expiredDay = ', res.expiredDay)
       localStorage.setItem('expireDay', res.expiredDay.toString())
       setShowSuccess(true)
     }
@@ -62,8 +63,10 @@ export default function ExchangeDialog(props: {
           <CloseIcon />
         </button>
         <Show when={!showSuccess()}>
-          <h2 class="text-2xl text-center mb-3 text-red-500">VIP 已过期!</h2>
-          <div class="text-xl text-center mb-4">每天领取兑换码可获取 24 小时的 VIP 资格</div>
+          <Show when={props.showTitle}>
+            <h2 class="text-2xl text-center mb-3 text-red-500">VIP 已过期!</h2>
+          </Show>
+          <div class="text-xl text-center mb-4">每天领取兑换码可获取 24 小时的 VIP 资格哦</div>
           <div class="max-h-96 overflow-y-auto border border-gray-300 rounded p-2 shadow-md">
             <div>
               <h3 class="text-lg">步骤一: 使用微信扫码打开小程序</h3>
@@ -100,9 +103,7 @@ export default function ExchangeDialog(props: {
           <div class="text-xl text-center mb-4">每天领取兑换码可获取 24 小时的 VIP 资格哦</div>
 
           <div class="mt-4 flex justify-center">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded" onClick={() => {
-              window.location.href = '/'
-            }}>
+            <button class="bg-blue-500 text-white px-4 py-2 rounded" onClick={props.successClick}>
               我知道了
             </button>
           </div>

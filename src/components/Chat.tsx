@@ -686,7 +686,12 @@ export default function (props: {
         <ChargeDialog closeDialog={closeChargeDialog} />
       </Show>
       <Show when={showExchangeDialog()}>
-        <ExchangeDialog onClick={() => setShowExchangeDialog(false)} />
+        <ExchangeDialog
+          successClick={() => {
+            window.location.href = '/'
+          }}
+          showTitle={true}
+          onClick={() => setShowExchangeDialog(false)} />
       </Show>
       <Toaster position="top-center" />
     </div>
