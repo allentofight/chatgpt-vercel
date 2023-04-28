@@ -130,7 +130,6 @@ export default function (props: {
     if (sharedStore.message?.type === 'loginRequired') {
       setShowLoginDirectDialog(true)
       setLoginGuideTitle('登录后可拥有保存会话等功能')
-      console.log(`Message: ${JSON.stringify(sharedStore.message)}`);
     } else if (sharedStore.message?.type === 'selectedChat') {
       let chat = sharedStore.message?.info as { id: string, title: string, body: string }
       setCurrentChat(chat)
