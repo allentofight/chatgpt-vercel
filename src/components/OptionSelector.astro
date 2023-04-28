@@ -2,8 +2,7 @@
 ---
 const options = [
   { title: 'GPT-3.5-turbo(4k)', description: 'GPT 3.5  模型，仅对充值用户提供。此模型支持 4k token（大约 2000 字）的上下文会话' },
-  { title: 'GPT-4(8k)', description: '当前最先进的模型，仅对充值用户提供。GPT-4 擅长需要高级推理、复杂指令理解和更多创造力的任务。此模型支持 8k token（大约 4000 字）的上下文会话' },
-  { title: 'GPT-4(32k)', description: '当前最先进的模型，仅对充值用户提供。GPT-4 擅长需要高级推理、复杂指令理解和更多创造力的任务。此模型支持 32k token（大约 1.6w 字）的上下文会话' },
+  { title: 'new bing(GPT4)', description: '底层基于当今最先进的 GPT-4 模型，new bing 是一个基于人工智能（AI）的搜索引擎，它可以让你用自然语言提出问题，获取完整的答案，进行聊天和创作。新必应不仅提供了可靠、及时的搜索结果，还会引用相关的来源。你可以用简单或复杂的方式提问，跟进，或在聊天中进行优化。新必应会理解你的意图，并给你惊喜的回复。' },
 ];
 
 let selectedOption = options[0].title;
@@ -79,11 +78,6 @@ let selectedOption = options[0].title;
 
 <script is:inline>
 
-  window.addEventListener('selectOption', (event) => {
-    const selectedOption = event.detail;
-    console.log('selectedOption = ', selectedOption)
-    optionsButton.disabled = true
-  });
 
   const optionsButton = document.getElementById('options-button');
   const optionsList = document.getElementById('options-list');
@@ -96,7 +90,20 @@ let selectedOption = options[0].title;
   selectedOptionText.textContent = optionsList.getAttribute('data-selected');
 
 
-  function handleClick(option, selectedItem) {
+  window.addEventListener('selectOption', (event) => {
+    const index = event.detail.index-1;
+    const optionObject = optionsData[index];
+    const selectedItem = optionsList.querySelector(`#option-${index}`);
+    handleClick(optionObject, selectedItem, index);
+    if (event.detail.disabled) {
+      optionsButton.setAttribute('disabled', event.detail.disabled);
+    } else {
+      optionsButton.removeAttribute('disabled');
+    }
+  });
+
+
+  function handleClick(option, selectedItem, index) {
     const prevSelectedOption = optionsList.getAttribute('data-selected');
 
     if (prevSelectedOption) {
@@ -114,6 +121,13 @@ let selectedOption = options[0].title;
 
     selectedItem.classList.add('bg-gray-100');
     selectedItem.insertAdjacentHTML('beforeend', '<span class="inline-block ml-2 text-green-500">&#x2714;</span>');
+
+    const event = new CustomEvent('optionSelected', {
+      detail: {
+        index: index+1
+      }
+    });
+    window.dispatchEvent(event);
   }
 
   optionsButton.addEventListener('click', (event) => {
@@ -121,12 +135,12 @@ let selectedOption = options[0].title;
     optionsList.style.display = optionsList.style.display === 'none' ? 'block' : 'none';
   });
 
-  optionItems.forEach((item) => {
+  optionItems.forEach((item, index) => {
     const optionTitle = item.getAttribute('data-title');
     const optionObject = optionsData.find(option => option.title === optionTitle);
     item.addEventListener('click', (event) => {
       event.stopPropagation();
-      handleClick(optionObject, item);
+      handleClick(optionObject, item, index);
     });
   });
 

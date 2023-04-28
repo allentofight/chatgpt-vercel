@@ -6,7 +6,6 @@ import type { MjChatMessage, PromptItem } from "~/types"
 import MjPromptList from "./MjPromptList"
 import { Fzf } from "fzf"
 import throttle from "just-throttle"
-import { isMobile } from "~/utils"
 import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
@@ -18,7 +17,7 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 
-import { sendMjPrompt } from "~/utils/api"
+import { sendMjPrompt, updateMjMessage, fetchMjMessageList } from "~/utils/api"
 
 export default function (props: {
   prompts: PromptItem[]
@@ -53,8 +52,8 @@ export default function (props: {
   const defaultMessage: MjChatMessage = {
     role: 'hint',
     content: _message,
-    type: '',
     buttonMessageId: '',
+    type: 1,
     imageUrl: '',
     messageId: ''
   }
@@ -76,10 +75,10 @@ export default function (props: {
   )
 
   onMount(() => {
-
     const { isLogin } = useAuth()
     if (isLogin()) {
       fetchUserInfo()
+      fetchMessageList()
     }
     makeEventListener(
       inputRef,
@@ -146,14 +145,30 @@ export default function (props: {
   })
 
   function delChat() {
-    const fn = throttle(() => {
-      uploadChatList()
-    }, 1000);
-    fn()
   }
 
   function closeChargeDialog() {
     setShowChargeDialog(false)
+  }
+
+  function fetchMessageList() {
+    fetchMjMessageList().then((data) => {
+      let result = data.list.map(item => {
+        return {
+          role: item.type == 1 ? 'prompt' : 'variation',
+          prompt: item.prompt,
+          content: item.prompt + (item.ref ?? ''),
+          buttonMessageId: item.buttonMessageId,
+          messageId: item.messageId,
+          clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
+          type: item.type,
+          imageUrl: `https://api-node.makechat.help/api/image/fetch?img=${item.imageUrl}`
+        } as MjChatMessage
+      })
+      setMessageList(result)
+    }).catch(error => {
+      console.error('fetch error:', error)
+    })
   }
 
   createEffect((prev: number | undefined) => {
@@ -174,7 +189,7 @@ export default function (props: {
         setMessageList([defaultMessage])
       } else if (
         messageList().length > 1 &&
-        messageList()[0].special === "default"
+        messageList()[0].role === "hint"
       ) {
         setMessageList(messageList().slice(1))
       } else if (setting().archiveSession) {
@@ -208,74 +223,6 @@ export default function (props: {
     }
     return true
   })
-
-  function archiveCurrentMessage() {
-
-    if (currentAssistantMessage()) {
-      setMessageList([
-        ...messageList(),
-        {
-          role: "hint",
-          content: currentAssistantMessage().trim(),
-          id: Date.now()
-        }
-      ])
-
-      setCurrentAssistantMessage("")
-      setLoading(false)
-      setController()
-      !isMobile() && inputRef.focus()
-      //uploadChatList()
-    }
-  }
-
-  function uploadChatList() {
-
-    if (!isLocalStorageAvailable()) {
-      return
-    }
-
-    let sessionId = localStorage.getItem('sessionId')
-    if (!sessionId) {
-      return
-    }
-
-    let result = messageList().filter(
-      k => k.role !== "error"
-    )
-
-    let isCreatingChat = currentChat().id.length < 3
-    let postChat = {
-      id: currentChat().id,
-      title: isCreatingChat ? messageList()[0].content.slice(0, 10) : currentChat().title,
-      body: JSON.stringify(result)
-    }
-    fetch(`${apiHost}/api/chat/createOrUpdate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionId}`
-      },
-      body: JSON.stringify(postChat),
-    }).then((response) => {
-      // Check if the response status is OK (200)
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      // Parse the response as JSON
-      return response.json();
-    })
-      .then((data) => {
-        // Handle the data
-        if (isCreatingChat) {
-          setCurrentChat({ ...postChat, id: data.id })
-          setSharedStore('message', { type: 'addChat', info: currentChat() })
-        }
-      })
-      .catch((error) => {
-        console.error('Error fetching chat:', error);
-      });
-  }
 
   function fetchUserInfo() {
     if (isLocalStorageAvailable()) {
@@ -320,6 +267,59 @@ export default function (props: {
     return ''
   }
 
+  async function sendMJButtonCommand(command: string, message: MjChatMessage) {
+    try {
+      let ref = ''
+      if (command.includes('U')) {
+        const match = command.match(/\d+/);
+        ref = match ? `- Image #${match[0]}` : '';
+      }
+
+      message.prompt += ' --q .5'
+
+      setMessageList((prev) => [
+        ...prev,
+        {
+          role: command.startsWith('U') ? "variation" : "prompt",
+          content: message.prompt + " " + ref,
+          prompt: message.prompt,
+          buttonMessageId: '',
+          type: command.startsWith('U') ? 2 : 1,
+          imageUrl: '',
+          messageId: '',
+          ref,
+        } as MjChatMessage,
+      ]);
+
+      let res = await sendMjPrompt({
+        prompt: message.prompt,
+        button: command,
+        ref,
+        buttonMessageId: message.buttonMessageId
+      })
+
+      // Assuming res contains the messageId for the last message
+      if (res.messageId) {
+        // Update the last item in messageList with the new messageId
+        setMessageList((prevMessageList) => {
+          const updatedMessageList = [...prevMessageList];
+          updatedMessageList[updatedMessageList.length - 1] = {
+            ...updatedMessageList[updatedMessageList.length - 1],
+            messageId: res.messageId,
+          };
+          return updatedMessageList;
+        });
+
+        updateMjMessage({
+          messageId: message.messageId,
+          clickedEvent: JSON.stringify([command]),
+        })
+      }
+    } catch (error: any) {
+      setLoading(false)
+    }
+  }
+
   async function sendMessage(value?: string) {
     const { showLogin, isExpired, isLogin } = useAuth()
 
@@ -357,27 +357,25 @@ export default function (props: {
     if (window?.umami) umami.trackEvent("chat_generate")
     setInputContent("")
 
-    if (
-      !value ||
-      value !==
-      messageList()
-        .filter(k => k.role === "user")
-        .at(-1)?.content
-    ) {
-      setMessageList([
-        ...messageList(),
-        {
-          role: "user",
-          content: prompt,
-          id: Date.now()
-        }
-      ])
+    if (!prompt.includes('--v')) {
+      prompt += ' --v 5 --q .5'
     }
 
-    try {
-      let res = await sendMjPrompt(prompt)
-      console.log(res.messageId)
+    setMessageList((prev) => [
+      ...prev,
+      {
+        role: "prompt",
+        content: prompt,
+        prompt,
+        type: 1,
+        buttonMessageId: '',
+        imageUrl: '',
+        messageId: '',
+      },
+    ]);
 
+    try {
+      let res = await sendMjPrompt({ prompt })
       // Assuming res contains the messageId for the last message
       if (res.messageId) {
         // Update the last item in messageList with the new messageId
@@ -394,7 +392,6 @@ export default function (props: {
     } catch (error: any) {
       setLoading(false)
     }
-    //archiveCurrentMessage()
   }
 
   function selectPrompt(prompt: string) {
@@ -463,10 +460,9 @@ export default function (props: {
               <MjMessageItem
                 delChat={delChat}
                 message={message}
-                hiddenAction={loading() || message.special === "default"}
                 index={index()}
                 setInputContent={setInputContent}
-                sendMessage={sendMessage}
+                mjBtnClick={sendMJButtonCommand}
                 setMessageList={setMessageList}
               />
             )}

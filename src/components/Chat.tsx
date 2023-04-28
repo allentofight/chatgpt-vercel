@@ -2,7 +2,7 @@ import { createEffect, createSignal, For, onMount, Show } from "solid-js"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import MessageItem from "./MessageItem"
 import ChargeDialog from "./ChargeDialog"
-import type { ChatMessage, PromptItem } from "~/types"
+import { ChatMessage, PromptItem, Role, Model } from "~/types"
 import SettingAction from "./SettingAction"
 import PromptList from "./PromptList"
 import { Fzf } from "fzf"
@@ -40,7 +40,7 @@ export default function (props: {
   } = props.env
   const [messageList, setMessageList] = createSignal<ChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
-  const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '' })
+  const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: Model.GPT_3 })
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
@@ -50,6 +50,7 @@ export default function (props: {
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
+
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const defaultMessage: ChatMessage = {
     role: "assistant",
@@ -61,6 +62,7 @@ export default function (props: {
   })
   const [height, setHeight] = createSignal("48px")
   const [compositionend, setCompositionend] = createSignal(true)
+
 
   const scrollToBottom = throttle(
     () => {
@@ -78,6 +80,12 @@ export default function (props: {
     if (isLogin()) {
       fetchUserInfo()
     }
+
+    window.addEventListener('optionSelected', function (e: CustomEvent) {
+      currentChat().model = e.detail.index
+    } as EventListener);
+
+
     makeEventListener(
       inputRef,
       "compositionend",
@@ -137,8 +145,13 @@ export default function (props: {
       setLoginGuideTitle('登录后可拥有保存会话功能')
       console.log(`Message: ${JSON.stringify(sharedStore.message)}`);
     } else if (sharedStore.message?.type === 'selectedChat') {
-      let chat = sharedStore.message?.info as { id: string, title: string, body: string }
-      setCurrentChat(chat)
+      console.log('sharedStore = ', sharedStore.message)
+      let chat = sharedStore.message?.info as { id: string, title: string, body: string, model?: Model }
+      let chatWithModel: { id: string, title: string, body: string, model: Model } = {
+        ...chat,
+        model: chat.model ?? Model.GPT_3
+      };
+      setCurrentChat(chatWithModel)
       if (!parseInt(chat.id)) {
         setMessageList([defaultMessage])
       } else {
@@ -147,6 +160,18 @@ export default function (props: {
     } else if (sharedStore.message?.type === 'showCharge') {
       setShowChargeDialog(true)
     }
+  })
+
+  createEffect(() => {
+    const event = new CustomEvent('selectOption', {
+      detail: {
+        index: currentChat().model ?? Model.GPT_3,
+        disabled: parseInt(currentChat().id) > 0
+      }
+    });
+    console.log('model = ', currentChat().model)
+    window.dispatchEvent(event);
+
   })
 
   function delChat() {
@@ -213,7 +238,23 @@ export default function (props: {
     return true
   })
 
-  function archiveCurrentMessage() {
+  interface IResponse {
+    conversationSignature: string;
+    conversationId: string;
+    clientId: string;
+    invocationId: string;
+  }
+
+  function archiveCurrentMessage(response: IResponse | null = null) {
+    let extractInfo = {}
+    if (response) {
+      extractInfo = {
+        conversationSignature: response.conversationSignature,
+        conversationId: response.conversationId,
+        clientId: response.clientId,
+        invocationId: response.invocationId,
+      }
+    }
 
     if (currentAssistantMessage()) {
       setMessageList([
@@ -221,7 +262,8 @@ export default function (props: {
         {
           role: "assistant",
           content: currentAssistantMessage().trim(),
-          id: Date.now()
+          id: Date.now(),
+          ...extractInfo
         }
       ])
 
@@ -231,6 +273,33 @@ export default function (props: {
       !isMobile() && inputRef.focus()
       uploadChatList()
     }
+  }
+
+  function prepareForUpload(chatMessages: ChatMessage[]): Partial<ChatMessage>[] {
+    // Find the most recent message with a conversationId, from the end
+    let lastConversationIdIndex = -1;
+    for (let i = chatMessages.length - 1; i >= 0; i--) {
+      if (chatMessages[i].hasOwnProperty('conversationId')) {
+        lastConversationIdIndex = i;
+        break;
+      }
+    }
+
+    // Map the messages to a new format
+    return chatMessages.map((msg, index) => {
+      const newMsg: Partial<ChatMessage> = {
+        role: msg.role,
+        content: msg.content,
+      };
+      // If this message is the one with the most recent conversationId, keep that property
+      if (index === lastConversationIdIndex) {
+        newMsg.conversationId = msg.conversationId;
+        newMsg.conversationSignature = msg.conversationSignature;
+        newMsg.clientId = msg.clientId;
+        newMsg.invocationId = msg.invocationId
+      }
+      return newMsg;
+    });
   }
 
   function uploadChatList() {
@@ -248,11 +317,17 @@ export default function (props: {
       k => k.role !== "error"
     )
 
+
+    if (currentChat().model === Model.GPT_New_Bing) {
+      result = prepareForUpload(result) as ChatMessage[];
+    }
+
     let isCreatingChat = currentChat().id.length < 3
     let postChat = {
       id: currentChat().id,
       title: isCreatingChat ? messageList()[0].content.slice(0, 10) : currentChat().title,
-      body: JSON.stringify(result)
+      body: JSON.stringify(result),
+      model: currentChat().model
     }
     fetch(`${apiHost}/api/chat/createOrUpdate`, {
       method: 'POST',
@@ -273,6 +348,7 @@ export default function (props: {
         // Handle the data
         if (isCreatingChat) {
           setCurrentChat({ ...postChat, id: data.id })
+          console.log('currentChat = ', currentChat())
           setSharedStore('message', { type: 'addChat', info: currentChat() })
         }
       })
@@ -364,8 +440,9 @@ export default function (props: {
         }
       ])
     }
+    let result;
     try {
-      await fetchGPT(getPassedMessageList(inputValue))
+      result = await fetchGPT(getPassedMessageList(inputValue), inputValue)
     } catch (error: any) {
       setLoading(false)
       setController()
@@ -379,7 +456,7 @@ export default function (props: {
           }
         ])
     }
-    archiveCurrentMessage()
+    archiveCurrentMessage(result)
   }
 
   function getPassedMessageList(inputValue: string) {
@@ -400,22 +477,59 @@ export default function (props: {
   }
 
   type Message = { role: string; content: string };
-  async function fetchGPT(messages: Message[]) {
+  async function fetchGPT(messages: Message[], inputVal: string) {
     setLoading(true)
     const controller = new AbortController()
     setController(controller)
 
-    const response = await fetch("/api", {
-      method: "POST",
-      body: JSON.stringify({
-        messages,
-        key: undefined,
-        temperature: setting().openaiAPITemperature / 100,
-        password: setting().password,
-        model: setting().model
-      }),
-      signal: controller.signal
-    })
+    let isModelGPT3 = currentChat().model === Model.GPT_3
+    let response;
+    if (isModelGPT3) {
+      response = await fetch("/api", {
+        method: "POST",
+        body: JSON.stringify({
+          messages,
+          key: undefined,
+          temperature: setting().openaiAPITemperature / 100,
+          password: setting().password,
+          model: setting().model
+        }),
+        signal: controller.signal
+      })
+    } else {
+      let index = -1;
+      const roleToFind: Role = 'assistant';
+      // 寻找上一条 asssistant 消息
+      for (let i = messageList().length - 1; i >= 0; i--) {
+        if (messageList()[i].role === roleToFind) {
+          index = i;
+          break;
+        }
+      }
+      let initial
+
+      if (index > -1) {
+        let messageItem = messageList()[index]
+        initial = {
+          conversationSignature: messageItem.conversationSignature,
+          conversationId: messageItem.conversationId,
+          clientId: messageItem.clientId,
+          invocationId: messageItem.invocationId,
+          message: inputVal,
+        }
+      } else {
+        initial = {
+          message: inputVal,
+        }
+      }
+
+      // 如果是 NewBing
+      response = await fetch("/api/bing", {
+        method: "POST",
+        body: JSON.stringify(initial),
+        signal: controller.signal
+      })
+    }
 
     if (!response.ok) {
       const res = await response.json()
@@ -450,12 +564,26 @@ export default function (props: {
     while (!done) {
       const { value, done: readerDone } = await reader.read()
       if (value) {
-        const char = decoder.decode(value)
+        let char = decoder.decode(value)
         if (char === "\n" && currentAssistantMessage().endsWith("\n")) {
           continue
         }
         if (char) {
-          setCurrentAssistantMessage(currentAssistantMessage() + char)
+          if (!isModelGPT3) {
+            const regex = /\[\^[0-9]+\^\]/g; // 创建一个正则表达式，用于匹配 [^数字^] 形式的字符串
+            if (char.startsWith("{\"conversationId")) {
+              let result = JSON.parse(char)
+              let response = result.response.replace(regex, '');
+              setCurrentAssistantMessage(response)
+              return result
+            } else {
+              char = char.replace(regex, '')
+              console.log('char = ', char)
+              setCurrentAssistantMessage(currentAssistantMessage() + char)
+            }
+          } else {
+            setCurrentAssistantMessage(currentAssistantMessage() + char)
+          }
         }
       }
       done = readerDone

@@ -175,6 +175,8 @@ export const post: APIRoute = async context => {
             try {
               const json = JSON.parse(data)
               const text = json.choices[0].delta?.content
+              console.log('json = ', text)
+              console.log('A is true, text:', JSON.stringify(text)); // Debug
               const queue = encoder.encode(text)
               controller.enqueue(queue)
             } catch (e) {

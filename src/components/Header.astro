@@ -3,6 +3,7 @@ import Logo from "./Logo.astro"
 import ThemeToggle from "./ThemeToggle.astro"
 import OptionSelector from "./OptionSelector.astro"
 export const prerender = true
+const { title } = Astro.props as Props
 ---
 
 <header class="sticky top--100px z-10 px-2em">
@@ -16,10 +17,10 @@ export const prerender = true
     >
       <span
         class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1"
-        >ChatGPT</span
+        >{title}</span
       >
     </div>
-    <div class="flex-none invisible">
+    <div class="flex-none">
       <OptionSelector />
     </div>
     <ThemeToggle />

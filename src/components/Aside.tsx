@@ -114,6 +114,7 @@ export default function ChatContainer() {
 
   createEffect(() => {
     if (selectedChat()) {
+      console.log('send selectedChat')
       setSharedStore('message', { type: 'selectedChat', info: selectedChat() })
     }
   })

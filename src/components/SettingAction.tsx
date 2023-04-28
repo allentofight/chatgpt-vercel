@@ -24,26 +24,6 @@ export default function SettingAction(props: {
     >
       <Show when={shown()}>
         <div class="<sm:max-h-10em max-h-14em overflow-y-auto">
-          <SettingItem
-            icon="i-carbon:machine-learning-model"
-            label="OpenAI 模型"
-          >
-            <select
-              name="model"
-              class="max-w-150px w-full bg-slate bg-op-15 rounded-sm appearance-none accent-slate text-center  focus:bg-op-20 focus:ring-0 focus:outline-none"
-              value={props.setting().model}
-              onChange={e => {
-                props.setSetting({
-                  ...props.setting(),
-                  model: (e.target as HTMLSelectElement).value as Model
-                })
-              }}
-            >
-              <option value="gpt-3.5-turbo">gpt-3.5-turbo(4k)</option>
-              <option value="gpt-4">gpt-4(8k)</option>
-              <option value="gpt-4-32k">gpt-4(32k)</option>
-            </select>
-          </SettingItem>
           <SettingItem icon="i-carbon:user-online" label="系统角色指令">
             <input
               type="text"
