@@ -344,7 +344,6 @@ export default function (props: {
         // Handle the data
         if (isCreatingChat) {
           setCurrentChat({ ...postChat, id: data.id })
-          console.log('currentChat = ', currentChat())
           setSharedStore('message', { type: 'addChat', info: currentChat() })
         }
       })

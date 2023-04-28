@@ -238,13 +238,6 @@ export default function ChatContainer() {
     }
 
     setSelectedChat(defaultChat)
-
-    /**
-    const selectOptionEvent = new CustomEvent('selectOption', {
-      detail: { title: 'GPT-4-8k', description: 'This is the GPT-4-8k option' },
-    });
-    window.dispatchEvent(selectOptionEvent);
-     */
   };
 
   const fetchChats = async () => {
