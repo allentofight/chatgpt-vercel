@@ -362,24 +362,22 @@ export default function (props: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${sessionId}`,
         },
-      })
-        .then((response) => {
-          // Check if the response status is OK (200)
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          // Parse the response as JSON
-          return response.json();
-        })
-        .then((data) => {
-          localStorage.setItem('expireDay', data.expiredDay.toString());
-          localStorage.setItem('inviteCode', data.inviteCode);
-          localStorage.setItem('sessionId', data.token);
-        })
-        .catch((error) => {
-          toast.error('登录状态已过期，请退出重新登录~')
-          console.error('Error fetching user info:', error);
-        });
+      }).then(async (response) => {
+        // Check if the response status is OK (200)
+        if (!response.ok) {
+          const data = await response.json(); // parse response to JSON
+          throw new Error(data.message);
+        }
+        // Parse the response as JSON
+        return response.json();
+      }).then((data) => {
+        localStorage.setItem('expireDay', data.expiredDay.toString());
+        localStorage.setItem('inviteCode', data.inviteCode);
+        localStorage.setItem('sessionId', data.token);
+      }).catch((error) => {
+        toast.error(error.message)
+        console.error('Error fetching user info:', error);
+      });
     } else {
       console.error('LocalStorage is not available.');
     }
