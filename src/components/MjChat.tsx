@@ -161,7 +161,7 @@ export default function (props: {
           messageId: item.messageId,
           clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
           type: item.type,
-          imageUrl: `https://api-node.makechat.help/api/image/fetch?img=${item.imageUrl}`
+          imageUrl: `${apiHost}/api/image/fetch?img=${item.imageUrl}`
         } as MjChatMessage
       })
       setMessageList(result)
