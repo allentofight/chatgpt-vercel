@@ -121,8 +121,7 @@ export default function ChatContainer() {
 
   createEffect(() => {
     if (selectedChat()) {
-      console.log('send selectedChat')
-      setSharedStore('message', { type: 'selectedChat', info: selectedChat() })
+      setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
     }
   })
 
@@ -139,6 +138,12 @@ export default function ChatContainer() {
       setChats(originChats)
       setSharedStore('message', { type: 'none' })
       setSelectedChat(chats()[0])
+    } else if (sharedStore.message?.type === 'updateChatBody') {
+      let chat = sharedStore.message?.info as Chat
+      let filteredChats = chats().filter(item => {
+        return item.id === selectedChat().id
+      })
+      filteredChats[0].body = chat.body
     }
   });
 

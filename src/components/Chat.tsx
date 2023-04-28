@@ -342,9 +342,12 @@ export default function (props: {
     })
       .then((data) => {
         // Handle the data
+
         if (isCreatingChat) {
           setCurrentChat({ ...postChat, id: data.id })
           setSharedStore('message', { type: 'addChat', info: currentChat() })
+        } else {
+          setSharedStore('message', { type: 'updateChatBody', info: { body: postChat.body } })
         }
       })
       .catch((error) => {

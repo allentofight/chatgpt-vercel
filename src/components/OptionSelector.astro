@@ -1,14 +1,15 @@
 <!-- GPTOptions.astro -->
 ---
 const options = [
-  { title: 'GPT-3.5-turbo(4k)', description: 'GPT 3.5  模型，仅对充值用户提供。此模型支持 4k token（大约 2000 字）的上下文会话' },
-  { title: 'new bing(GPT4)', description: '底层基于当今最先进的 GPT-4 模型，new bing 是一个基于人工智能（AI）的搜索引擎，它可以让你用自然语言提出问题，获取完整的答案，进行聊天和创作。新必应不仅提供了可靠、及时的搜索结果，还会引用相关的来源。你可以用简单或复杂的方式提问，跟进，或在聊天中进行优化。新必应会理解你的意图，并给你惊喜的回复。' },
+  { title: 'GPT-3.5', description: 'GPT 3.5  模型，仅对充值用户提供。此模型支持 4k token（大约 2000 字）的上下文会话' },
+  { title: 'new bing', description: '底层基于当今最先进的 GPT-4 模型，new bing 是一个基于人工智能（AI）的搜索引擎，它可以让你用自然语言提出问题，获取完整的答案，进行聊天和创作。新必应不仅提供了可靠、及时的搜索结果，还会引用相关的来源。你可以用简单或复杂的方式提问，跟进，或在聊天中进行优化。新必应会理解你的意图，并给你惊喜的回复。' },
 ];
 
 let selectedOption = options[0].title;
 ---
 
 <div class="container">
+  <span id="status-label" style="display: none;color:#334155;">GPT-3.5</span>
   <button id="options-button" class="border border-gray-300 px-3 py-1 rounded text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
     <span id="selected-option-text">{selectedOption}</span>
     <span class="arrow-down">&#9662;</span>
@@ -89,16 +90,22 @@ let selectedOption = options[0].title;
   const selectedOptionText = document.getElementById('selected-option-text');
   selectedOptionText.textContent = optionsList.getAttribute('data-selected');
 
+  const statusLabel = document.getElementById('status-label');
 
   window.addEventListener('selectOption', (event) => {
     const index = event.detail.index-1;
     const optionObject = optionsData[index];
     const selectedItem = optionsList.querySelector(`#option-${index}`);
     handleClick(optionObject, selectedItem, index);
+
     if (event.detail.disabled) {
       optionsButton.setAttribute('disabled', event.detail.disabled);
+      statusLabel.style.display = 'inline'; // Or 'block', depending on your layout
+      optionsButton.style.display = 'none';
     } else {
       optionsButton.removeAttribute('disabled');
+      optionsButton.style.display = 'inline'; // Or 'block', depending on your layout
+      statusLabel.style.display = 'none';
     }
   });
 
@@ -121,6 +128,7 @@ let selectedOption = options[0].title;
 
     selectedItem.classList.add('bg-gray-100');
     selectedItem.insertAdjacentHTML('beforeend', '<span class="inline-block ml-2 text-green-500">&#x2714;</span>');
+    statusLabel.textContent = 'Model: ' + option.title;
 
     const event = new CustomEvent('optionSelected', {
       detail: {
