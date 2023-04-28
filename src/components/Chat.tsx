@@ -143,9 +143,7 @@ export default function (props: {
     if (sharedStore.message?.type === 'loginRequired') {
       setShowLoginDirectDialog(true)
       setLoginGuideTitle('登录后可拥有保存会话功能')
-      console.log(`Message: ${JSON.stringify(sharedStore.message)}`);
     } else if (sharedStore.message?.type === 'selectedChat') {
-      console.log('sharedStore = ', sharedStore.message)
       let chat = sharedStore.message?.info as { id: string, title: string, body: string, model?: Model }
       let chatWithModel: { id: string, title: string, body: string, model: Model } = {
         ...chat,
@@ -169,9 +167,7 @@ export default function (props: {
         disabled: parseInt(currentChat().id) > 0
       }
     });
-    console.log('model = ', currentChat().model)
     window.dispatchEvent(event);
-
   })
 
   function delChat() {
@@ -578,7 +574,6 @@ export default function (props: {
               return result
             } else {
               char = char.replace(regex, '')
-              console.log('char = ', char)
               setCurrentAssistantMessage(currentAssistantMessage() + char)
             }
           } else {

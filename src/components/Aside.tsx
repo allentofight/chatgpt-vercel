@@ -11,18 +11,25 @@ import FaqDialog from './FaqDialog'
 const apiHost = import.meta.env.PUBLIC_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import ExchangeDialog from './ExchangeDialog'
+import { Model } from "~/types"
 
 interface Chat {
   id: string;
   title: string;
   body?: string;
   gmtModified: Date;
+  model?: Model;
 }
 
 export default function ChatContainer() {
   const [chats, setChats] = createSignal<Chat[]>([]);
 
-  const defaultChat = { id: '0', title: "Empty chat", gmtModified: new Date() }
+  const defaultChat = {
+    id: '0',
+    title: "Empty chat",
+    gmtModified: new Date(),
+    model: Model.GPT_3
+  }
 
   const initialItem: Chat = chats().length > 0 ? chats()[0] : defaultChat
 
@@ -127,6 +134,7 @@ export default function ChatContainer() {
         id: chat.id,
         title: chat.title,
         body: chat.body,
+        model: chat.model,
       } as Chat);
       setChats(originChats)
       setSharedStore('message', { type: 'none' })
