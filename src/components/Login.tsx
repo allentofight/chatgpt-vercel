@@ -1,7 +1,7 @@
 // src/components/LoginDialog.tsx
 import { createSignal, onMount, Show } from 'solid-js';
 import toast, { Toaster } from 'solid-toast';
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 import { useAuth } from "~/utils/useAuth"
 import FansDialog from './FansDialog'
 

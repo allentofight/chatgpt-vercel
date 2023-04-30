@@ -2,7 +2,7 @@
 import { createSignal, Show } from 'solid-js';
 
 import CloseIcon from './CloseIcon'
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import toast, { Toaster } from 'solid-toast';
 

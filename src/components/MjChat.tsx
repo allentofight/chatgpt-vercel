@@ -6,7 +6,6 @@ import type { MjChatMessage, PromptItem } from "~/types"
 import MjPromptList from "./MjPromptList"
 import { Fzf } from "fzf"
 import throttle from "just-throttle"
-import type { Setting } from "~/system"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
@@ -15,27 +14,15 @@ import toast, { Toaster } from 'solid-toast'
 
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import { sendMjPrompt, updateMjMessage, fetchMjMessageList } from "~/utils/api"
 
 export default function (props: {
   prompts: PromptItem[]
-  env: {
-    setting: Setting
-    message: string
-    resetContinuousDialogue: boolean
-  }
-  question?: string
 }) {
   let inputRef: HTMLTextAreaElement
   let containerRef: HTMLDivElement
-
-  const {
-    message: _message,
-    setting: _setting,
-    resetContinuousDialogue: _resetContinuousDialogue
-  } = props.env
 
   const [messageList, setMessageList] = createSignal<MjChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
@@ -43,15 +30,16 @@ export default function (props: {
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
   const [controller, setController] = createSignal<AbortController>()
-  const [setting, setSetting] = createSignal(_setting)
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
+  const MJ_HINT = import.meta.env.CLIENT_MJ_MESSAGE
+
   const defaultMessage: MjChatMessage = {
     role: 'hint',
-    content: _message,
+    content: MJ_HINT,
     buttonMessageId: '',
     type: 1,
     imageUrl: '',
@@ -97,30 +85,20 @@ export default function (props: {
       },
       { passive: true }
     )
-    document.querySelector("main")?.classList.remove("before")
-    document.querySelector("main")?.classList.add("after")
+
     createResizeObserver(containerRef, ({ width, height }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
+
+    setTimeout(() => {
+      document.querySelector("#root")?.classList.remove("before")
+    })
+    document.querySelector("#root")?.classList.add("after")
+
     const setting = localStorage.getItem("setting")
     const session = localStorage.getItem("session")
     try {
-      let archiveSession = false
-      if (setting) {
-        const parsed = JSON.parse(setting)
-        archiveSession = parsed.archiveSession
-        setSetting({
-          ..._setting,
-          ...parsed,
-          ...(_resetContinuousDialogue ? { continuousDialogue: false } : {})
-        })
-      }
-      if (props.question) {
-        window.history.replaceState(undefined, "ChatGPT", "/")
-        sendMessage(props.question)
-      } else {
-        setMessageList([defaultMessage])
-      }
+      setMessageList([defaultMessage])
     } catch {
       console.log("Setting parse error")
     }
@@ -191,15 +169,9 @@ export default function (props: {
         messageList()[0].role === "hint"
       ) {
         setMessageList(messageList().slice(1))
-      } else if (setting().archiveSession) {
-        localStorage.setItem("session", JSON.stringify(messageList()))
       }
     }
     return true
-  })
-
-  createEffect(() => {
-    localStorage.setItem("setting", JSON.stringify(setting()))
   })
 
   createEffect(prev => {
@@ -445,7 +417,7 @@ export default function (props: {
   }
 
   return (
-    <div ref={containerRef!} class="mt-4">
+    <main ref={containerRef!} class="mt-4">
       <div class="px-1em mb-6em">
         <div
           id="message-container"
@@ -578,6 +550,6 @@ export default function (props: {
         <ChargeDialog closeDialog={closeChargeDialog} />
       </Show>
       <Toaster position="top-center" />
-    </div>
+    </main>
   )
 }

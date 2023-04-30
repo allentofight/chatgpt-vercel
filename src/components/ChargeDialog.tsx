@@ -1,6 +1,6 @@
 import { createEffect, createSignal, Show, onMount } from 'solid-js';
 import dateformat from 'dateformat';
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 

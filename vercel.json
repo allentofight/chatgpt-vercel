@@ -1,4 +1,14 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/cron",
+      "destination": "/api/cron"
+    },
+    {
+      "source": "/:path((?!api).*)",
+      "destination": "/"
+    }
+  ],
   "crons": [
     {
       "path": "/api/cron",
@@ -9,15 +19,7 @@
       "schedule": "0 12 * * *"
     }
   ],
-  "headers": [
-    {
-      "source": "(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, s-maxage=43200, max-age=43200"
-        }
-      ]
-    }
-  ]
+  "github": {
+    "silent": true
+  }
 }

@@ -1,5 +1,5 @@
 import { createEffect, createSignal } from 'solid-js';
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 const InviteDialog = (props: {

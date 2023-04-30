@@ -1,5 +1,5 @@
 // api.js or api.ts
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 
 interface MjPromptBody {
   // Define the properties and their types here

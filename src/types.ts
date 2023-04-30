@@ -1,7 +1,15 @@
+import { type SessionSettings } from "./env"
+
+export const enum LocalStorageKey {
+  GLOBALSETTINGS = "gpt-global-settings",
+  THEME = "gpt-theme",
+  PREFIXSESSION = "gpt-session-"
+}
+
 export interface ChatMessage {
   role: Role
   content: string
-  special?: "default" | "locked" | "temporary",
+  type?: "default" | "locked" | "temporary"
   conversationSignature?: string,
   conversationId?: string,
   clientId?: string,
@@ -18,6 +26,7 @@ export interface MjChatMessage {
   type: number,
   clickedButtons?: Array<string>
   imageUrl: string,
+
 }
 
 export type Role = "system" | "user" | "assistant" | "error"
@@ -33,4 +42,23 @@ export interface PromptItem {
   desc: string
   prompt: string
   positions?: Set<number>
+}
+
+export interface Prompt {
+  desc: string
+  detail: string
+}
+
+export interface Session {
+  id: string
+  lastVisit: number
+  messages: ChatMessage[]
+  settings: SessionSettings
+}
+
+export interface Option {
+  desc: string
+  title: string
+  positions?: Set<number>
+  extra?: any
 }

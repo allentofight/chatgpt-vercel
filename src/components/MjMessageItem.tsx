@@ -112,7 +112,7 @@ export default (props: Props) => {
 
           <ImageWithSpinner
             src={`${imageUrl()}`}
-            className="image-container bg-gray-500 rounded-md"
+            className="image-container rounded-md"
           />
           <Show when={buttonLabels().length && buttonLabels().length == 9}>
             <div

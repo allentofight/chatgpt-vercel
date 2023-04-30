@@ -3,14 +3,14 @@ import { createEffect, createSignal, Show, onMount } from 'solid-js';
 import ChatIcon from './ChatIcon'
 import ChatEdit from './ChatEdit'
 import ChatConfirm from './ChatConfirm'
+import ExchangeDialog from './ExchangeDialog'
 import DeleteConfirm from './DeleteConfirm'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './store'
 import InviteDialog from './InviteDialog'
 import FaqDialog from './FaqDialog'
-const apiHost = import.meta.env.PUBLIC_API_HOST;
+const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
-import ExchangeDialog from './ExchangeDialog'
 import { Model } from "~/types"
 
 interface Chat {
@@ -20,6 +20,9 @@ interface Chat {
   gmtModified: Date;
   model?: Model;
 }
+
+let test = import.meta.env.CLIENT_GLOBAL_SETTINGS
+console.log('test = ', apiHost)
 
 export default function ChatContainer() {
   const [chats, setChats] = createSignal<Chat[]>([]);
