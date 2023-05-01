@@ -98,10 +98,10 @@ function Store() {
   const validContext = createMemo(() =>
     store.sessionSettings.continuousDialogue
       ? store.messageList.filter(
-          (k, i, _) =>
-            (k.role === "assistant" && _[i - 1]?.role === "user") ||
-            (k.role === "user" && _[i + 1]?.role !== "error")
-        )
+        (k, i, _) =>
+          (k.role === "assistant" && _[i - 1]?.role === "user") ||
+          (k.role === "user" && _[i + 1]?.role !== "error")
+      )
       : store.messageList.filter(k => k.type === "locked")
   )
 

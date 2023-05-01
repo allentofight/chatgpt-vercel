@@ -208,7 +208,6 @@ export default function () {
       const currentValue = parseInt(localStorage.getItem(storageKey) || '0') + 1;
       localStorage.setItem(storageKey, currentValue.toString())
     }
-    console.log('before...')
     setStore("inputContent", "")
     try {
       setStore("messageList", k => [

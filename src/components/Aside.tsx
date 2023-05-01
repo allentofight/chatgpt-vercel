@@ -21,8 +21,6 @@ interface Chat {
   model?: ModelEnum;
 }
 
-let test = import.meta.env.CLIENT_GLOBAL_SETTINGS
-console.log('test = ', apiHost)
 
 export default function ChatContainer() {
   const [chats, setChats] = createSignal<Chat[]>([]);
