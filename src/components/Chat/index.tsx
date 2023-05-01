@@ -36,6 +36,10 @@ export default function () {
   const { store, setStore } = RootStore
   onMount(() => {
     fetchUserInfoAsync()
+    window.addEventListener('optionSelected', function (e: CustomEvent) {
+      currentChat().model = e.detail.index
+    } as EventListener);
+
     createResizeObserver(containerRef, ({ width }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
@@ -74,6 +78,15 @@ export default function () {
     }
   })
 
+  createEffect(() => {
+    const event = new CustomEvent('selectOption', {
+      detail: {
+        index: currentChat().model ?? Model.GPT_3,
+        disabled: parseInt(currentChat().id) > 0
+      }
+    });
+    window.dispatchEvent(event);
+  })
 
   async function fetchUserInfoAsync() {
     try {
