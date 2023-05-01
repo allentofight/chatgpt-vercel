@@ -6,7 +6,7 @@ import ChatConfirm from './ChatConfirm'
 import ExchangeDialog from './ExchangeDialog'
 import DeleteConfirm from './DeleteConfirm'
 import { useAuth } from "~/utils/useAuth"
-import { setSharedStore, sharedStore } from './store'
+import { setSharedStore, sharedStore } from './MessagesStore'
 import InviteDialog from './InviteDialog'
 import FaqDialog from './FaqDialog'
 const apiHost = import.meta.env.CLIENT_API_HOST;

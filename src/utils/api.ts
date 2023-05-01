@@ -1,3 +1,5 @@
+import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
+
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
@@ -101,3 +103,30 @@ export const queryPromptStatus = async (messageId: string) => {
     throw error;
   }
 };
+
+export async function fetchUserInfo() {
+  if (isLocalStorageAvailable()) {
+    let sessionId = localStorage.getItem('sessionId')
+    if (!sessionId) {
+      return
+    }
+    const response = await fetch(`${apiHost}/api/auth/getUserInfo`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message);
+    }
+    const data = await response.json();
+    localStorage.setItem('expireDay', data.expiredDay.toString());
+    localStorage.setItem('inviteCode', data.inviteCode);
+    localStorage.setItem('sessionId', data.token);
+  } else {
+    throw new Error('LocalStorage is not available.');
+  }
+}

@@ -9,7 +9,7 @@ import throttle from "just-throttle"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
-import { setSharedStore, sharedStore } from './store'
+import { setSharedStore, sharedStore } from './MessagesStore'
 import toast, { Toaster } from 'solid-toast'
 
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
