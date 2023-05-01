@@ -9,6 +9,8 @@ import openai from "/assets/openai.svg?raw"
 import vercel from "/assets/vercel.svg?raw"
 import type { FakeRoleUnion } from "./SettingAction"
 
+import { setSharedStore } from '../MessagesStore'
+
 interface Props {
   message: ChatMessage
   hiddenAction: boolean
@@ -52,6 +54,8 @@ export default (props: Props) => {
         }
         return messages.filter((_, i) => i !== props.index)
       })
+      setSharedStore('message', { type: 'delChat' })
+      setSharedStore('message', { type: 'none' })
     }
   }
 

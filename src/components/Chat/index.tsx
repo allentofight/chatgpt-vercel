@@ -75,6 +75,8 @@ export default function () {
       }
     } else if (sharedStore.message?.type === 'showCharge') {
       setShowChargeDialog(true)
+    } else if (sharedStore.message?.type === 'delChat') {
+      uploadChatList()
     }
   })
 
@@ -224,7 +226,6 @@ export default function () {
             : "提问太长了，请缩短。"
         )
       }
-      console.log('msgList = ', JSON.stringify(store.messageList))
       setStore("loading", true)
       controller = new AbortController()
       // 在关闭连续对话时，有效上下文只包含了锁定的对话。
