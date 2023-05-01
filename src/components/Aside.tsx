@@ -144,7 +144,10 @@ export default function ChatContainer() {
       let filteredChats = chats().filter(item => {
         return item.id === selectedChat().id
       })
-      filteredChats[0].body = chat.body
+      if (filteredChats.length) {
+        filteredChats[0].body = chat.body
+      }
+
     }
   });
 
