@@ -11,14 +11,14 @@ import InviteDialog from './InviteDialog'
 import FaqDialog from './FaqDialog'
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
-import { Model } from "~/types"
+import { ModelEnum } from "~/types"
 
 interface Chat {
   id: string;
   title: string;
   body?: string;
   gmtModified: Date;
-  model?: Model;
+  model?: ModelEnum;
 }
 
 let test = import.meta.env.CLIENT_GLOBAL_SETTINGS
@@ -31,7 +31,7 @@ export default function ChatContainer() {
     id: '0',
     title: "Empty chat",
     gmtModified: new Date(),
-    model: Model.GPT_3
+    model: ModelEnum.GPT_3
   }
 
   const initialItem: Chat = chats().length > 0 ? chats()[0] : defaultChat

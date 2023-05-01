@@ -76,20 +76,6 @@ export default function SettingAction() {
                 }}
               />
             </SettingItem>
-            <SettingItem icon="i-carbon:api" label="OpenAI Key">
-              <input
-                type="password"
-                value={store.globalSettings.APIKey}
-                class="input-box"
-                onInput={e => {
-                  setStore(
-                    "globalSettings",
-                    "APIKey",
-                    (e.target as HTMLInputElement).value
-                  )
-                }}
-              />
-            </SettingItem>
             <SettingItem icon="i-carbon:keyboard" label="Enter 键发送消息">
               <SwitchButton
                 checked={store.globalSettings.enterToSend}
@@ -177,18 +163,6 @@ export default function SettingAction() {
                 </span>
               </div>
             </SettingItem>
-            <SettingItem icon="i-carbon:save-image" label="记录对话内容">
-              <SwitchButton
-                checked={store.sessionSettings.saveSession}
-                onChange={e => {
-                  setStore(
-                    "sessionSettings",
-                    "saveSession",
-                    (e.target as HTMLInputElement).checked
-                  )
-                }}
-              />
-            </SettingItem>
             <SettingItem
               icon="i-carbon:3d-curve-auto-colon"
               label="开启连续对话"
@@ -213,15 +187,6 @@ export default function SettingAction() {
           <ActionItem
             onClick={() => {
               setActionState("showSetting", k =>
-                k !== "global" ? "global" : "none"
-              )
-            }}
-            icon="i-carbon:settings"
-            label="全局设置"
-          />
-          <ActionItem
-            onClick={() => {
-              setActionState("showSetting", k =>
                 k !== "session" ? "session" : "none"
               )
             }}
@@ -232,16 +197,6 @@ export default function SettingAction() {
         <Switch
           fallback={
             <div class="flex">
-              <ActionItem
-                onClick={() => {
-                  setActionState("fakeRole", k => {
-                    const _ = ["normal", "user", "assistant"] as FakeRoleUnion[]
-                    return _[(_.indexOf(k) + 1) % _.length]
-                  })
-                }}
-                icon={roleIcons[actionState.fakeRole]}
-                label="伪装角色"
-              />
               <ActionItem
                 onClick={async () => {
                   setActionState("genImg", "loading")
@@ -263,26 +218,6 @@ export default function SettingAction() {
                     ? "i-carbon:status-resolved dark:text-yellow text-yellow-6"
                     : "i-ri:markdown-line"
                 }
-              />
-              <ActionItem
-                onClick={() => {
-                  if (actionState.clearSessionConfirm) {
-                    clearSession()
-                    setActionState("clearSessionConfirm", false)
-                  } else {
-                    setActionState("clearSessionConfirm", true)
-                    setTimeout(
-                      () => setActionState("clearSessionConfirm", false),
-                      3000
-                    )
-                  }
-                }}
-                icon={
-                  actionState.clearSessionConfirm
-                    ? "i-carbon:checkmark animate-bounce text-red-6 dark:text-red"
-                    : "i-carbon:clean"
-                }
-                label={actionState.clearSessionConfirm ? "确定" : "清空对话"}
               />
             </div>
           }

@@ -2,7 +2,7 @@ import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { batch, createEffect, Show, createSignal, onMount } from "solid-js"
 import { useSearchParams } from "solid-start"
 import { RootStore, loadSession } from "~/store"
-import { LocalStorageKey, type ChatMessage, Model } from "~/types"
+import { LocalStorageKey, type ChatMessage, ModelEnum } from "~/types"
 import { setSession, isMobile } from "~/utils"
 import MessageContainer from "./MessageContainer"
 import InputBox, { defaultInputBoxHeight } from "./InputBox"
@@ -29,7 +29,7 @@ export default function () {
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
-  const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: Model.GPT_3 })
+  const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
 
   const [searchParams] = useSearchParams()
   const q = searchParams[SearchParamKey]
@@ -62,10 +62,10 @@ export default function () {
       setShowLoginDirectDialog(true)
       setLoginGuideTitle('登录后可拥有保存会话功能')
     } else if (sharedStore.message?.type === 'selectedChat') {
-      let chat = sharedStore.message?.info as { id: string, title: string, body: string, model?: Model }
-      let chatWithModel: { id: string, title: string, body: string, model: Model } = {
+      let chat = sharedStore.message?.info as { id: string, title: string, body: string, model?: ModelEnum }
+      let chatWithModel: { id: string, title: string, body: string, model: ModelEnum } = {
         ...chat,
-        model: chat.model ?? Model.GPT_3
+        model: chat.model ?? ModelEnum.GPT_3
       };
       setCurrentChat(chatWithModel)
       if (!parseInt(chat.id)) {
@@ -81,7 +81,7 @@ export default function () {
   createEffect(() => {
     const event = new CustomEvent('selectOption', {
       detail: {
-        index: currentChat().model ?? Model.GPT_3,
+        index: currentChat().model ?? ModelEnum.GPT_3,
         disabled: parseInt(currentChat().id) > 0
       }
     });

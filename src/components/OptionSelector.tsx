@@ -8,7 +8,6 @@ declare global {
 
 const options = [
   { title: 'GPT-3.5', description: 'GPT 3.5  模型，仅对充值用户提供。此模型支持 4k token（大约 2000 字）的上下文会话' },
-  { title: 'new bing', description: '底层基于当今最先进的 GPT-4 模型，new bing 是一个基于人工智能（AI）的搜索引擎，它可以让你用自然语言提出问题，获取完整的答案，进行聊天和创作。新必应不仅提供了可靠、及时的搜索结果，还会引用相关的来源。你可以用简单或复杂的方式提问，跟进，或在聊天中进行优化。新必应会理解你的意图，并给你惊喜的回复。' },
 ];
 
 function OptionSelector() {

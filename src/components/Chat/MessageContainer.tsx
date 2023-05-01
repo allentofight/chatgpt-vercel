@@ -79,7 +79,7 @@ export default function ({
         </Show>
       </div>
       <Show
-        when={!store.loading && (store.contextToken || store.inputContentToken)}
+        when={!store.loading && (store.contextToken || store.inputContentToken) && false}
       >
         <div class="flex items-center px-1em text-0.8em">
           <hr class="flex-1 border-slate/40" />
@@ -87,16 +87,14 @@ export default function ({
             when={store.inputContentToken}
             fallback={
               <span class="mx-1 text-slate/40">
-                {`有效上下文 Tokens : ${
-                  store.contextToken
-                }/$${store.contextToken$.toFixed(4)}`}
+                {`有效上下文 Tokens : ${store.contextToken
+                  }/$${store.contextToken$.toFixed(4)}`}
               </span>
             }
           >
             <span class="mx-1 text-slate/40">
-              {`有效上下文+提问 Tokens : ${
-                store.contextToken + store.inputContentToken
-              }(`}
+              {`有效上下文+提问 Tokens : ${store.contextToken + store.inputContentToken
+                }(`}
               <span
                 classList={{
                   "text-red-500": store.remainingToken < 0

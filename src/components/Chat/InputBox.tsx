@@ -183,8 +183,7 @@ export default function ({
               onClick={stopStreamFetch}
             >
               <span class="dark:text-slate text-slate-7">
-                AI 正在思考 / {store.currentMessageToken} / $
-                {store.currentMessageToken$.toFixed(4)}
+                AI 正在思考
               </span>
             </div>
           }
