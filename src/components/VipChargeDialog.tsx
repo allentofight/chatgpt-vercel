@@ -33,7 +33,7 @@ const VipChargeDialog = (props: Props) => {
     {
       id: 3,
       title: '年度会员',
-      desc: ['不限字数', '专属 AI 进阶社群', '专属AI微信工具群'],
+      desc: ['不限字数', '专属 AI 进阶社群', '专属 AI 绘画体验'],
       currentPrice: '¥449',
       originalPrice: '¥1190',
     },
