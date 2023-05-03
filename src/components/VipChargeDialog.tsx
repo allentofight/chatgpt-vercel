@@ -47,23 +47,23 @@ const VipChargeDialog = (props: Props) => {
   };
 
   return (
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-99">
       <div class="bg-white p-6 rounded-lg flex flex-col items-center gap-4 z-10 w-11/12 sm:w-3/4 max-w-xl relative">
         <button class="absolute top-4 right-4" onClick={props.onClose}>
           <CloseIcon />
         </button>
         <h2 class="text-2xl font-semibold mb-4">VIP 套餐</h2>
-        <div class="flex gap-2">
+        <div class="grid grid-cols-1 md:flex gap-2">
           {vipOptions.map((option, index) => (
             <div
-              class={`relative bg-gray-200 px-4 pb-6 pt-4 w-44 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
+              class={`relative bg-gray-200 px-4 pb-6 pt-4 w-full md:w-44 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
                 }`}
               onClick={() => setSelectedOptionIndex(index)}
             >
               <div class="text-lg font-bold">{option.title}</div>
               <div class="text-sm text-gray-600 mt-2 text-left h-15">
                 {option.desc.map((item, idx) => (
-                  <div class="flex items-baseline" >
+                  <div class="flex items-baseline">
                     <span class="mr-1">{idx + 1}.</span>
                     <span>{item}</span>
                   </div>
