@@ -130,3 +130,48 @@ export async function fetchUserInfo() {
     throw new Error('LocalStorage is not available.');
   }
 }
+
+export const requestPayment = async (productId: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/alipay/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify({
+        productId,
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    throw error;
+  }
+};
+
+export const queryPaymentStatus = async (outTradeNo: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/alipay/query?outTradeNo=${outTradeNo}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    throw error;
+  }
+};

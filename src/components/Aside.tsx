@@ -12,6 +12,7 @@ import FaqDialog from './FaqDialog'
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { ModelEnum } from "~/types"
+import VipChargeDialog from './VipChargeDialog'
 
 interface Chat {
   id: string;
@@ -43,6 +44,8 @@ export default function ChatContainer() {
   const [showInviteDialog, setShowInviteDialog] = createSignal(false);
 
   const [showFaqDialog, setShowFaqDialog] = createSignal(false);
+
+  const [showVipDialog, setShowVipDialog] = createSignal(false);
 
   const [loading, setLoading] = createSignal<boolean>(false);
 
@@ -76,6 +79,10 @@ export default function ChatContainer() {
 
   function closeFaqDialog() {
     setShowFaqDialog(false)
+  }
+
+  function closeVipDialog() {
+    setShowVipDialog(false)
   }
 
   function confirmDel() {
@@ -438,6 +445,20 @@ export default function ChatContainer() {
                 if (showLogin()) {
                   return
                 }
+                setShowVipDialog(true)
+              }}>
+                <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="7" r="4"></circle>
+                  <circle cx="14" cy="7" r="4"></circle>
+                  <path d="M9 15v4"></path>
+                  <path d="M15 15v4"></path>
+                  <path d="M6 19h6"></path>
+                  <path d="M12 19h6"></path>
+                </svg>购买 VIP 权益</a>
+              <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                if (showLogin()) {
+                  return
+                }
                 setShowInviteDialog(true)
               }}>
                 <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -493,6 +514,9 @@ export default function ChatContainer() {
             successClick={() => setShowExchangeDialog(false)}
             showTitle={false}
             onClick={() => setShowExchangeDialog(false)} />
+        </Show>
+        <Show when={showVipDialog()}>
+          <VipChargeDialog onClose={closeVipDialog} />
         </Show>
       </aside >
     </>
