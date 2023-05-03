@@ -13,6 +13,7 @@ const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { ModelEnum } from "~/types"
 import VipChargeDialog from './VipChargeDialog'
+import ChargeDialog from './ChargeDialog'
 
 interface Chat {
   id: string;
@@ -49,6 +50,8 @@ export default function ChatContainer() {
   const [showFaqDialog, setShowFaqDialog] = createSignal(false);
 
   const [showVipDialog, setShowVipDialog] = createSignal(false);
+
+  const [showChargeDialog, setShowChargeDialog] = createSignal(false)
 
   const [loading, setLoading] = createSignal<boolean>(false);
 
@@ -189,6 +192,10 @@ export default function ChatContainer() {
       selectedChat().title = newName
       updateChatTitle()
     }
+  }
+
+  function closeChargeDialog() {
+    setShowChargeDialog(false)
   }
 
   function updateChatTitle() {
@@ -485,9 +492,7 @@ export default function ChatContainer() {
                   if (showLogin()) {
                     return
                   }
-
-                  setSharedStore('message', { type: 'showCharge' })
-                  setSharedStore('message', { type: 'none' })
+                  setShowChargeDialog(true)
                 }}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -529,6 +534,9 @@ export default function ChatContainer() {
           </Show>
           <Show when={showVipDialog()}>
             <VipChargeDialog onClose={closeVipDialog} />
+          </Show>
+          <Show when={showChargeDialog()}>
+            <ChargeDialog closeDialog={closeChargeDialog} />
           </Show>
         </aside >
       </div>
