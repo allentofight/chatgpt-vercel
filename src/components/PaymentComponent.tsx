@@ -4,7 +4,6 @@ import { createSignal, onMount, Show, createEffect, onCleanup } from 'solid-js';
 import { requestPayment, queryPaymentStatus } from "~/utils/api"
 
 import PaymentSuccessDialog from "./PaymentSuccessDialog";
-
 import QRCode from 'qrcode';
 
 import { setItemWithExpiration, getItemWithExpiration } from "~/utils/orderStorage"
@@ -20,10 +19,11 @@ export default function PaymentComponent() {
 
   const [qrDataURL, setQRDataURL] = createSignal<string>('');
 
+  const [qrCodeContainer, setQRCodeContainer] = createSignal<HTMLDivElement | null>(null);
 
   const [hintText, setHintText] = createSignal('加载中...');
 
-  setTimeout(() => { setHintText('注：若二维码过期或因为网络加载不出，请刷新页面') }, 3000)
+  setTimeout(() => { setHintText('注：若二维码加载不出，请刷新页面') }, 2000)
 
 
   const queryOrderStatus = async (outTradeNo: string) => {
@@ -40,14 +40,47 @@ export default function PaymentComponent() {
     }
   };
 
-  const generateQRCode = async (qrCodeUrl: string) => {
-    try {
-      const url = await QRCode.toDataURL(qrCodeUrl);
-      setQRDataURL(url);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+
+  let alipayLogoUrl = 'https://i.imgur.com/Yz6RDA1.png'
+
+  createEffect(async () => {
+    if (!qrCodeContainer()) return;
+
+    const qrCodeDataURL = await QRCode.toDataURL(qrDataURL(), {
+      width: 256,
+      color: {
+        dark: '#000000',
+        light: '#ffffff',
+      },
+      errorCorrectionLevel: 'H',
+    });
+
+    const qrCodeImage = new Image();
+    qrCodeImage.src = qrCodeDataURL;
+    qrCodeImage.onload = () => {
+      const qrCodeCanvas = document.createElement('canvas');
+      qrCodeCanvas.width = 256;
+      qrCodeCanvas.height = 256;
+      const qrCodeCtx = qrCodeCanvas.getContext('2d');
+      if (!qrCodeCtx) return;
+      qrCodeCtx.drawImage(qrCodeImage, 0, 0);
+
+      const logoImage = new Image();
+      logoImage.crossOrigin = 'anonymous'; // 添加这一行
+      logoImage.src = alipayLogoUrl;
+      logoImage.onload = () => {
+        const logoSize = 64;
+        const logoPosition = (qrCodeCanvas.width - logoSize) / 2;
+        qrCodeCtx.drawImage(logoImage, logoPosition, logoPosition, logoSize, logoSize);
+
+        const finalDataURL = qrCodeCanvas.toDataURL();
+        const finalImage = new Image();
+        finalImage.src = finalDataURL;
+        qrCodeContainer()!.appendChild(finalImage);
+      };
+    };
+  });
+
   createEffect(async () => {
     if (parseInt(productId()) > 0) {
       let key = `productid_${productId()}`
@@ -56,7 +89,7 @@ export default function PaymentComponent() {
       if (storage) {
         storage = JSON.parse(storage)
         outTradeNo = storage.outTradeNo
-        generateQRCode(storage.qrCode)
+        setQRDataURL(storage.qrCode)
       } else {
         let result = await requestPayment(productId())
         outTradeNo = result.outTradeNo
@@ -64,7 +97,7 @@ export default function PaymentComponent() {
           qrCode: result.qrCode,
           outTradeNo: result.outTradeNo
         }), 1)
-        generateQRCode(result.qrCode)
+        setQRDataURL(result.qrCode)
       }
 
       intervalId = window.setInterval(() => {
@@ -103,12 +136,10 @@ export default function PaymentComponent() {
   return (
     <div class="flex flex-col items-center justify-center mt-10">
       <div class="w-full flex justify-center mb-2">
-        <h2 class="text-xl text-center">ChatGPT<strong class="text-blue-500">{title()}</strong></h2>
+        <h2 class="text-xl text-center">ChatGPT<strong class="text-blue-500">{title()}</strong>购买</h2>
       </div>
-      <div class="w-[136px] h-[136px]">
-        <img src={qrDataURL()} alt="QR Code" />
+      <div ref={setQRCodeContainer}>
       </div>
-      <p class="mt-4 bg-[#fef7ea]">请使用支付宝扫码付款</p>
       <p class="mt-4 bg-[#fef7ea]">{hintText()}</p>
       <Show when={showDialog()}>
         <PaymentSuccessDialog />
