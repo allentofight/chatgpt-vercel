@@ -107,14 +107,30 @@ export default function () {
     setShowChargeDialog(false)
   }
 
-  function archiveCurrentMessage() {
+  interface IResponse {
+    conversationSignature: string;
+    conversationId: string;
+    clientId: string;
+    invocationId: string;
+  }
+  function archiveCurrentMessage(response: IResponse | null = null) {
+    let extractInfo = {}
+    if (response) {
+      extractInfo = {
+        conversationSignature: response.conversationSignature,
+        conversationId: response.conversationId,
+        clientId: response.clientId,
+        invocationId: response.invocationId,
+      }
+    }
     if (store.currentAssistantMessage) {
       batch(() => {
         setStore("messageList", k => [
           ...k,
           {
             role: "assistant",
-            content: store.currentAssistantMessage.trim()
+            content: store.currentAssistantMessage.trim(),
+            ...extractInfo
           }
         ])
         setStore("currentAssistantMessage", "")
@@ -124,6 +140,33 @@ export default function () {
     }
     !isMobile() && store.inputRef?.focus()
     uploadChatList()
+  }
+
+  function prepareForUpload(chatMessages: ChatMessage[]): Partial<ChatMessage>[] {
+    // Find the most recent message with a conversationId, from the end
+    let lastConversationIdIndex = -1;
+    for (let i = chatMessages.length - 1; i >= 0; i--) {
+      if (chatMessages[i].hasOwnProperty('conversationId')) {
+        lastConversationIdIndex = i;
+        break;
+      }
+    }
+
+    // Map the messages to a new format
+    return chatMessages.map((msg, index) => {
+      const newMsg: Partial<ChatMessage> = {
+        role: msg.role,
+        content: msg.content,
+      };
+      // If this message is the one with the most recent conversationId, keep that property
+      if (index === lastConversationIdIndex) {
+        newMsg.conversationId = msg.conversationId;
+        newMsg.conversationSignature = msg.conversationSignature;
+        newMsg.clientId = msg.clientId;
+        newMsg.invocationId = msg.invocationId
+      }
+      return newMsg;
+    });
   }
 
   function uploadChatList() {
@@ -139,6 +182,10 @@ export default function () {
     let result = store.messageList.filter(
       k => k.role !== "error"
     )
+
+    if (currentChat().model === ModelEnum.GPT_New_Bing) {
+      result = prepareForUpload(result) as ChatMessage[];
+    }
 
     let isCreatingChat = currentChat().id.length < 3
     let postChat = {
@@ -162,7 +209,6 @@ export default function () {
       // Parse the response as JSON
       return response.json();
     }).then((data) => {
-
       if (isCreatingChat) {
         setCurrentChat({ ...postChat, id: data.id })
         setSharedStore('message', { type: 'addChat', info: currentChat() })
@@ -211,6 +257,7 @@ export default function () {
       localStorage.setItem(storageKey, currentValue.toString())
     }
     setStore("inputContent", "")
+    let result;
     try {
       setStore("messageList", k => [
         ...k,
@@ -229,7 +276,7 @@ export default function () {
       setStore("loading", true)
       controller = new AbortController()
       // 在关闭连续对话时，有效上下文只包含了锁定的对话。
-      await fetchGPT(
+      result = await fetchGPT(
         store.sessionSettings.continuousDialogue
           ? store.validContext
           : [
@@ -238,7 +285,8 @@ export default function () {
               role: "user",
               content: inputValue
             }
-          ]
+          ],
+        inputValue
       )
     } catch (error: any) {
       setStore("loading", false)
@@ -254,21 +302,60 @@ export default function () {
       }
     }
 
-    archiveCurrentMessage()
+    archiveCurrentMessage(result)
   }
 
-  async function fetchGPT(messages: ChatMessage[]) {
-    const response = await fetch("/api", {
-      method: "POST",
-      body: JSON.stringify({
-        messages,
-        key: undefined,
-        temperature: store.sessionSettings.APITemperature,
-        password: store.globalSettings.password,
-        model: store.sessionSettings.APIModel
-      }),
-      signal: controller?.signal
-    })
+  async function fetchGPT(messages: ChatMessage[], inputVal: string) {
+
+    let isModelGPT3 = currentChat().model === ModelEnum.GPT_3
+    let response;
+    if (isModelGPT3) {
+      response = await fetch("/api", {
+        method: "POST",
+        body: JSON.stringify({
+          messages,
+          key: undefined,
+          temperature: store.sessionSettings.APITemperature,
+          password: store.globalSettings.password,
+          model: store.sessionSettings.APIModel
+        }),
+        signal: controller?.signal
+      })
+    } else {
+      let index = -1;
+      const roleToFind = 'assistant';
+      // 寻找上一条 asssistant 消息
+      for (let i = store.messageList.length - 1; i >= 0; i--) {
+        if (store.messageList[i].role === roleToFind) {
+          index = i;
+          break;
+        }
+      }
+      let initial
+
+      if (index > -1) {
+        let messageItem = store.messageList[index]
+        initial = {
+          conversationSignature: messageItem.conversationSignature,
+          conversationId: messageItem.conversationId,
+          clientId: messageItem.clientId,
+          invocationId: messageItem.invocationId,
+          message: inputVal,
+        }
+      } else {
+        initial = {
+          message: inputVal,
+        }
+      }
+
+      // 如果是 NewBing
+      response = await fetch("/api/bing", {
+        method: "POST",
+        body: JSON.stringify(initial),
+        signal: controller?.signal
+      })
+    }
+
     if (!response.ok) {
       const res = await response.json()
       throw new Error(res.error.message)
@@ -284,12 +371,25 @@ export default function () {
     while (!done) {
       const { value, done: readerDone } = await reader.read()
       if (value) {
-        const char = decoder.decode(value)
+        let char = decoder.decode(value)
         if (char === "\n" && store.currentAssistantMessage.endsWith("\n")) {
           continue
         }
         if (char) {
-          setStore("currentAssistantMessage", k => k + char)
+          if (!isModelGPT3) {
+            const regex = /\[\^[0-9]+\^\]/g; // 创建一个正则表达式，用于匹配 [^数字^] 形式的字符串
+            if (char.startsWith("{\"conversationId")) {
+              let result = JSON.parse(char)
+              let response = result.response.replace(regex, '');
+              setStore("currentAssistantMessage", response)
+              return result
+            } else {
+              char = char.replace(regex, '')
+              setStore("currentAssistantMessage", k => k + char)
+            }
+          } else {
+            setStore("currentAssistantMessage", k => k + char)
+          }
         }
       }
       done = readerDone

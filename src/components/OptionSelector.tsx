@@ -8,6 +8,7 @@ declare global {
 
 const options = [
   { title: 'GPT-3.5', description: 'GPT 3.5  模型，仅对充值用户提供。此模型支持 4k token（大约 2000 字）的上下文会话' },
+  { title: 'New Bing', description: 'New Bing 是微软最新推出的搜索引擎，底层基于 OpenAI ChatGPT 4 模型，可以让你和它进行智能对话，获取网上最新信息' },
 ];
 
 function OptionSelector() {
@@ -34,16 +35,16 @@ function OptionSelector() {
       }
       setOptionsVisible(false);
     };
-    window.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("click", handleClickOutside);
 
     return () => {
       window.removeEventListener("selectOption", selectOptionHandler);
-      window.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("click", handleClickOutside);
     };
   })
 
   return (
-    <div class="container">
+    <div class="container z-50">
       <span
         id="status-label"
         style={`display: ${disabled() ? 'inline' : 'none'};color:#334155;`}
@@ -65,7 +66,17 @@ function OptionSelector() {
           {options.map((option, index) => (
             <li
               class="group relative border-b border-gray-200 last:border-b-0 px-3 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => { setSelectedOption(option.title); setOptionsVisible(false); }}
+              onClick={() => {
+                setSelectedOption(option.title);
+                setOptionsVisible(false);
+                const optionSelectedEvent = new CustomEvent("optionSelected", {
+                  detail: {
+                    index: index + 1,
+                  },
+                });
+
+                window.dispatchEvent(optionSelectedEvent);
+              }}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(-1)}
             >

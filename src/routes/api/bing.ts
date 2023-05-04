@@ -1,4 +1,4 @@
-import type { APIRoute } from "astro"
+import type { APIEvent } from "solid-start/api"
 import type { ParsedEvent, ReconnectInterval } from "eventsource-parser"
 import { createParser } from "eventsource-parser"
 import { fetchWithTimeout } from "~/utils"
@@ -33,14 +33,16 @@ export const config = {
 }
 
 
-export const baseURL = import.meta.env.GPT4_HOST
+console.log('bing baseURL = ')
 
-console.log('bing baseURL = ', baseURL)
+export const baseURL = process.env.NEW_BING_HOST
+
+console.log('after bing baseURL = ', baseURL)
 
 const timeout = Number(import.meta.env.TIMEOUT)
 
 
-export const post: APIRoute = async context => {
+export async function POST({ request }: APIEvent) {
   try {
     const body: {
       message: string,
@@ -48,7 +50,8 @@ export const post: APIRoute = async context => {
       conversationId: string,
       clientId: string,
       invocationId: string,
-    } = await context.request.json()
+    } = await request.json()
+
     const {
       message,
       conversationSignature,
