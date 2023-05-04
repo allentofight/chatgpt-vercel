@@ -41,7 +41,7 @@ export default function PaymentComponent() {
   };
 
 
-  let alipayLogoUrl = 'https://i.imgur.com/Yz6RDA1.png'
+  let alipayLogoUrl = 'https://p.sda1.dev/11/76cd5b172073d9d3551b2963b61786b0/Yz6RDA1.png'
 
   createEffect(async () => {
     if (!qrCodeContainer()) return;
