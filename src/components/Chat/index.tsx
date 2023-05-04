@@ -377,14 +377,12 @@ export default function () {
         }
         if (char) {
           if (!isModelGPT3) {
-            const regex = /\[\^[0-9]+\^\]/g; // 创建一个正则表达式，用于匹配 [^数字^] 形式的字符串
             if (char.startsWith("{\"conversationId")) {
               let result = JSON.parse(char)
-              let response = result.response.replace(regex, '');
+              let response = result.response
               setStore("currentAssistantMessage", response)
               return result
             } else {
-              char = char.replace(regex, '')
               setStore("currentAssistantMessage", k => k + char)
             }
           } else {
