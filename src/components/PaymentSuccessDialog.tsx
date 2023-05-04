@@ -4,7 +4,7 @@ export default function PaymentSuccessDialog() {
       <div class="bg-white p-8 rounded-lg flex flex-col items-center">
         <h2 class="text-2xl mb-6">恭喜你，充值成功!</h2>
         <p class="mb-4">欢迎扫码添加坤哥微信进GPT技巧群</p>
-        <img class="mb-6" src="https://i.imgur.com/4Eg9yPC.png" alt="QR Code" width="432" height="496" />
+        <img class="mb-6" src="https://i.imgtg.com/2023/05/04/CkYCM.png" alt="QR Code" width="432" height="496" />
         <button class="bg-red-500 text-white rounded px-4 py-2" onClick={() => window.location.href = '/'}>
           返回首页
         </button>

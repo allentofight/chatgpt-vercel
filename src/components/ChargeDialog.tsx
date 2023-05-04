@@ -112,7 +112,7 @@ const ChargeDialog = (props: ChargeDialogProps) => {
         <div class="flex flex-col items-center mt-6">
           <img
             style={{ width: "100%", height: "auto" }}
-            src="https://i.imgur.com/4Eg9yPC.png"
+            src="https://i.imgtg.com/2023/05/04/CkYCM.png"
             alt="QR code"
           />
           <p class="text-gray-600 mt-2">
