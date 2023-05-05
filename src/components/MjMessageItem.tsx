@@ -50,7 +50,7 @@ export default (props: Props) => {
         setProcess('加载中')
         window.clearInterval(intervalId);
         setImageUrl(`https://api-node.makechat.help/api/image/fetch?img=${res.response.imageUrl}`)
-        setRole(res.type == 1 ? 'prompt' : 'variation')
+        setRole(props.message.type == 1 ? 'prompt' : 'variation')
         props.message.buttonMessageId = res.response.buttonMessageId
       }
     } catch (error) {
@@ -79,8 +79,6 @@ export default (props: Props) => {
       prompt: ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"],
       variation: [
         '🪄 Make Variations',
-        '🔍 Light Upscale Redo',
-        '🔍 Beta Upscale Redo'
       ],
       hint: [],
       help: [],
@@ -148,7 +146,7 @@ export default (props: Props) => {
               </For>
             </div>
           </Show>
-          <Show when={buttonLabels().length === 3}>
+          <Show when={buttonLabels().length === 1}>
             <div
               class={`grid mt-2 grid-cols-2 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
             >

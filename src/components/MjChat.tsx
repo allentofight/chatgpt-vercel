@@ -139,7 +139,7 @@ export default function (props: {
           messageId: item.messageId,
           clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
           type: item.type,
-          imageUrl: `${apiHost}/api/image/fetch?img=${item.imageUrl}`
+          imageUrl: item.imageUrl?.includes('beisheng') ? item.imageUrl : `${apiHost}/api/image/fetch?img=${item.imageUrl}`
         } as MjChatMessage
       })
       setMessageList(result)
@@ -246,7 +246,9 @@ export default function (props: {
         ref = match ? `- Image #${match[0]}` : '';
       }
 
-      message.prompt += ' --q .5'
+      if (!message.prompt?.includes('--q')) {
+        message.prompt += ' --q .5'
+      }
 
       setMessageList((prev) => [
         ...prev,
@@ -355,6 +357,7 @@ export default function (props: {
           updatedMessageList[updatedMessageList.length - 1] = {
             ...updatedMessageList[updatedMessageList.length - 1],
             messageId: res.messageId,
+            type: res.type,
           };
           return updatedMessageList;
         });
