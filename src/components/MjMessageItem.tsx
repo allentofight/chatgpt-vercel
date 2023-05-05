@@ -37,14 +37,21 @@ export default (props: Props) => {
 
   const [clickedButtons, setClickedButtons] = createSignal(props.message.clickedButtons ?? []);
 
+  const [process, setProcess] = createSignal(props.message.imageUrl.length ? "加载中" : "0%");
+
   const fetchData = async (messageId: string) => {
     try {
-      const response = await queryPromptStatus(messageId)
-      if (response.status) {
+      const res = await queryPromptStatus(messageId)
+      if (res.progress) {
+        setProcess(`${res.progress}%`)
+      }
+
+      if (res.progress == 100) {
+        setProcess('加载中')
         window.clearInterval(intervalId);
-        setImageUrl(`https://api-node.makechat.help/api/image/fetch?img=${response.imageUrl}`)
-        setRole(response.type == 1 ? 'prompt' : 'variation')
-        props.message.buttonMessageId = response.buttonMessageId
+        setImageUrl(`https://api-node.makechat.help/api/image/fetch?img=${res.response.imageUrl}`)
+        setRole(res.type == 1 ? 'prompt' : 'variation')
+        props.message.buttonMessageId = res.response.buttonMessageId
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -112,6 +119,7 @@ export default (props: Props) => {
 
           <ImageWithSpinner
             src={`${imageUrl()}`}
+            process={process()}
             className="image-container rounded-md"
           />
           <Show when={buttonLabels().length && buttonLabels().length == 9}>

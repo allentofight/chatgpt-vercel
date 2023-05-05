@@ -1,10 +1,11 @@
-import { createEffect, onCleanup, onMount, createSignal } from 'solid-js';
+import { createEffect, Show, onCleanup, onMount, createSignal } from 'solid-js';
 import { Spinner } from 'spin.js';
 import '../styles/spinner-animation.css';
 
 interface ImageWithSpinnerProps {
   src: string;
   className?: string;
+  process?: string; // Add process property
 }
 
 export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
@@ -56,6 +57,11 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
       <div class={`${isLoading() ? `relative bg-gray-500 w-[350px] h-[350px] ${props.className}` : props.className}`} ref={containerRef}>
         <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center" style={`display: ${isLoading() ? 'flex' : 'none'};`}>
           <div ref={containerRef}></div>
+          <Show when={
+            props.process?.length && isLoading()
+          }>
+            <div class="absolute text-2xl text-white">{props.process}</div>
+          </Show>
         </div>
         <img
           src={props.src}

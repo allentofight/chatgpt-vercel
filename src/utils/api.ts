@@ -86,7 +86,7 @@ export const fetchMjMessageList = async () => {
 export const queryPromptStatus = async (messageId: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
-    const response = await fetch(`${apiHost}/api/mj/queryPromptStatus?messageId=${messageId}`, {
+    const response = await fetch(`${apiHost}/api/mj/queryImageProcess?messageId=${messageId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
