@@ -18,8 +18,8 @@ export default function ImageLargeDialog({ children }: DialogProps) {
     <>
       <div onClick={handleClick}>{children(false, isOpen())}</div>
       {isOpen() && (
-        <div class="fixed inset-0 bg-red flex justify-center items-center z-99" onClick={handleClick}>
-          <div class="mx-1 rounded-md shadow-lg">
+        <div class="fixed inset-0 bg-black flex justify-center items-center z-99" onClick={handleClick}>
+          <div class="mx-4 rounded-md shadow-lg">
             {children(true, isOpen())}
           </div>
           <CircleCloseButton onClick={handleClick} />
