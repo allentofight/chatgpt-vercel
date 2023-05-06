@@ -331,8 +331,12 @@ export default function (props: {
     if (window?.umami) umami.trackEvent("chat_generate")
     setInputContent("")
 
+    if (!prompt.includes('--q')) {
+      prompt += ' --q .5'
+    }
+
     if (!prompt.includes('--v')) {
-      prompt += ' --v 5 --q .5'
+      prompt += ' --v 5'
     }
 
     setMessageList((prev) => [
