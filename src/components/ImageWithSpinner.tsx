@@ -2,6 +2,8 @@ import { createEffect, Show, onCleanup, onMount, createSignal } from 'solid-js';
 import { Spinner } from 'spin.js';
 import '../styles/spinner-animation.css';
 
+import ImageLargeDialog from './ImageLargeDialog'
+
 interface ImageWithSpinnerProps {
   src: string;
   className?: string;
@@ -30,7 +32,7 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
     left: '50%',
     fadeColor: 'transparent',
     shadow: '0 0 1px transparent',
-    zIndex: 2000000000,
+    zIndex: 98,
     className: 'spinner',
     position: 'absolute',
   };
@@ -63,15 +65,32 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
             <div class="absolute text-2xl text-white">{props.process}</div>
           </Show>
         </div>
-        <img
-          src={props.src}
-          alt='开始绘图'
-          ref={imgRef}
-          class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'rounded-md object-cover w-full max-w-[350px] opacity-100'} ${props.className}`}
-          onLoad={() => {
-            imgRef.style.display = '';
-          }}
-        />
+        <ImageLargeDialog>
+          {(isDialogOpen: boolean, isOpen: boolean) => (
+            <>
+              <img
+                src={props.src}
+                alt='开始绘图'
+                ref={imgRef}
+                class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'object-cover w-full max-w-[350px] opacity-100'} ${isDialogOpen ? 'max-w-4xl w-4/5' : ''} ${props.className}`}
+                onClick={(event) => {
+                  if (isOpen) {
+                    event.stopPropagation();
+                  }
+                }}
+                onLoad={() => {
+                  imgRef.style.display = '';
+                }}
+              />
+              <Show when={isOpen}>
+                <div class="bg-transparent text-gray hover:text-white hover:underline" onClick={(event) => {
+                  window.open(props.src)
+                  event.stopPropagation();
+                }}>请在浏览器中打开</div>
+              </Show>
+            </>
+          )}
+        </ImageLargeDialog>
       </div>
     </>
   );

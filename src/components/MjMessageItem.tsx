@@ -1,4 +1,4 @@
-import { type Setter, For, Show, createEffect, onCleanup, createSignal } from "solid-js"
+import { type Setter, For, Show, createEffect, Switch, Match, onCleanup, createSignal } from "solid-js"
 import type { MjChatMessage } from "../types"
 import "../styles/message.css"
 import "../styles/clipboard.css"
@@ -39,6 +39,8 @@ export default (props: Props) => {
 
   const [process, setProcess] = createSignal(props.message.imageUrl.length ? "加载中" : "0%");
 
+  const [errorMessage, setErrorMessage] = createSignal(props.message.errorMessage);
+
   const fetchData = async (messageId: string) => {
     try {
       const res = await queryPromptStatus(messageId)
@@ -47,11 +49,18 @@ export default (props: Props) => {
       }
 
       if (res.progress == 100) {
-        setProcess('加载中')
-        window.clearInterval(intervalId);
-        setImageUrl(`https://api-node.makechat.help/api/image/fetch?img=${res.response.imageUrl}`)
-        setRole(props.message.type == 1 ? 'prompt' : 'variation')
-        props.message.buttonMessageId = res.response.buttonMessageId
+        if (res.response.imageUrl) {
+          setProcess('加载中')
+          window.clearInterval(intervalId);
+          setImageUrl(`https://api-node.makechat.help/api/image/fetch?img=${res.response.imageUrl}`)
+          setRole(props.message.type == 1 ? 'prompt' : 'variation')
+          props.message.buttonMessageId = res.response.buttonMessageId
+        } else {
+          clearInterval(intervalId);
+          setRole('error')
+          props.message.role = 'error'
+          setErrorMessage(res.response.content)
+        }
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -102,15 +111,7 @@ export default (props: Props) => {
       >
       </div>
 
-      <Show when={props.message.role === 'hint'}>
-        <div
-          class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
-          innerHTML={md
-            .render(props.message.content)
-          }
-        />
-      </Show>
-      <Show when={props.message.role !== 'hint'}>
+      <Switch fallback={
         <div
           class="message prose prose-slate dark:prose-invert dark:text-slate mt-4 break-words overflow-hidden">
           <label class="mt-4">{props.message.content}</label>
@@ -163,7 +164,24 @@ export default (props: Props) => {
             </div>
           </Show>
         </div>
-      </Show>
+      }>
+        <Match when={role() === 'hint'}>
+          <div
+            class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
+            innerHTML={md
+              .render(props.message.content)
+            }
+          />
+        </Match>
+        <Match when={role() === 'error'}>
+          <div
+            class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
+            innerHTML={md
+              .render(props.message.content + `<br/><span class="text-xl text-red-500">报错：${errorMessage()}，请重试</span>`)
+            }
+          />
+        </Match>
+      </Switch>
     </div >
   )
 }

@@ -132,13 +132,14 @@ export default function (props: {
     fetchMjMessageList().then((data) => {
       let result = data.list.map(item => {
         return {
-          role: item.type == 1 ? 'prompt' : 'variation',
+          role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,
           content: item.prompt + (item.ref ?? ''),
           buttonMessageId: item.buttonMessageId,
           messageId: item.messageId,
           clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
           type: item.type,
+          errorMessage: item.errorMessage,
           imageUrl: item.imageUrl?.includes('beisheng') ? item.imageUrl : `${apiHost}/api/image/fetch?img=${item.imageUrl}`
         } as MjChatMessage
       })

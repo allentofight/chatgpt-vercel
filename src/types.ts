@@ -26,6 +26,7 @@ export interface MjChatMessage {
   type: number,
   clickedButtons?: Array<string>
   imageUrl: string,
+  errorMessage?: string,
 
 }
 
