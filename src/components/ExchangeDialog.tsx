@@ -47,7 +47,7 @@ export default function ExchangeDialog(props: {
     if (res.errorMessage) {
       toast.error(res.errorMessage)
     } else {
-      toast.success('兑换成功，恭喜获得 VIP 使用期一天，每天领取后可24小时内享有 VIP 权限哦', {
+      toast.success('兑换成功，恭喜获得 1小时 VIP 体验资格', {
         duration: 3000
       })
       localStorage.setItem('expireDay', res.expiredDay.toString())
@@ -66,7 +66,8 @@ export default function ExchangeDialog(props: {
           <Show when={props.showTitle}>
             <h2 class="text-2xl text-center mb-3 text-red-500">VIP 已过期!</h2>
           </Show>
-          <div class="text-xl text-center mb-4">每天领取兑换码可获取 24 小时的 VIP 资格哦</div>
+          <div class="text-xl text-center mb-2">领取兑换码可获得1小时的 VIP 资格</div>
+          <div class="text-lg text-red text-center font-bold mb-2">兑换码每小时更新一次哦</div>
           <div class="max-h-96 overflow-y-auto border border-gray-300 rounded p-2 shadow-md">
             <div>
               <h3 class="text-lg">步骤一: 使用微信扫码打开小程序</h3>
@@ -87,7 +88,7 @@ export default function ExchangeDialog(props: {
               value={exchangeCode()}
               onInput={(e: Event) => setExchangeCode((e.target as HTMLInputElement).value)}
               class="border border-gray-300 p-2 rounded mb-4 w-2/3"
-              placeholder="输入兑换码，立即获得 24 小时 VIP 资格"
+              placeholder="输入兑换码，立即获得 1 小时 VIP 资格"
             />
             <button
               class={`bg-blue-500 text-white px-4 py-2 rounded ${isSubmitting() ? 'opacity-50' : ''}`}
@@ -99,8 +100,8 @@ export default function ExchangeDialog(props: {
         </Show>
 
         <Show when={showSuccess()}>
-          <h2 class="text-2xl text-center mb-3 text-blue-500">恭喜你已获取 24小时 VIP 使用权限!</h2>
-          <div class="text-xl text-center mb-4">每天领取兑换码可获取 24 小时的 VIP 资格哦</div>
+          <h2 class="text-2xl text-center mb-3 text-blue-500">恭喜你已获取 1小时 VIP 使用权限!</h2>
+          <div class="text-xl text-center mb-4">领取兑换码可获取 1 小时的 VIP 资格哦</div>
 
           <div class="mt-4 flex justify-center">
             <button class="bg-blue-500 text-white px-4 py-2 rounded" onClick={props.successClick}>

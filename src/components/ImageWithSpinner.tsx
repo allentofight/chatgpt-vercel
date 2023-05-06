@@ -72,7 +72,7 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
                 src={props.src}
                 alt='开始绘图'
                 ref={imgRef}
-                class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'object-cover w-full max-w-[350px] opacity-100'} ${isDialogOpen ? 'max-w-4xl w-4/5' : ''} ${props.className}`}
+                class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'object-contain w-full max-w-[350px] opacity-100'} ${isDialogOpen ? 'max-w-4xl max-h-4xl' : ''} ${props.className}`}
                 onClick={(event) => {
                   if (isOpen) {
                     event.stopPropagation();
