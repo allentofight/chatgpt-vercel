@@ -43,7 +43,7 @@ export async function copyToClipboard(text: string) {
 
     // Get the focus back on the previously focused element, if any
     if (previouslyFocusedElement) {
-      ;(previouslyFocusedElement as HTMLElement).focus()
+      ; (previouslyFocusedElement as HTMLElement).focus()
     }
   }
 }

@@ -307,9 +307,15 @@ export default function () {
 
   async function fetchGPT(messages: ChatMessage[], inputVal: string) {
 
-    let isModelGPT3 = currentChat().model === ModelEnum.GPT_3
+    let modelMap = {
+      [ModelEnum.GPT_3]: "gpt-3.5-turbo",
+      [ModelEnum.GPT_4]: "gpt-4",
+      [ModelEnum.GPT_New_Bing]: "new-bing",
+    }
+
+    let isModelGPT = [ModelEnum.GPT_3, ModelEnum.GPT_4].includes(currentChat().model)
     let response;
-    if (isModelGPT3) {
+    if (isModelGPT) {
       response = await fetch("/api", {
         method: "POST",
         body: JSON.stringify({
@@ -317,7 +323,7 @@ export default function () {
           key: undefined,
           temperature: store.sessionSettings.APITemperature,
           password: store.globalSettings.password,
-          model: store.sessionSettings.APIModel
+          model: modelMap[currentChat().model]
         }),
         signal: controller?.signal
       })
@@ -376,7 +382,7 @@ export default function () {
           continue
         }
         if (char) {
-          if (!isModelGPT3) {
+          if (!isModelGPT) {
             if (char.startsWith("{\"conversationId")) {
               let result = JSON.parse(char)
               let response = result.response

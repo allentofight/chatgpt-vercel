@@ -112,36 +112,6 @@ export default function SettingAction() {
                 />
               </SettingItem>
             </Show>
-            <SettingItem
-              icon="i-carbon:machine-learning-model"
-              label="OpenAI 模型"
-            >
-              <Selector
-                class="max-w-150px"
-                value={store.sessionSettings.APIModel}
-                onChange={e => {
-                  setStore(
-                    "sessionSettings",
-                    "APIModel",
-                    (e.target as HTMLSelectElement).value as Model
-                  )
-                }}
-                options={[
-                  {
-                    value: "gpt-3.5-turbo",
-                    label: "gpt-3.5-turbo(4k)"
-                  },
-                  {
-                    value: "gpt-4",
-                    label: "gpt-4(8k)"
-                  },
-                  {
-                    value: "gpt-4-32k",
-                    label: "gpt-4(32k)"
-                  }
-                ]}
-              />
-            </SettingItem>
             <SettingItem icon="i-carbon:data-enrichment" label="思维发散程度">
               <div class="flex items-center justify-between w-150px">
                 <input

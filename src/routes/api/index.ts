@@ -35,7 +35,7 @@ export const config = {
 }
 
 
-export const localKey = process.env.OPENAI_API_KEY || ""
+export let localKey = process.env.OPENAI_API_KEY || ""
 
 export const baseURL =
   process.env.NO_GFW !== "false"
@@ -61,6 +61,12 @@ export async function POST({ request }: APIEvent) {
       model: Model
 
     } = await request.json()
+
+    if (body.model.includes('gpt-4')) {
+      localKey = process.env.OPEN_API_4_KEY!
+    }
+
+
     const { messages, key = localKey, temperature, password, model } = body
 
     if (passwordSet && password !== passwordSet) {
@@ -94,6 +100,8 @@ export async function POST({ request }: APIEvent) {
 
     const encoder = new TextEncoder()
     const decoder = new TextDecoder()
+
+    console.log('model = ', model)
 
     const rawRes = await fetchWithTimeout(
       `https://${baseURL}/v1/chat/completions`,

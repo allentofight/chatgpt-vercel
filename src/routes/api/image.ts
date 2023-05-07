@@ -5,11 +5,11 @@ export const localKey = import.meta.env.OPENAI_API_KEY
 export const baseURL = import.meta.env.NOGFW
   ? "api.openai.com"
   : (import.meta.env.OPENAI_API_BASE_URL || "api.openai.com").replace(
-      /^https?:\/\//,
-      ""
-    )
+    /^https?:\/\//,
+    ""
+  )
 
-    
+
 export const post: APIRoute = async context => {
   const body = await context.request.json()
   const { message, key = localKey } = body as {
