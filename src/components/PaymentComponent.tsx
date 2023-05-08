@@ -23,7 +23,7 @@ export default function PaymentComponent() {
 
   const [hintText, setHintText] = createSignal('加载中...');
 
-  setTimeout(() => { setHintText('注：若二维码加载不出，请刷新页面') }, 2000)
+  setTimeout(() => { setHintText('注：若二维码加载不出，请稍等片刻刷新页面') }, 2000)
 
 
   const queryOrderStatus = async (outTradeNo: string) => {
