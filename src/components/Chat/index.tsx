@@ -2,7 +2,7 @@ import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { batch, createEffect, Show, createSignal, onMount } from "solid-js"
 import { useSearchParams } from "solid-start"
 import { RootStore, loadSession } from "~/store"
-import { LocalStorageKey, type ChatMessage, ModelEnum } from "~/types"
+import { LocalStorageKey, type ChatMessage, ModelEnum, Model } from "~/types"
 import { setSession, isMobile } from "~/utils"
 import MessageContainer from "./MessageContainer"
 import InputBox, { defaultInputBoxHeight } from "./InputBox"
@@ -18,6 +18,12 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { fetchUserInfo, incrGPT4Cnt, gpt4Check } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
+
+let modelMap = {
+  [ModelEnum.GPT_3]: "gpt-3.5-turbo" as Model,
+  [ModelEnum.GPT_4]: "gpt-4" as Model,
+  [ModelEnum.GPT_New_Bing]: "new-bing" as Model,
+}
 
 export default function () {
   let containerRef: HTMLDivElement
@@ -40,6 +46,11 @@ export default function () {
     fetchUserInfoAsync()
     window.addEventListener('optionSelected', function (e: CustomEvent) {
       currentChat().model = e.detail.index
+      setStore(
+        "sessionSettings",
+        "APIModel",
+        modelMap[e.detail.index as ModelEnum]
+      )
     } as EventListener);
 
     createResizeObserver(containerRef, ({ width }, el) => {
@@ -347,11 +358,7 @@ export default function () {
 
   async function fetchGPT(messages: ChatMessage[], inputVal: string) {
 
-    let modelMap = {
-      [ModelEnum.GPT_3]: "gpt-3.5-turbo",
-      [ModelEnum.GPT_4]: "gpt-4",
-      [ModelEnum.GPT_New_Bing]: "new-bing",
-    }
+
 
     let isModelGPT = [ModelEnum.GPT_3, ModelEnum.GPT_4].includes(currentChat().model)
     let response;

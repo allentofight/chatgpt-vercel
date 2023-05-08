@@ -20,22 +20,22 @@ const VipChargeDialog = (props: Props) => {
     {
       id: 1,
       title: '月度会员',
-      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用权限', 'AI绘画(MJ)使用权限'],
-      currentPrice: '¥49.9',
+      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用（每天有限使用）', 'AI绘画无限出图(MJ)'],
+      currentPrice: '¥59.9',
       originalPrice: '¥139',
     },
     {
       id: 2,
       title: '季度会员',
-      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用权限', 'AI绘画(MJ)使用权限'],
-      currentPrice: '¥119',
+      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用（每天有限使用）', 'AI绘画无限出图(MJ)'],
+      currentPrice: '¥145',
       originalPrice: '¥299',
     },
     {
       id: 3,
       title: '年度会员',
-      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用权限', 'AI绘画(MJ)使用权限'],
-      currentPrice: '¥449',
+      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用（每天有限使用）', 'AI绘画无限出图(MJ)'],
+      currentPrice: '¥560',
       originalPrice: '¥1190',
     },
   ];
@@ -49,7 +49,7 @@ const VipChargeDialog = (props: Props) => {
 
   return (
     <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-99">
-      <div class="bg-white p-6 rounded-lg flex flex-col items-center gap-4 z-10 w-11/12 sm:w-3/4 max-w-xl relative">
+      <div class="bg-white p-6 rounded-lg flex flex-col items-center gap-4 z-10 w-11/12 sm:w-3/4 max-w-3xl relative">
         <button class="absolute top-4 right-4" onClick={props.onClose}>
           <CloseIcon />
         </button>
@@ -57,14 +57,14 @@ const VipChargeDialog = (props: Props) => {
         <div class="grid grid-cols-1 md:flex gap-2">
           {vipOptions.map((option, index) => (
             <div
-              class={`relative bg-gray-200 px-3 pb-8 pt-4 w-full md:w-44 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
+              class={`relative bg-gray-200 px-3 pb-8 pt-4 w-full md:w-55 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
                 }`}
               onClick={() => setSelectedOptionIndex(index)}
             >
               <div class="text-lg font-bold">{option.title}</div>
               <div class="text-sm text-gray-600 mt-2 text-left h-15">
                 {option.desc.map((item, idx) => (
-                  <div class="flex items-baseline">
+                  <div class="flex items-baseline whitespace-nowrap">
                     <span class="mr-1">{idx + 1}.</span>
                     <span>{item}</span>
                   </div>

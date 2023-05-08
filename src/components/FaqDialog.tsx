@@ -28,10 +28,9 @@ export default function FAQDialog(props: {
     answer: createMemo(() => (
       <>
         目前网站收费有以下几种形式:<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;1.20 次提问 15元<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;2.月会员49.9<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;3.一季120<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;4.包年450
+        &nbsp;&nbsp;&nbsp;&nbsp;2.月会员59.9<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;3.一季145<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;4.包年560
       </>
     ))
   },
