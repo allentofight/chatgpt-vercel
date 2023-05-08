@@ -15,7 +15,7 @@ import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from '../MessagesStore'
 import toast, { Toaster } from 'solid-toast';
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
-import { fetchUserInfo } from "~/utils/api"
+import { fetchUserInfo, incrGPT4Cnt, gpt4Check } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
@@ -233,6 +233,22 @@ export default function () {
     }
   }
 
+  async function isGPT4Qualify() {
+    try {
+      let gpt4Verify = await gpt4Check()
+      console.log('gpt4Verify = ', gpt4Verify)
+      return gpt4Verify.success
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+        console.error('Error fetch qualify info:', error);
+      } else {
+        console.error(error);
+      }
+      return false
+    }
+  }
+
   async function sendMessage(value?: string, fakeRole?: FakeRoleUnion) {
 
     const { showLogin, isExpired, isLogin, isPaiedUser } = useAuth()
@@ -248,19 +264,24 @@ export default function () {
       return
     }
 
-    if (!isPaiedUser() && currentChat().model === ModelEnum.GPT_4) {
-      // 付费用户才能使用 GPT4!
-
-      setShowVipDialog(true)
-      return
-    }
-
     fetchUserInfoAsync()
 
     const inputValue = value ?? store.inputContent
     if (!inputValue) return
 
     if (!isLocalStorageAvailable()) {
+      return
+    }
+
+    if (!isPaiedUser() && currentChat().model === ModelEnum.GPT_4) {
+      // 付费用户才能使用 GPT4!
+      setShowVipDialog(true)
+      return
+    }
+
+    let isGPT4Using = isPaiedUser() && currentChat().model === ModelEnum.GPT_4
+    let isGPT4Qualified = await isGPT4Qualify()
+    if (isGPT4Using && !isGPT4Qualified) {
       return
     }
 
@@ -301,6 +322,10 @@ export default function () {
           ],
         inputValue
       )
+      if (isGPT4Using) {
+        incrGPT4Cnt()
+        return
+      }
     } catch (error: any) {
       setStore("loading", false)
       controller = undefined
