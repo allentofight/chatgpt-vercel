@@ -141,7 +141,7 @@ export default function (props: {
           clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
           type: item.type,
           errorMessage: item.errorMessage,
-          imageUrl: item.imageUrl?.includes('beisheng') ? item.imageUrl : `${apiHost}/api/image/fetch?img=${item.imageUrl}`
+          imageUrl: item.imageUrl?.includes('beisheng') ? item.imageUrl : (item.imageUrl ? `https://api-node.makechat.help/api/image/fetch?img=${item.imageUrl}` : "")
         } as MjChatMessage
       })
       setMessageList(result)
