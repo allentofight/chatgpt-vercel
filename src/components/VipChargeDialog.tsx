@@ -20,21 +20,21 @@ const VipChargeDialog = (props: Props) => {
     {
       id: 1,
       title: '月度会员',
-      desc: ['不限字数', '专属 AI 进阶社群'],
+      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用权限', 'AI绘画使用权限'],
       currentPrice: '¥49.9',
       originalPrice: '¥139',
     },
     {
       id: 2,
       title: '季度会员',
-      desc: ['不限字数', '专属 AI 进阶社群'],
+      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用权限', 'AI绘画使用权限'],
       currentPrice: '¥119',
       originalPrice: '¥299',
     },
     {
       id: 3,
       title: '年度会员',
-      desc: ['不限字数', '专属 AI 进阶社群', '专属 AI 绘画体验'],
+      desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用权限', 'AI绘画使用权限'],
       currentPrice: '¥449',
       originalPrice: '¥1190',
     },
@@ -57,7 +57,7 @@ const VipChargeDialog = (props: Props) => {
         <div class="grid grid-cols-1 md:flex gap-2">
           {vipOptions.map((option, index) => (
             <div
-              class={`relative bg-gray-200 px-4 pb-6 pt-4 w-full md:w-44 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
+              class={`relative bg-gray-200 px-4 pb-8 pt-4 w-full md:w-44 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
                 }`}
               onClick={() => setSelectedOptionIndex(index)}
             >
@@ -73,7 +73,7 @@ const VipChargeDialog = (props: Props) => {
               <Show when={index == 1}>
                 <div class="absolute bottom-1 left-0 right-0 mx-auto bold text-sm text-red-500">90%用户选择此套餐</div>
               </Show>
-              <div class="mt-4">
+              <div class="mt-6">
                 <span class="text-lg font-bold text-blue-500">{option.currentPrice}</span>
                 <span class="text-sm text-gray-600 ml-2 line-through">{option.originalPrice}</span>
               </div>

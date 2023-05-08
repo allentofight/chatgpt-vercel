@@ -280,9 +280,12 @@ export default function () {
     }
 
     let isGPT4Using = isPaiedUser() && currentChat().model === ModelEnum.GPT_4
-    let isGPT4Qualified = await isGPT4Qualify()
-    if (isGPT4Using && !isGPT4Qualified) {
-      return
+
+    if (isGPT4Using) {
+      let isGPT4Qualified = await isGPT4Qualify()
+      if (!isGPT4Qualified) {
+        return
+      }
     }
 
     if (!isLogin()) {
@@ -324,7 +327,6 @@ export default function () {
       )
       if (isGPT4Using) {
         incrGPT4Cnt()
-        return
       }
     } catch (error: any) {
       setStore("loading", false)
