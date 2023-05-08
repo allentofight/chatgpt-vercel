@@ -32,6 +32,17 @@ export const useAuth = () => {
     return true
   };
 
+  const isPaiedUser = () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+    let sessionId = localStorage.getItem('isPaiedUser')
+    if (!sessionId) {
+      return false
+    }
+    return true
+  };
+
   const isExpired = () => {
     if (!isLocalStorageAvailable()) {
       return
@@ -44,5 +55,5 @@ export const useAuth = () => {
       return date < new Date()
     }
   }
-  return { showLogin, isLogin, isExpired };
+  return { showLogin, isLogin, isExpired, isPaiedUser };
 };

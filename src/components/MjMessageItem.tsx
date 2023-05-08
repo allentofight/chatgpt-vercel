@@ -6,11 +6,13 @@ import md from "~/markdown-it"
 import { queryPromptStatus } from "~/utils/api"
 import type { MjRole } from "~/types"
 import ImageWithSpinner from "./ImageWithSpinner"
+import MjMessageAction from "./MjMessageAction"
 
 interface Props {
   message: MjChatMessage
   index?: number
   mjBtnClick: (command: string, message: MjChatMessage,) => void
+  delChat: (messageId: string) => void
   setInputContent?: Setter<string>
   setMessageList?: Setter<MjChatMessage[]>
 }
@@ -67,11 +69,20 @@ export default (props: Props) => {
     }
   };
 
+  function del() {
+    if (props.setMessageList) {
+      props.setMessageList(messages => {
+        return messages.filter((_, i) => i !== props.index)
+      })
+      props.delChat(props.message.messageId)
+    }
+  }
+
   createEffect(() => {
     if (props.message.messageId && !imageUrl()?.length) {
       // Set up an interval to fetch data every 3 seconds (3000 milliseconds)
       fetchData(props.message.messageId)
-      intervalId = window.setInterval(() => fetchData(props.message.messageId), 3000);
+      intervalId = window.setInterval(() => fetchData(props.message.messageId), 6000);
       // Clean up the interval when the component is unmounted or the effect is re-run
       onCleanup(() => {
         clearInterval(intervalId);
@@ -182,6 +193,10 @@ export default (props: Props) => {
           />
         </Match>
       </Switch>
+      <MjMessageAction
+        hidden={false}
+        del={del}
+      />
     </div >
   )
 }

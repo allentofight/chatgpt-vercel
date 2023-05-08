@@ -10,6 +10,7 @@ interface VipOption {
 }
 
 interface Props {
+  title: string,
   onClose: () => void;
 }
 
@@ -52,7 +53,7 @@ const VipChargeDialog = (props: Props) => {
         <button class="absolute top-4 right-4" onClick={props.onClose}>
           <CloseIcon />
         </button>
-        <h2 class="text-2xl font-semibold mb-4">VIP 套餐</h2>
+        <h2 class="text-2xl font-semibold mb-4">{props.title}</h2>
         <div class="grid grid-cols-1 md:flex gap-2">
           {vipOptions.map((option, index) => (
             <div

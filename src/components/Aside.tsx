@@ -534,7 +534,9 @@ export default function ChatContainer() {
               onClick={() => setShowExchangeDialog(false)} />
           </Show>
           <Show when={showVipDialog()}>
-            <VipChargeDialog onClose={closeVipDialog} />
+            <VipChargeDialog
+              title="VIP 套餐"
+              onClose={closeVipDialog} />
           </Show>
           <Show when={showChargeDialog()}>
             <ChargeDialog closeDialog={closeChargeDialog} />

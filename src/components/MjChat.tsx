@@ -16,7 +16,7 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
-import { sendMjPrompt, updateMjMessage, fetchMjMessageList } from "~/utils/api"
+import { sendMjPrompt, updateMjMessage, delMjMessage, fetchMjMessageList } from "~/utils/api"
 
 export default function (props: {
   prompts: PromptItem[]
@@ -121,7 +121,8 @@ export default function (props: {
     }
   })
 
-  function delChat() {
+  function delChat(messageId: string) {
+    delMjMessage(messageId)
   }
 
   function closeChargeDialog() {

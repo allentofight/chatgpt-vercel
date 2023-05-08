@@ -6,6 +6,7 @@ import { LocalStorageKey, type ChatMessage, ModelEnum } from "~/types"
 import { setSession, isMobile } from "~/utils"
 import MessageContainer from "./MessageContainer"
 import InputBox, { defaultInputBoxHeight } from "./InputBox"
+import VipChargeDialog from '../VipChargeDialog'
 import { type FakeRoleUnion, setActionState } from "./SettingAction"
 import LoginGuideDialog from '../LoginGuideDialog'
 import ExchangeDialog from '../ExchangeDialog'
@@ -26,6 +27,7 @@ export default function () {
     defaultInputBoxHeight
   )
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
+  const [showVipDialog, setShowVipDialog] = createSignal(false);
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
@@ -89,6 +91,10 @@ export default function () {
     });
     window.dispatchEvent(event);
   })
+
+  function closeVipDialog() {
+    setShowVipDialog(false)
+  }
 
   async function fetchUserInfoAsync() {
     try {
@@ -229,7 +235,7 @@ export default function () {
 
   async function sendMessage(value?: string, fakeRole?: FakeRoleUnion) {
 
-    const { showLogin, isExpired, isLogin } = useAuth()
+    const { showLogin, isExpired, isLogin, isPaiedUser } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
@@ -239,6 +245,13 @@ export default function () {
     if (isLogin() && isExpired()) {
       toast.error('VIP 会员已过期，请及时充值或观看广告兑换 VIP 权限哦');
       setShowExchangeDialog(true)
+      return
+    }
+
+    if (!isPaiedUser() && currentChat().model === ModelEnum.GPT_4) {
+      // 付费用户才能使用 GPT4!
+
+      setShowVipDialog(true)
       return
     }
 
@@ -426,6 +439,11 @@ export default function () {
           }}
           showTitle={true}
           onClick={() => setShowExchangeDialog(false)} />
+      </Show>
+      <Show when={showVipDialog()}>
+        <VipChargeDialog
+          title="付费用户才能使用GPT4哦"
+          onClose={closeVipDialog} />
       </Show>
       <Toaster position="top-center" />
     </main>

@@ -82,6 +82,28 @@ export const fetchMjMessageList = async () => {
   }
 };
 
+export const delMjMessage = async (id: string) => {
+  let sessionId = localStorage.getItem('sessionId')
+  fetch(`${apiHost}/api/mj/delete`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`
+    },
+    body: JSON.stringify({
+      id,
+    }),
+  }).then((response) => {
+    // Check if the response status is OK (200)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    // Parse the response as JSON
+    return response.json();
+  }).catch((error) => {
+    console.error('Error delete chat:', error);
+  });
+}
 
 export const queryPromptStatus = async (messageId: string) => {
   try {
@@ -126,6 +148,12 @@ export async function fetchUserInfo() {
     localStorage.setItem('expireDay', data.expiredDay.toString());
     localStorage.setItem('inviteCode', data.inviteCode);
     localStorage.setItem('sessionId', data.token);
+    if (data.isPaiedUser) {
+      localStorage.setItem('isPaiedUser', data.isPaiedUser);
+    } else {
+      localStorage.removeItem('isPaiedUser');
+    }
+
   } else {
     throw new Error('LocalStorage is not available.');
   }
