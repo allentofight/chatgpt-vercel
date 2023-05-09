@@ -19,7 +19,7 @@ interface MjUpdateChatMessage {
 export const sendMjPrompt = async (body: MjPromptBody) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
-    const response = await fetch(`${apiHost}/api/mj/sendPrompt`, {
+    const response = await fetch(`${apiHost}/api/mj/sendToTemp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
