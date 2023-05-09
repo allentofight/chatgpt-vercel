@@ -363,7 +363,6 @@ export default function (props: {
           updatedMessageList[updatedMessageList.length - 1] = {
             ...updatedMessageList[updatedMessageList.length - 1],
             messageId: res.messageId,
-            type: res.type,
           };
           return updatedMessageList;
         });

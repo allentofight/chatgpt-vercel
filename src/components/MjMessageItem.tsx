@@ -7,6 +7,7 @@ import { queryPromptStatus } from "~/utils/api"
 import type { MjRole } from "~/types"
 import ImageWithSpinner from "./ImageWithSpinner"
 import MjMessageAction from "./MjMessageAction"
+import { isMobile } from "~/utils"
 
 interface Props {
   message: MjChatMessage
@@ -39,18 +40,25 @@ export default (props: Props) => {
 
   const [clickedButtons, setClickedButtons] = createSignal(props.message.clickedButtons ?? []);
 
-  const [process, setProcess] = createSignal(props.message.imageUrl.length ? "加载中" : "0%");
+  const [process, setProcess] = createSignal(props.message.imageUrl.length ? "加载中" : "排队中");
 
   const [errorMessage, setErrorMessage] = createSignal(props.message.errorMessage);
 
   const fetchData = async (messageId: string) => {
     try {
       const res = await queryPromptStatus(messageId)
-      if (res.progress) {
-        setProcess(`${res.progress}%`)
+
+      const errorCallback = (message: string) => {
+        clearInterval(intervalId);
+        setRole('error')
+        props.message.role = 'error'
+        setErrorMessage(message)
       }
 
       if (res.progress == 100) {
+        if (res.messageId) {
+          props.message.messageId = res.messageId
+        }
         if (res.response.imageUrl) {
           setProcess('加载中')
           window.clearInterval(intervalId);
@@ -58,11 +66,12 @@ export default (props: Props) => {
           setRole(props.message.type == 1 ? 'prompt' : 'variation')
           props.message.buttonMessageId = res.response.buttonMessageId
         } else {
-          clearInterval(intervalId);
-          setRole('error')
-          props.message.role = 'error'
-          setErrorMessage(res.response.content)
+          errorCallback(res.response.content)
         }
+      } else if (res.progress === 'incomplete') {
+        errorCallback(res.response.content)
+      } else if (res.progress) {
+        setProcess(`${res.progress}%`)
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -113,90 +122,160 @@ export default (props: Props) => {
   }
 
   return (
-    <div
-      class="group flex gap-3 px-4 mx--4 rounded-lg transition-colors sm:hover:bg-slate/6 dark:sm:hover:bg-slate/5 relative message-item"
-    >
+    <>
+      <style>
+        {`
+            .first-container {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              grid-template-rows: auto;
+              grid-gap: 2px;
+              margin-bottom: 2px;
+            }
+            .second-container {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              grid-template-rows: auto;
+              grid-gap: 2px;
+            }
+            .button {
+              width: 64px;
+              height: 32px;
+              padding: 0 2px;
+              margin: 1px 0;
+            }
+            .first-container > .button:not(:nth-child(3n)) {
+              margin-right: 2px;
+            }
+        `}
+      </style>
       <div
-        class={`shrink-0 w-7 h-7 mt-4 rounded-full op-80 flex items-center justify-center cursor-pointer ${roleClass[role()]
-          }`}
+        class="group flex gap-3 px-4 mx--4 rounded-lg transition-colors sm:hover:bg-slate/6 dark:sm:hover:bg-slate/5 relative message-item"
       >
-      </div>
-
-      <Switch fallback={
         <div
-          class="message prose prose-slate dark:prose-invert dark:text-slate mt-4 break-words overflow-hidden">
-          <label class="mt-4">{props.message.content}</label>
-
-          <ImageWithSpinner
-            src={`${imageUrl()}`}
-            process={process()}
-            className="image-container rounded-md"
-          />
-          <Show when={buttonLabels().length && buttonLabels().length == 9}>
-            <div
-              class={`grid mt-2 grid-cols-5 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
-            >
-              <For each={buttonLabels()}>
-                {(label, index) => (
-                  <button
-                    class={`w-[64px] py-1 ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
-                    onClick={() => clickButton(label)}
-                    disabled={!imageUrl()?.length}>
-                    {index() === 4 ? (
-                      <img
-                        src="https://i.loli.wiki/public/230419/redo.svg"
-                        alt=""
-                        width="19"
-                        height="19"
-                        class="mx-auto"
-                      />
-                    ) : (
-                      label
-                    )}
-                  </button>
-                )}
-              </For>
-            </div>
-          </Show>
-          <Show when={buttonLabels().length === 1}>
-            <div
-              class={`grid mt-2 grid-cols-2 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
-            >
-              <For each={buttonLabels()}>
-                {(label, index) => (
-                  <button
-                    class={`py-1 ${clickedButtons().includes(label) ? 'bg-[#048149]' : 'bg-[#4e5058]'} text-white rounded-sm text-sm`}
-                    onClick={() => clickButton(label)}
-                    disabled={!imageUrl()?.length}>
-                    {label}
-                  </button>
-                )}
-              </For>
-            </div>
-          </Show>
+          class={`shrink-0 w-[30px] h-[30px] mt-4 rounded-full op-80 flex items-center justify-center cursor-pointer ${roleClass[role()]
+            }`}
+        >
+          <img src="https://b1.beisheng.com/common/starchain_self_image/2305/08/WKsSQPOjlHMZwYe.png" class="border-1 rounded border-gray-500" />
         </div>
-      }>
-        <Match when={role() === 'hint'}>
+
+        <Switch fallback={
           <div
-            class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
-            innerHTML={md
-              .render(props.message.content)
-            }
-          />
-        </Match>
-        <Match when={role() === 'error'}>
-          <div
-            class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
-            innerHTML={md
-              .render(props.message.content + `<br/><span class="text-xl text-red-500">报错：${errorMessage()}，请重试</span>`)
-            }
-          />
-        </Match>
-      </Switch>
-      <MjMessageAction
-        hidden={false}
-        del={del}
-      />
-    </div >
+            class="message prose prose-slate dark:prose-invert dark:text-slate mt-4 break-words overflow-hidden">
+            <label class="mt-4">{props.message.content}</label>
+
+            <ImageWithSpinner
+              src={`${imageUrl()}`}
+              process={process()}
+              className="rounded-md"
+            />
+            <Show when={buttonLabels().length && buttonLabels().length == 9}>
+              <Show when={!isMobile()}>
+                <div
+                  class={`grid mt-2 grid-cols-5 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
+                >
+                  <For each={buttonLabels()}>
+                    {(label, index) => (
+                      <button
+                        class={`w-[64px] py-1 ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
+                        onClick={() => clickButton(label)}
+                        disabled={!imageUrl()?.length}>
+                        {index() === 4 ? (
+                          <img
+                            src="https://i.loli.wiki/public/230419/redo.svg"
+                            alt=""
+                            width="19"
+                            height="19"
+                            class="mx-auto"
+                          />
+                        ) : (
+                          label
+                        )}
+                      </button>
+                    )}
+                  </For>
+                </div>
+              </Show>
+              <Show when={isMobile()}>
+                <div class="mt-2" style="width: 216px;">
+                  <div class="first-container">
+                    <For each={buttonLabels().slice(0, 5)}>
+                      {(label, index) => (
+                        <button
+                          class={`button ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
+                          onClick={() => clickButton(label)}
+                          disabled={!imageUrl()?.length}
+                        >
+                          {index() === 4 ? (
+                            <img
+                              src="https://i.loli.wiki/public/230419/redo.svg"
+                              alt=""
+                              width="19"
+                              height="19"
+                              class="mx-auto"
+                            />
+                          ) : (label)}
+                        </button>
+                      )}
+                    </For>
+                  </div>
+                  <div class="second-container">
+                    <For each={buttonLabels().slice(5)}>
+                      {(label, index) => (
+                        <button
+                          class={`button ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
+                          onClick={() => clickButton(label)}
+                          disabled={!imageUrl()?.length}
+                        >
+                          {label}
+                        </button>
+                      )}
+                    </For>
+                  </div>
+                </div>
+              </Show>
+
+            </Show>
+            <Show when={buttonLabels().length === 1}>
+              <div
+                class={`grid mt-2 grid-cols-2 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
+              >
+                <For each={buttonLabels()}>
+                  {(label, index) => (
+                    <button
+                      class={`py-1 ${clickedButtons().includes(label) ? 'bg-[#048149]' : 'bg-[#4e5058]'} text-white rounded-sm text-sm`}
+                      onClick={() => clickButton(label)}
+                      disabled={!imageUrl()?.length}>
+                      {label}
+                    </button>
+                  )}
+                </For>
+              </div>
+            </Show>
+          </div>
+        }>
+          <Match when={role() === 'hint'}>
+            <div
+              class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
+              innerHTML={md
+                .render(props.message.content)
+              }
+            />
+          </Match>
+          <Match when={role() === 'error'}>
+            <div
+              class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
+              innerHTML={md
+                .render(props.message.content + `<br/><span class="text-xl text-red-500">报错：${errorMessage()}，请重试</span>`)
+              }
+            />
+          </Match>
+        </Switch>
+        <MjMessageAction
+          hidden={false}
+          del={del}
+        />
+      </div >
+    </>
   )
 }
