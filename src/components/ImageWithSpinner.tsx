@@ -56,7 +56,7 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
 
   return (
     <>
-      <div class={`${isLoading() ? `relative bg-gray-500 w-[350px] h-[350px] ${props.className}` : props.className}`} ref={containerRef}>
+      <div class={`${isLoading() ? `relative bg-gray-500 w-full h-auto w-[350px] h-[350px] ${props.className}` : props.className}`} ref={containerRef}>
         <div class="absolute top-0 left-0 w-full h-full flex justify-center items-center" style={`display: ${isLoading() ? 'flex' : 'none'};`}>
           <div ref={containerRef}></div>
           <Show when={
@@ -72,7 +72,7 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
                 src={props.src}
                 alt='开始绘图'
                 ref={imgRef}
-                class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'object-contain max-w-[550px] max-h-[350px] opacity-100'} ${isDialogOpen ? 'max-w-4xl max-h-4xl' : ''} ${props.className}`}
+                class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'object-contain max-w-full max-w-[550px] max-h-[350px] opacity-100'} ${isDialogOpen ? 'max-w-4xl max-h-4xl' : ''} ${props.className}`}
                 onClick={(event) => {
                   if (isOpen) {
                     event.stopPropagation();
