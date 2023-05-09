@@ -7,7 +7,7 @@ export default function LoginGuideDialog(props: {
 
   return (
     <>
-      <div class='fixed inset-0 z-50'>
+      <div class='fixed inset-0 z-100'>
         <div class="fixed inset-0 bg-gray-900 opacity-70"></div>
         <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-md shadow-lg">
           <h2 class="text-2xl font-bold mb-4">{props.title}</h2>
