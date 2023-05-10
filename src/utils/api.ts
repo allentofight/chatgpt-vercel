@@ -29,11 +29,12 @@ export const sendMjPrompt = async (body: MjPromptBody) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      let error = await response.json()
+      throw new Error(error.message);
     }
     return response.json();
   } catch (error) {
-    console.error("Error fetching chat:", error);
+    console.log('sendMJPrompt error = ', error)
     throw error;
   }
 };

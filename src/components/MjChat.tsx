@@ -367,8 +367,9 @@ export default function (props: {
           return updatedMessageList;
         });
       }
-
     } catch (error: any) {
+      console.log('error...', error)
+      toast.error(error.message)
       setLoading(false)
     }
   }
