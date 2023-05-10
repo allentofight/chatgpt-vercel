@@ -2,8 +2,9 @@ import logo from "/assets/logo.svg?raw"
 import ThemeToggle from "./ThemeToggle"
 import OptionSelector from "./OptionSelector"
 import { RootStore, loadSession } from "~/store"
-import { Show, createMemo } from "solid-js"
+import { Show, createEffect, createMemo } from "solid-js"
 import { useNavigate } from "solid-start"
+import { createSignal, onMount } from "solid-js";
 
 function splitEmoji(text: string) {
   const [icon, title] = text
@@ -32,6 +33,16 @@ export default function Header() {
   const { store } = RootStore
   const navigate = useNavigate()
   const iconTitle = createMemo(() => splitEmoji(store.sessionSettings.title))
+  const [path, setPath] = createSignal('');
+  const [title, setTitle] = createSignal('');
+  onMount(() => {
+    setPath(window.location.pathname);
+  });
+
+  createEffect(() => {
+    setTitle(path().includes('mj') ? 'Midjourney' : 'ChatGPT')
+  })
+
   return (
     <>
       <div
@@ -56,24 +67,15 @@ export default function Header() {
             scrollTo("main", -48)
           }}
         >
-          <Show
-            when={iconTitle().title}
-            fallback={
-              <>
-                <span class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1">
-                  ChatGPT
-                </span>
-              </>
-            }
-          >
-            <span class="ml-1 font-extrabold text-slate-7 dark:text-slate">
-              {iconTitle().title}
-            </span>
-          </Show>
+          <span class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1">
+            {title()}
+          </span>
         </div>
-        <div class="flex-none">
-          <OptionSelector />
-        </div>
+        <Show when={!path().includes('mj')}>
+          <div class="flex-none">
+            <OptionSelector />
+          </div>
+        </Show>
 
         <ThemeToggle />
       </header>
