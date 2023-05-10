@@ -5,6 +5,7 @@ import { RootStore, loadSession } from "~/store"
 import { Show, createEffect, createMemo } from "solid-js"
 import { useNavigate } from "solid-start"
 import { createSignal, onMount } from "solid-js";
+import { ModelEnum } from "~/types"
 
 function splitEmoji(text: string) {
   const [icon, title] = text
@@ -30,6 +31,8 @@ function scrollTo(selector: string, yOffset = 0) {
 }
 
 export default function Header() {
+
+  const [model, setModel] = createSignal(ModelEnum.GPT_3);
   const { store } = RootStore
   const navigate = useNavigate()
   const iconTitle = createMemo(() => splitEmoji(store.sessionSettings.title))
@@ -37,10 +40,14 @@ export default function Header() {
   const [title, setTitle] = createSignal('');
   onMount(() => {
     setPath(window.location.pathname);
+
+    window.addEventListener('optionSelected', function (e: CustomEvent) {
+      setModel(e.detail.index as ModelEnum)
+    } as EventListener);
   });
 
   createEffect(() => {
-    setTitle(path().includes('mj') ? 'Midjourney' : 'ChatGPT')
+    setTitle(model() == ModelEnum.MJ ? 'Midjourney' : 'ChatGPT')
   })
 
   return (
@@ -71,11 +78,10 @@ export default function Header() {
             {title()}
           </span>
         </div>
-        <Show when={!path().includes('mj')}>
-          <div class="flex-none">
-            <OptionSelector />
-          </div>
-        </Show>
+
+        <div class="flex-none">
+          <OptionSelector />
+        </div>
 
         <ThemeToggle />
       </header>

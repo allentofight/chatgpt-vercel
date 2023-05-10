@@ -1,5 +1,5 @@
 import { createResizeObserver } from "@solid-primitives/resize-observer"
-import { batch, createEffect, Show, createSignal, onMount } from "solid-js"
+import { batch, createEffect, Show, createSignal, onMount, onCleanup } from "solid-js"
 import { useSearchParams } from "solid-start"
 import { RootStore, loadSession } from "~/store"
 import { LocalStorageKey, type ChatMessage, ModelEnum, Model } from "~/types"
@@ -23,6 +23,7 @@ let modelMap = {
   [ModelEnum.GPT_3]: "gpt-3.5-turbo" as Model,
   [ModelEnum.GPT_4]: "gpt-4" as Model,
   [ModelEnum.GPT_New_Bing]: "new-bing" as Model,
+  [ModelEnum.MJ]: "mj" as Model,
 }
 
 export default function () {
@@ -44,14 +45,23 @@ export default function () {
   const { store, setStore } = RootStore
   onMount(() => {
     fetchUserInfoAsync()
-    window.addEventListener('optionSelected', function (e: CustomEvent) {
-      currentChat().model = e.detail.index
-      setStore(
-        "sessionSettings",
-        "APIModel",
-        modelMap[e.detail.index as ModelEnum]
-      )
-    } as EventListener);
+
+    const eventListenerFunction = function (e: CustomEvent) {
+      if (e.detail.index < ModelEnum.MJ) {
+        currentChat().model = e.detail.index
+        setStore(
+          "sessionSettings",
+          "APIModel",
+          modelMap[e.detail.index as ModelEnum]
+        )
+      }
+    };
+
+    (window as any).addEventListener('optionSelected', eventListenerFunction);
+
+    onCleanup(() => {
+      (window as any).removeEventListener('optionSelected', eventListenerFunction);
+    });
 
     createResizeObserver(containerRef, ({ width }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
@@ -62,6 +72,9 @@ export default function () {
     document.querySelector("#root")?.classList.add("after")
     if (q) sendMessage(q)
   })
+
+
+
 
   createEffect(() => {
     localStorage.setItem(

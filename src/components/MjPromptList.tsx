@@ -129,7 +129,7 @@ function Item(props: {
         "bg-op-20": props.hover
       }}
       onClick={() => {
-        props.select("/" + props.prompt.desc + " ")
+        props.select(props.prompt.desc + " ")
       }}
     >
       <p>{DescComponent}</p>

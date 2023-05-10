@@ -40,6 +40,7 @@ export enum ModelEnum {
   GPT_3 = 1,
   GPT_New_Bing = 2,
   GPT_4 = 3,
+  MJ = 4,
 }
 
 export interface PromptItem {

@@ -11,6 +11,7 @@ import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from './MessagesStore'
 import toast, { Toaster } from 'solid-toast'
+import VipChargeDialog from './VipChargeDialog'
 
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
@@ -34,6 +35,7 @@ export default function (props: {
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
+  const [showVipDialog, setShowVipDialog] = createSignal(false);
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const MJ_HINT = import.meta.env.CLIENT_MJ_MESSAGE
 
@@ -101,23 +103,6 @@ export default function (props: {
       setMessageList([defaultMessage])
     } catch {
       console.log("Setting parse error")
-    }
-  })
-
-  createEffect(() => {
-    if (sharedStore.message?.type === 'loginRequired') {
-      setShowLoginDirectDialog(true)
-      setLoginGuideTitle('登录后可拥有保存会话等功能')
-    } else if (sharedStore.message?.type === 'selectedChat') {
-      let chat = sharedStore.message?.info as { id: string, title: string, body: string }
-      setCurrentChat(chat)
-      if (!parseInt(chat.id)) {
-        setMessageList([])
-      } else {
-        setMessageList(JSON.parse(chat.body))
-      }
-    } else if (sharedStore.message?.type === 'showCharge') {
-      setShowChargeDialog(true)
     }
   })
 
@@ -227,6 +212,10 @@ export default function (props: {
     }
   }
 
+  function closeVipDialog() {
+    setShowVipDialog(false)
+  }
+
   function getPrompt(input?: string) {
     let commands = props.prompts.map(item => item.desc)
 
@@ -292,7 +281,7 @@ export default function (props: {
   }
 
   async function sendMessage(value?: string) {
-    const { showLogin, isExpired, isLogin } = useAuth()
+    const { showLogin, isExpired, isLogin, isPaiedUser } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
@@ -313,6 +302,12 @@ export default function (props: {
     let prompt = getPrompt(inputValue)
     if (!prompt.length) {
       toast.error("Midjourney 绘画命令有误，请输入'/'来选择正确的命令");
+      return
+    }
+
+    if (!isPaiedUser()) {
+      // 付费用户才能使用 GPT4!
+      setShowVipDialog(true)
       return
     }
 
@@ -549,6 +544,11 @@ export default function (props: {
       </Show>
       <Show when={showChargeDialog()}>
         <ChargeDialog closeDialog={closeChargeDialog} />
+      </Show>
+      <Show when={showVipDialog()}>
+        <VipChargeDialog
+          title="付费用户才能使用MJ哦"
+          onClose={closeVipDialog} />
       </Show>
       <Toaster position="top-center" />
     </main>
