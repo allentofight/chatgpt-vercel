@@ -248,10 +248,6 @@ export default function (props: {
         ref = match ? `- Image #${match[0]}` : '';
       }
 
-      if (!message.prompt?.includes('--q')) {
-        message.prompt += ' --q .5'
-      }
-
       setMessageList((prev) => [
         ...prev,
         {
@@ -331,10 +327,6 @@ export default function (props: {
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
     setInputContent("")
-
-    if (!prompt.includes('--q')) {
-      prompt += ' --q .5'
-    }
 
     if (!prompt.includes('--v')) {
       prompt += ' --v 5'
