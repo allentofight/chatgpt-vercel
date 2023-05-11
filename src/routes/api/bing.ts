@@ -33,11 +33,7 @@ export const config = {
 }
 
 
-console.log('bing baseURL = ')
-
 export const baseURL = process.env.NEW_BING_HOST
-
-console.log('after bing baseURL = ', baseURL)
 
 const timeout = Number(import.meta.env.TIMEOUT)
 

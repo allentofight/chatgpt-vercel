@@ -18,6 +18,7 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { fetchUserInfo, incrGPT4Cnt, gpt4Check } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
+import Login from "~/components/Login"
 
 let modelMap = {
   [ModelEnum.GPT_3]: "gpt-3.5-turbo" as Model,
@@ -39,6 +40,7 @@ export default function () {
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
+  const [showBindTelDialog, setShowBindTelDialog] = createSignal(false)
 
   const [searchParams] = useSearchParams()
   const q = searchParams[SearchParamKey]
@@ -123,6 +125,11 @@ export default function () {
   async function fetchUserInfoAsync() {
     try {
       await fetchUserInfo();
+
+      const { isLogin } = useAuth()
+      if (isLogin() && !localStorage.getItem('isTelBinded')) {
+        setShowBindTelDialog(true)
+      }
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -491,6 +498,15 @@ export default function () {
         <VipChargeDialog
           title="付费用户才能使用GPT4哦"
           onClose={closeVipDialog} />
+      </Show>
+      <Show when={showBindTelDialog()}>
+        <Login title="请绑定手机号"
+          buttonTitle="绑定"
+          showBindSuccess={true}
+          successCallback={() => {
+            setShowBindTelDialog(false)
+          }}
+        />
       </Show>
       <Toaster position="top-center" />
     </main>

@@ -160,6 +160,12 @@ export async function fetchUserInfo() {
       localStorage.removeItem('isPaiedUser');
     }
 
+    if (data.isTelBinded) {
+      localStorage.setItem('isTelBinded', '1');
+    } else {
+      localStorage.removeItem('isTelBinded');
+    }
+
   } else {
     throw new Error('LocalStorage is not available.');
   }
