@@ -28,14 +28,14 @@ const VipChargeDialog = (props: Props) => {
       id: 2,
       title: '季度会员',
       desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用（每天有限使用）', 'AI绘画无限出图(MJ)'],
-      currentPrice: '¥145',
+      currentPrice: '¥165',
       originalPrice: '¥299',
     },
     {
       id: 3,
       title: '年度会员',
       desc: ['不限字数', '专属 AI 进阶社群', 'GPT4使用（每天有限使用）', 'AI绘画无限出图(MJ)'],
-      currentPrice: '¥560',
+      currentPrice: '¥620',
       originalPrice: '¥1190',
     },
   ];
