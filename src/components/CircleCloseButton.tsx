@@ -12,7 +12,7 @@ export default function CircleCloseButton(props: CloseButtonProps) {
 
   return (
     <div
-      class='hidden lg:hidden flex justify-center items-center w-9 h-9 border-2 border-solid rounded-full cursor-pointer absolute top-0 right-0 mt-2 mr-2'
+      class='hidden flex justify-center items-center w-9 h-9 border-2 border-solid rounded-full cursor-pointer absolute top-0 right-0 mt-2 mr-2'
       aria-label='关闭'
       role='button'
       tabindex='0'
