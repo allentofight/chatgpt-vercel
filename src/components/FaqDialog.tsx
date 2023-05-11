@@ -29,8 +29,8 @@ export default function FAQDialog(props: {
       <>
         目前网站收费有以下几种形式:<br />
         &nbsp;&nbsp;&nbsp;&nbsp;2.月会员59.9<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;3.一季145<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;4.包年560
+        &nbsp;&nbsp;&nbsp;&nbsp;3.一季165<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;4.包年620
       </>
     ))
   },
