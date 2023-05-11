@@ -149,7 +149,11 @@ export async function fetchUserInfo() {
     localStorage.setItem('expireDay', data.expiredDay.toString());
     localStorage.setItem('inviteCode', data.inviteCode);
     localStorage.setItem('sessionId', data.token);
-    localStorage.setItem('email', data.email);
+    if (data.email) {
+      localStorage.setItem('email', data.email);
+    } else {
+      localStorage.removeItem('email')
+    }
     if (data.isPaiedUser) {
       localStorage.setItem('isPaiedUser', data.isPaiedUser);
     } else {
