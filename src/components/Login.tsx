@@ -151,17 +151,6 @@ export default function LoginDialog(props: {
             {disabled() ? `${count()}s` : "发送验证码"}
           </button>
         </div>
-        <Show when={email().length > 0}>
-          <div class="mb-4">
-            <input
-              type="email"
-              class="border rounded w-full py-2 px-3 text-grey-darker"
-              value={email()}
-              disabled={true}
-              onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
-            />
-          </div>
-        </Show>
         <div class="flex justify-center">
           <button
             class={`w-full ${submitDisabled() ? 'bg-opacity-50' : ''} py-2 px-4 rounded bg-blue-500 text-white`}
