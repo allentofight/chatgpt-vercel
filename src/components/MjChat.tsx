@@ -19,12 +19,15 @@ const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import { sendMjPrompt, updateMjMessage, delMjMessage, fetchMjMessageList } from "~/utils/api"
 
+import MJGenerator from "./MJGenerator"
+
 export default function (props: {
   prompts: PromptItem[]
 }) {
   let inputRef: HTMLTextAreaElement
   let containerRef: HTMLDivElement
 
+  const [prompt, setPrompt] = createSignal("")
   const [messageList, setMessageList] = createSignal<MjChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '' })
@@ -36,6 +39,7 @@ export default function (props: {
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showVipDialog, setShowVipDialog] = createSignal(false);
+  const [showMJGeneratorDialog, setShowMJGeneratorDialog] = createSignal(true)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const MJ_HINT = import.meta.env.CLIENT_MJ_MESSAGE
 
@@ -140,6 +144,23 @@ export default function (props: {
       scrollToBottom()
     }
     return messageList().length
+  })
+
+  createEffect(() => {
+
+    if (prompt().length) {
+      setInputContent('/imagine ' + prompt().trim())
+      setShowMJGeneratorDialog(false)
+      setPrompt('')
+    }
+  })
+
+  createEffect(() => {
+
+    if (inputContent().includes('showPrompt')) {
+      setShowMJGeneratorDialog(true)
+      setInputContent('')
+    }
   })
 
   createEffect(() => {
@@ -549,6 +570,13 @@ export default function (props: {
         <VipChargeDialog
           title="付费用户才能使用MJ哦"
           onClose={closeVipDialog} />
+      </Show>
+      <Show when={showMJGeneratorDialog()}>
+        <MJGenerator
+          setPrompt={setPrompt}
+          handleClick={() => {
+            setShowMJGeneratorDialog(false)
+          }} />
       </Show>
       <Toaster position="top-center" />
     </main>

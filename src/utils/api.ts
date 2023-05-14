@@ -261,3 +261,26 @@ export const queryPaymentStatus = async (outTradeNo: string) => {
     throw error;
   }
 };
+
+export const sendMjTranslate = async (body: MjPromptBody) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/mj/translate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      let error = await response.json()
+      throw new Error(error.message);
+    }
+    return response.json();
+  } catch (error) {
+    console.log('sendMJPrompt error = ', error)
+    throw error;
+  }
+};
