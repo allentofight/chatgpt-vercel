@@ -167,7 +167,7 @@ const MJGenerator = (props: {
           ref={setContainer}
           class="mx-auto my-3 px-6 sm:max-w-sm md:max-w-md lg:max-w-7xl  bg-white overflow-y-auto rounded pb-37">
           <div>
-            <h1 class="text-center mb-5 pt-5 text-sky-500 text-lg">Midjourney Prompt生成器</h1>
+            <h1 class="text-center mb-5 pt-5 text-[#2282F1] text-lg">Midjourney Prompt生成器</h1>
             <div id="description" class="text-center mb-5">
               <p>
                 对于刚接触智能AI绘画工具的新手，编写绘画关键词（Prompts ）是个很头疼的事情。这个智能AI绘画关键词（Prompts
@@ -785,7 +785,7 @@ const MJGenerator = (props: {
           ref={setComputedPromptDiv}
           id="computed-prompt-div" class="z-101 fixed bottom-0 rounded-bl rounded-br inset-x-0 mx-auto left-0 px-6 py-3 flex flex-col border border-[#A2D5FF] bg-[#F5FAFF] mb-3">
           <textarea id="computed-prompt" disabled class="p-1 form-control w-full resize-none border" rows="2"></textarea>
-          <button id="copy-button" class="ml-auto mr-auto text-white bg-[#54b4eb] rounded py-3 w-[100px] rounded mt-2">复制去作图</button>
+          <button id="copy-button" class="ml-auto mr-auto text-white bg-[#2282F1] rounded py-3 w-[100px] rounded mt-2">复制去作图</button>
         </div>
         <CircleCloseButton onClick={props.handleClick} />
       </div>

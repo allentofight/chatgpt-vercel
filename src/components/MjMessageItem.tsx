@@ -3,11 +3,12 @@ import type { MjChatMessage } from "../types"
 import "../styles/message.css"
 import "../styles/clipboard.css"
 import md from "~/markdown-it"
-import { queryPromptStatus } from "~/utils/api"
+import { queryPromptStatus, fetchSeed } from "~/utils/api"
 import type { MjRole } from "~/types"
 import ImageWithSpinner from "./ImageWithSpinner"
 import MjMessageAction from "./MjMessageAction"
 import { isMobile } from "~/utils"
+
 
 interface Props {
   message: MjChatMessage
@@ -33,6 +34,8 @@ export default (props: Props) => {
   }
 
   const [role, setRole] = createSignal<MjRole>(props.message.role);
+
+  const [seed, setSeed] = createSignal(props.message.seed ?? '');
 
   const [buttonLabels, setButtonLabels] = createSignal<string[]>([]);
 
@@ -105,7 +108,7 @@ export default (props: Props) => {
 
   createEffect(() => {
     let buttonInfo: ButtonInfo = {
-      prompt: ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4"],
+      prompt: ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4", "seed"],
       variation: [
         '🪄 Make Variations',
       ],
@@ -113,10 +116,20 @@ export default (props: Props) => {
       help: [],
       error: [],
     }
-    setButtonLabels(buttonInfo[role()])
+    let buttons = buttonInfo[role()]
+    if (buttons.length == 10 && seed().length) {
+      buttons = buttons.slice(0, -1)
+      console.log('buttons = ', buttons)
+    }
+    setButtonLabels(buttons)
   })
 
-  function clickButton(command: string) {
+  async function clickButton(command: string) {
+    if (command === 'seed') {
+      let result = await fetchSeed(props.message.messageId)
+      setSeed(result.seed)
+      return
+    }
     props.mjBtnClick(command, props.message)
     setClickedButtons([command, ...clickedButtons()]);
   }
@@ -163,13 +176,12 @@ export default (props: Props) => {
           <div
             class="message prose prose-slate dark:prose-invert dark:text-slate mt-4 break-words overflow-hidden">
             <label class="mt-4">{props.message.content}</label>
-
             <ImageWithSpinner
               src={`${imageUrl()}`}
               process={process()}
               className="rounded-md"
             />
-            <Show when={buttonLabels().length && buttonLabels().length == 9}>
+            <Show when={buttonLabels().length && buttonLabels().length >= 9}>
               <Show when={!isMobile()}>
                 <div
                   class={`grid mt-2 grid-cols-5 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
@@ -233,6 +245,9 @@ export default (props: Props) => {
                     </For>
                   </div>
                 </div>
+              </Show>
+              <Show when={seed().length}>
+                <p class="mt-1 mb-0 text-blue-500 font-bold">Seed: {seed()}</p>
               </Show>
 
             </Show>

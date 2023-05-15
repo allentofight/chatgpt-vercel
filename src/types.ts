@@ -27,7 +27,7 @@ export interface MjChatMessage {
   clickedButtons?: Array<string>
   imageUrl: string,
   errorMessage?: string,
-
+  seed?: string,
 }
 
 export type Role = "system" | "user" | "assistant" | "error"

@@ -124,6 +124,7 @@ export default function (props: {
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,
+          seed: item.seed,
           content: item.prompt + (item.ref ?? ''),
           buttonMessageId: item.buttonMessageId,
           messageId: item.messageId,
