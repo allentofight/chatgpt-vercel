@@ -39,7 +39,7 @@ export default function (props: {
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showVipDialog, setShowVipDialog] = createSignal(false);
-  const [showMJGeneratorDialog, setShowMJGeneratorDialog] = createSignal(true)
+  const [showMJGeneratorDialog, setShowMJGeneratorDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const MJ_HINT = import.meta.env.CLIENT_MJ_MESSAGE
 
