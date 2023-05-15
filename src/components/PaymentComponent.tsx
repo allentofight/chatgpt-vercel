@@ -41,10 +41,10 @@ export default function PaymentComponent() {
   };
 
 
-  let alipayLogoUrl = 'https://p.sda1.dev/11/76cd5b172073d9d3551b2963b61786b0/Yz6RDA1.png'
+  let alipayLogoUrl = 'https://files.mdnice.com/user/1650/15575282-3a57-48ae-b8f3-7d9aa8c58caa.png'
 
   createEffect(async () => {
-    if (!qrCodeContainer() || !qrDataURL()) return;
+    if (!qrCodeContainer() || !qrDataURL().length) return;
 
     const qrCodeDataURL = await QRCode.toDataURL(qrDataURL(), {
       width: 256,
@@ -67,7 +67,7 @@ export default function PaymentComponent() {
 
       const logoImage = new Image();
       logoImage.crossOrigin = 'anonymous'; // 添加这一行
-      logoImage.src = alipayLogoUrl;
+      logoImage.src = '/alipay.png';
       logoImage.onload = () => {
         const logoSize = 64;
         const logoPosition = (qrCodeCanvas.width - logoSize) / 2;

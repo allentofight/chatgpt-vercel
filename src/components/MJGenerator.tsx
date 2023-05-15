@@ -162,7 +162,7 @@ const MJGenerator = (props: {
           }
         `}
       </style>
-      <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center z-90">
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center z-99">
         <div
           ref={setContainer}
           class="mx-auto my-3 px-6 sm:max-w-sm md:max-w-md lg:max-w-7xl  bg-white overflow-y-auto rounded pb-37">
