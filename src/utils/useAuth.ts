@@ -9,7 +9,7 @@ export const useAuth = () => {
 
     const storageKey = 'cnt_of_experience';
     const currentValue = parseInt(localStorage.getItem(storageKey) || '0');
-    if (currentValue < 5) {
+    if (currentValue < 3) {
       return false
     }
 
