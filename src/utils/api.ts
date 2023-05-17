@@ -160,6 +160,18 @@ export async function fetchUserInfo() {
       localStorage.removeItem('isPaiedUser');
     }
 
+    if (data.gpt3ExpireDay) {
+      localStorage.setItem('gpt3ExpireDay', data.gpt3ExpireDay.toString())
+    }
+
+    if (data.gpt4ExpireDay) {
+      localStorage.setItem('gpt4ExpireDay', data.gpt4ExpireDay.toString())
+    }
+
+    if (data.midjourneyExpireDay) {
+      localStorage.setItem('midjourneyExpireDay', data.midjourneyExpireDay.toString())
+    }
+
     if (data.isTelBinded) {
       localStorage.setItem('isTelBinded', '1');
     } else {
@@ -217,7 +229,7 @@ export async function incrGPT4Cnt() {
   }
 }
 
-export const requestPayment = async (productId: string) => {
+export const requestPayment = async (productId: string, options: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
     const response = await fetch(`${apiHost}/api/alipay/create`, {
@@ -228,6 +240,7 @@ export const requestPayment = async (productId: string) => {
       },
       body: JSON.stringify({
         productId,
+        options,
       })
     });
 

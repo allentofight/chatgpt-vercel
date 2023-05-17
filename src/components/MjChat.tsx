@@ -9,7 +9,7 @@ import throttle from "just-throttle"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
 import { useAuth } from "~/utils/useAuth"
-import { setSharedStore, sharedStore } from './MessagesStore'
+
 import toast, { Toaster } from 'solid-toast'
 import VipChargeDialog from './VipChargeDialog'
 
@@ -303,7 +303,7 @@ export default function (props: {
   }
 
   async function sendMessage(value?: string) {
-    const { showLogin, isExpired, isLogin, isPaiedUser } = useAuth()
+    const { showLogin, isExpired, isLogin, isMjExpired } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
@@ -327,7 +327,7 @@ export default function (props: {
       return
     }
 
-    if (!isPaiedUser()) {
+    if (isMjExpired()) {
       // 付费用户才能使用 GPT4!
       setShowVipDialog(true)
       return

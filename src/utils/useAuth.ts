@@ -47,7 +47,7 @@ export const useAuth = () => {
     if (!isLocalStorageAvailable()) {
       return
     }
-    let expireDate = localStorage.getItem('expireDay')
+    let expireDate = localStorage.getItem('gpt3ExpireDay')
     if (!expireDate) {
       return true
     } else {
@@ -55,5 +55,32 @@ export const useAuth = () => {
       return date < new Date()
     }
   }
-  return { showLogin, isLogin, isExpired, isPaiedUser };
+
+  const isGPT4Expired = () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+    let expireDate = localStorage.getItem('gpt4ExpireDay')
+    if (!expireDate) {
+      return true
+    } else {
+      let date = new Date(parseInt(expireDate))
+      return date < new Date()
+    }
+  }
+
+  const isMjExpired = () => {
+    if (!isLocalStorageAvailable()) {
+      return
+    }
+    let expireDate = localStorage.getItem('midjourneyExpireDay')
+    if (!expireDate) {
+      return true
+    } else {
+      let date = new Date(parseInt(expireDate))
+      return date < new Date()
+    }
+  }
+
+  return { showLogin, isLogin, isExpired, isGPT4Expired, isMjExpired, isPaiedUser };
 };

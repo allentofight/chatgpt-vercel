@@ -15,6 +15,7 @@ export default function PaymentComponent() {
 
   const [title, setTitle] = createSignal('');
   const [productId, setProductId] = createSignal('');
+  const [options, setOptions] = createSignal('');
   const [showDialog, setShowDialog] = createSignal(false);
 
   const [qrDataURL, setQRDataURL] = createSignal<string>('');
@@ -39,9 +40,6 @@ export default function PaymentComponent() {
       console.error('Error fetching data:', error);
     }
   };
-
-
-  let alipayLogoUrl = 'https://files.mdnice.com/user/1650/15575282-3a57-48ae-b8f3-7d9aa8c58caa.png'
 
   createEffect(async () => {
     if (!qrCodeContainer() || !qrDataURL().length) return;
@@ -91,7 +89,7 @@ export default function PaymentComponent() {
         outTradeNo = storage.outTradeNo
         setQRDataURL(storage.qrCode)
       } else {
-        let result = await requestPayment(productId())
+        let result = await requestPayment(productId(), options())
         outTradeNo = result.outTradeNo
         setItemWithExpiration(key, JSON.stringify({
           qrCode: result.qrCode,
@@ -124,6 +122,9 @@ export default function PaymentComponent() {
         }[id]
         setTitle(product!)
         setProductId(id)
+
+        let options = queryParams.get('options') as string
+        setOptions(options)
       }
     }
 

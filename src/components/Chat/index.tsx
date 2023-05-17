@@ -282,7 +282,7 @@ export default function () {
 
   async function sendMessage(value?: string, fakeRole?: FakeRoleUnion) {
 
-    const { showLogin, isExpired, isLogin, isPaiedUser } = useAuth()
+    const { showLogin, isExpired, isLogin, isGPT4Expired } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
@@ -304,13 +304,13 @@ export default function () {
       return
     }
 
-    if (!isPaiedUser() && currentChat().model === ModelEnum.GPT_4) {
+    if (isGPT4Expired() && currentChat().model === ModelEnum.GPT_4) {
       // 付费用户才能使用 GPT4!
       setShowVipDialog(true)
       return
     }
 
-    let isGPT4Using = isPaiedUser() && currentChat().model === ModelEnum.GPT_4
+    let isGPT4Using = !isGPT4Expired() && currentChat().model === ModelEnum.GPT_4
 
     if (isGPT4Using) {
       let isGPT4Qualified = await isGPT4Qualify()
