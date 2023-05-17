@@ -54,31 +54,33 @@ const VipChargeDialog = (props: Props) => {
           <CloseIcon />
         </button>
         <h2 class="text-2xl font-semibold mb-4">{props.title}</h2>
-        <div class="grid grid-cols-1 md:flex gap-2">
-          {vipOptions.map((option, index) => (
-            <div
-              class={`relative bg-gray-200 px-3 pb-8 pt-4 w-full md:w-55 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
-                }`}
-              onClick={() => setSelectedOptionIndex(index)}
-            >
-              <div class="text-lg font-bold">{option.title}</div>
-              <div class="text-sm text-gray-600 mt-2 text-left h-15">
-                {option.desc.map((item, idx) => (
-                  <div class="flex items-baseline whitespace-nowrap">
-                    <span class="mr-1">{idx + 1}.</span>
-                    <span>{item}</span>
-                  </div>
-                ))}
+        <div class="overflow-y-auto max-h-[calc(100vh-10rem)]"> {/* Add this wrapper div */}
+          <div class="grid grid-cols-1 md:flex gap-2">
+            {vipOptions.map((option, index) => (
+              <div
+                class={`relative bg-gray-200 px-3 pb-8 pt-4 w-full md:w-55 rounded-lg text-center border-4 ${selectedOptionIndex() === index ? 'border-blue-500' : 'border-transparent'
+                  }`}
+                onClick={() => setSelectedOptionIndex(index)}
+              >
+                <div class="text-lg font-bold">{option.title}</div>
+                <div class="text-sm text-gray-600 mt-2 text-left h-15">
+                  {option.desc.map((item, idx) => (
+                    <div class="flex items-baseline whitespace-nowrap">
+                      <span class="mr-1">{idx + 1}.</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+                <Show when={index == 1}>
+                  <div class="absolute bottom-1 left-0 right-0 mx-auto bold text-sm text-red-500">90%用户选择此套餐</div>
+                </Show>
+                <div class="mt-6">
+                  <span class="text-lg font-bold text-blue-500">{option.currentPrice}</span>
+                  <span class="text-sm text-gray-600 ml-2 line-through">{option.originalPrice}</span>
+                </div>
               </div>
-              <Show when={index == 1}>
-                <div class="absolute bottom-1 left-0 right-0 mx-auto bold text-sm text-red-500">90%用户选择此套餐</div>
-              </Show>
-              <div class="mt-6">
-                <span class="text-lg font-bold text-blue-500">{option.currentPrice}</span>
-                <span class="text-sm text-gray-600 ml-2 line-through">{option.originalPrice}</span>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
         <button
           class="bg-blue-500 text-white py-2 px-4 rounded-lg font-semibold mt-4 hover:bg-blue-700"
