@@ -119,15 +119,23 @@ export default (props: Props) => {
     let buttons = buttonInfo[role()]
     if (buttons.length == 10 && seed().length) {
       buttons = buttons.slice(0, -1)
-      console.log('buttons = ', buttons)
     }
     setButtonLabels(buttons)
   })
 
-  async function clickButton(command: string) {
+  async function clickButton(command: string, event: MouseEvent) {
+
     if (command === 'seed') {
+      const button = event.target as HTMLButtonElement;
+      button.disabled = true;
+      button.classList.add('bg-opacity-50');
       let result = await fetchSeed(props.message.messageId)
-      setSeed(result.seed)
+      if (result.seed) {
+        setSeed(result.seed)
+      } else {
+        button.disabled = false;
+        button.classList.remove('bg-opacity-50');
+      }
       return
     }
     props.mjBtnClick(command, props.message)
@@ -190,7 +198,7 @@ export default (props: Props) => {
                     {(label, index) => (
                       <button
                         class={`w-[64px] py-1 ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
-                        onClick={() => clickButton(label)}
+                        onClick={(e) => clickButton(label, e)}
                         disabled={!imageUrl()?.length}>
                         {index() === 4 ? (
                           <img
@@ -215,7 +223,7 @@ export default (props: Props) => {
                       {(label, index) => (
                         <button
                           class={`button ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
-                          onClick={() => clickButton(label)}
+                          onClick={(e) => clickButton(label, e)}
                           disabled={!imageUrl()?.length}
                         >
                           {index() === 4 ? (
@@ -236,7 +244,7 @@ export default (props: Props) => {
                       {(label, index) => (
                         <button
                           class={`button ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
-                          onClick={() => clickButton(label)}
+                          onClick={(e) => clickButton(label, e)}
                           disabled={!imageUrl()?.length}
                         >
                           {label}
@@ -259,7 +267,7 @@ export default (props: Props) => {
                   {(label, index) => (
                     <button
                       class={`py-1 ${clickedButtons().includes(label) ? 'bg-[#048149]' : 'bg-[#4e5058]'} text-white rounded-sm text-sm`}
-                      onClick={() => clickButton(label)}
+                      onClick={(e) => clickButton(label, e)}
                       disabled={!imageUrl()?.length}>
                       {label}
                     </button>
