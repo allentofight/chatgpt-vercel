@@ -49,7 +49,7 @@ const ChargeDialog = (props: ChargeDialogProps) => {
       // Parse the response as JSON
       return response.json();
     }).then((data) => {
-      localStorage.setItem('expireDay', data.gpt3ExpireDay.toString())
+      localStorage.setItem('gpt3ExpireDay', data.gpt3ExpireDay.toString())
       setEndDate(new Date(data.gpt3ExpireDay))
       if (endDate()! < new Date()) {
         setIsExpired(true)
