@@ -71,7 +71,7 @@ export default function (props: {
   onMount(() => {
     const { isLogin } = useAuth()
     if (isLogin()) {
-      fetchUserInfo()
+      fetchUserInfoAsync()
       fetchMessageList()
     }
     makeEventListener(
@@ -109,6 +109,19 @@ export default function (props: {
       console.log("Setting parse error")
     }
   })
+
+  async function fetchUserInfoAsync() {
+    try {
+      await fetchUserInfo();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+        console.error('Error fetching user info:', error);
+      } else {
+        console.error(error);
+      }
+    }
+  }
 
   function delChat(messageId: string) {
     delMjMessage(messageId)
@@ -309,6 +322,8 @@ export default function (props: {
       setShowLoginDirectDialog(true)
       return
     }
+
+    fetchUserInfoAsync()
 
     if (isLogin() && isExpired()) {
       toast.error('VIP 会员已过期，请及时充值哦');
