@@ -21,6 +21,8 @@ import { sendMjPrompt, updateMjMessage, delMjMessage, fetchMjMessageList } from 
 
 import MJGenerator from "./MJGenerator"
 
+import PullTrack from './PullTrack'
+
 export default function (props: {
   prompts: PromptItem[]
 }) {
@@ -30,14 +32,17 @@ export default function (props: {
   const [prompt, setPrompt] = createSignal("")
   const [messageList, setMessageList] = createSignal<MjChatMessage[]>([])
   const [inputContent, setInputContent] = createSignal("")
-  const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '' })
   const [currentAssistantMessage, setCurrentAssistantMessage] = createSignal("")
   const [loading, setLoading] = createSignal(false)
-  const [controller, setController] = createSignal<AbortController>()
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
+
+  const [isRefreshing, setIsRefreshing] = createSignal(false)
+  let [isLoading, setIsLoading] = createSignal(false);
+  let [hasMore, setHasMore] = createSignal(true);
+
   const [showVipDialog, setShowVipDialog] = createSignal(false);
   const [showMJGeneratorDialog, setShowMJGeneratorDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
@@ -67,6 +72,24 @@ export default function (props: {
     250,
     { leading: false, trailing: true }
   )
+
+  async function loadMoreMessages() {
+    if (isLoading() || !hasMore()) {
+      return;
+    }
+    setIsLoading(true);
+    fetchMessageList(() => {
+      setIsLoading(false)
+      setIsRefreshing(false)
+    });
+  }
+
+  createEffect(() => {
+
+    if (isRefreshing() && window.pageYOffset === 0) {
+      loadMoreMessages();
+    }
+  });
 
   onMount(() => {
     const { isLogin } = useAuth()
@@ -131,12 +154,14 @@ export default function (props: {
     setShowChargeDialog(false)
   }
 
-  function fetchMessageList() {
-    fetchMjMessageList().then((data) => {
+  function fetchMessageList(onComplete?: () => void) {
+    let earliestGmtCreate = messageList().length > 0 ? messageList()[0].gmtCreate : ""
+    fetchMjMessageList(earliestGmtCreate).then((data) => {
       let result = data.list.map(item => {
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,
+          gmtCreate: item.gmtCreate,
           seed: item.seed,
           content: item.prompt + (item.ref ?? ''),
           buttonMessageId: item.buttonMessageId,
@@ -147,15 +172,32 @@ export default function (props: {
           imageUrl: item.imageUrl?.includes('beisheng') ? item.imageUrl : (item.imageUrl ? `https://api-node.makechat.help/api/image/fetch?img=${item.imageUrl}` : "")
         } as MjChatMessage
       })
-      setMessageList(result)
+
+      setHasMore(data.hasMore)
+      if (messageList().length == 1 && messageList()[0].content == MJ_HINT) {
+        setMessageList(result)
+      } else {
+        setMessageList([...result, ...messageList()])
+      }
+
+      window.scrollTo({ top: 2 })
+
+      if (onComplete) {
+        onComplete();
+      }
     }).catch(error => {
-      console.error('fetch error:', error)
+      if (onComplete) {
+        onComplete();
+      }
+      console.error('fetch messageList error:', error)
     })
   }
 
   createEffect((prev: number | undefined) => {
     if (prev !== undefined && messageList().length > prev) {
-      scrollToBottom()
+      if (prev == 1 || messageList().length - prev == 1) {
+        scrollToBottom()
+      }
     }
     return messageList().length
   })
@@ -450,151 +492,171 @@ export default function (props: {
   }
 
   return (
-    <main ref={containerRef!} class="mt-4">
-      <div class="px-1em mb-6em">
-        <div
-          id="message-container"
-          class="px-1em"
-          style={{
-            "background-color": "var(--c-bg)"
-          }}
-        >
-          <For each={messageList()}>
-            {(message, index) => (
+    <>
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          
+          .animate-spin {
+            animation: spin 1s linear infinite;
+          }
+        `}
+      </style>
+      <main ref={containerRef!} class="mt-4">
+        <div class="px-1em mb-6em">
+          <div
+            id="message-container"
+            class="px-1em"
+            style={{
+              "background-color": "var(--c-bg)"
+            }}
+          >
+            {isLoading() && (
+              <div class="flex justify-center items-center">
+                <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-gray-900"></div>
+              </div>
+            )}
+            <PullTrack setIsRefreshing={setIsRefreshing} />
+            <For each={messageList()}>
+              {(message, index) => (
+                <MjMessageItem
+                  delChat={delChat}
+                  message={message}
+                  index={index()}
+                  setInputContent={setInputContent}
+                  mjBtnClick={sendMJButtonCommand}
+                  setMessageList={setMessageList}
+                />
+              )}
+            </For>
+            {currentAssistantMessage() && (
               <MjMessageItem
                 delChat={delChat}
-                message={message}
-                index={index()}
-                setInputContent={setInputContent}
-                mjBtnClick={sendMJButtonCommand}
-                setMessageList={setMessageList}
-              />
-            )}
-          </For>
-          {currentAssistantMessage() && (
-            <MjMessageItem
-              delChat={delChat}
-              hiddenAction={true}
-              message={{
-                role: "assistant",
-                content: currentAssistantMessage(),
-                special: "temporary"
-              }}
-            />
-          )}
-        </div>
-      </div>
-      <div
-        class="pb-2em px-2em fixed bottom-0 z-10"
-        style={{
-          "background-color": "var(--c-bg)",
-          width: containerWidth() === "init" ? "100%" : containerWidth()
-        }}
-      >
-        <div
-          style={{
-            transition: "opacity 1s ease-in-out",
-            opacity: containerWidth() === "init" ? 0 : 100
-          }}
-        >
-
-          <Show when={compatiblePrompt().length}>
-            <MjPromptList
-              prompts={compatiblePrompt()}
-              select={selectPrompt}
-            ></MjPromptList>
-          </Show>
-          <div class="flex items-end">
-            <textarea
-              ref={inputRef!}
-              id="input"
-              placeholder="请输入'/'开始绘画吧"
-              autocomplete="off"
-              value={inputContent()}
-              autofocus
-              onClick={scrollToBottom}
-              onKeyDown={e => {
-                if (e.isComposing) return
-                if (compatiblePrompt().length) {
-                  if (
-                    e.key === "ArrowUp" ||
-                    e.key === "ArrowDown" ||
-                    e.keyCode === 13
-                  ) {
-                    e.preventDefault()
-                  }
-                } else if (e.keyCode === 13) {
-                  if (!e.shiftKey) {
-                    e.preventDefault()
-                    sendMessage()
-                  }
-                } else if (e.key === "ArrowUp") {
-                  const userMessages = messageList()
-                    .filter(k => k.role === "user")
-                    .map(k => k.content)
-                  const content = userMessages.at(-1)
-                  if (content && !inputContent()) {
-                    e.preventDefault()
-                    setInputContent(content)
-                  }
-                }
-              }}
-              onInput={handleInput}
-              style={{
-                height: height(),
-                "border-bottom-right-radius": 0,
-                "border-top-right-radius":
-                  height() === "48px" ? 0 : "0.25rem",
-                "border-top-left-radius":
-                  compatiblePrompt().length === 0 ? "0.25rem" : 0
-              }}
-              class="self-end py-3 resize-none w-full px-3 text-slate-7 dark:text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:text-slate-400 placeholder:op-40"
-              rounded-l
-            />
-            <Show when={inputContent()}>
-              <button
-                class="i-carbon:add-filled absolute right-5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
-                onClick={() => {
-                  setInputContent("")
-                  inputRef.focus()
+                hiddenAction={true}
+                message={{
+                  role: "assistant",
+                  content: currentAssistantMessage(),
+                  special: "temporary"
                 }}
               />
+            )}
+          </div>
+        </div>
+        <div
+          class="pb-2em px-2em fixed bottom-0 z-10"
+          style={{
+            "background-color": "var(--c-bg)",
+            width: containerWidth() === "init" ? "100%" : containerWidth()
+          }}
+        >
+          <div
+            style={{
+              transition: "opacity 1s ease-in-out",
+              opacity: containerWidth() === "init" ? 0 : 100
+            }}
+          >
+
+            <Show when={compatiblePrompt().length}>
+              <MjPromptList
+                prompts={compatiblePrompt()}
+                select={selectPrompt}
+              ></MjPromptList>
             </Show>
-            <div
-              class="flex text-slate-7 dark:text-slate bg-slate bg-op-15 text-op-80! hover:text-op-100! h-3em items-center rounded-r"
-              style={{
-                "border-top-right-radius":
-                  compatiblePrompt().length === 0 ? "0.25rem" : 0
-              }}
-            >
-              <button
-                title="发送"
-                onClick={() => sendMessage()}
-                class="i-carbon:send-filled text-5 mx-3"
+            <div class="flex items-end">
+              <textarea
+                ref={inputRef!}
+                id="input"
+                placeholder="请输入'/'开始绘画吧"
+                autocomplete="off"
+                value={inputContent()}
+                autofocus
+                onClick={scrollToBottom}
+                onKeyDown={e => {
+                  if (e.isComposing) return
+                  if (compatiblePrompt().length) {
+                    if (
+                      e.key === "ArrowUp" ||
+                      e.key === "ArrowDown" ||
+                      e.keyCode === 13
+                    ) {
+                      e.preventDefault()
+                    }
+                  } else if (e.keyCode === 13) {
+                    if (!e.shiftKey) {
+                      e.preventDefault()
+                      sendMessage()
+                    }
+                  } else if (e.key === "ArrowUp") {
+                    const userMessages = messageList()
+                      .filter(k => k.role === "user")
+                      .map(k => k.content)
+                    const content = userMessages.at(-1)
+                    if (content && !inputContent()) {
+                      e.preventDefault()
+                      setInputContent(content)
+                    }
+                  }
+                }}
+                onInput={handleInput}
+                style={{
+                  height: height(),
+                  "border-bottom-right-radius": 0,
+                  "border-top-right-radius":
+                    height() === "48px" ? 0 : "0.25rem",
+                  "border-top-left-radius":
+                    compatiblePrompt().length === 0 ? "0.25rem" : 0
+                }}
+                class="self-end py-3 resize-none w-full px-3 text-slate-7 dark:text-slate bg-slate bg-op-15 focus:bg-op-20 focus:ring-0 focus:outline-none placeholder:text-slate-400 placeholder:text-slate-400 placeholder:op-40"
+                rounded-l
               />
+              <Show when={inputContent()}>
+                <button
+                  class="i-carbon:add-filled absolute right-5em bottom-3em rotate-45 text-op-20! hover:text-op-80! text-slate-7 dark:text-slate"
+                  onClick={() => {
+                    setInputContent("")
+                    inputRef.focus()
+                  }}
+                />
+              </Show>
+              <div
+                class="flex text-slate-7 dark:text-slate bg-slate bg-op-15 text-op-80! hover:text-op-100! h-3em items-center rounded-r"
+                style={{
+                  "border-top-right-radius":
+                    compatiblePrompt().length === 0 ? "0.25rem" : 0
+                }}
+              >
+                <button
+                  title="发送"
+                  onClick={() => sendMessage()}
+                  class="i-carbon:send-filled text-5 mx-3"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <Show when={showLoginDirectDialog()}>
-        <LoginGuideDialog title={loginGuideTitle()} />
-      </Show>
-      <Show when={showChargeDialog()}>
-        <ChargeDialog closeDialog={closeChargeDialog} />
-      </Show>
-      <Show when={showVipDialog()}>
-        <VipChargeDialog
-          title="付费用户才能使用MJ哦"
-          onClose={closeVipDialog} />
-      </Show>
-      <Show when={showMJGeneratorDialog()}>
-        <MJGenerator
-          setPrompt={setPrompt}
-          handleClick={() => {
-            setShowMJGeneratorDialog(false)
-          }} />
-      </Show>
-      <Toaster position="top-center" />
-    </main>
+        <Show when={showLoginDirectDialog()}>
+          <LoginGuideDialog title={loginGuideTitle()} />
+        </Show>
+        <Show when={showChargeDialog()}>
+          <ChargeDialog closeDialog={closeChargeDialog} />
+        </Show>
+        <Show when={showVipDialog()}>
+          <VipChargeDialog
+            title="付费用户才能使用MJ哦"
+            onClose={closeVipDialog} />
+        </Show>
+        <Show when={showMJGeneratorDialog()}>
+          <MJGenerator
+            setPrompt={setPrompt}
+            handleClick={() => {
+              setShowMJGeneratorDialog(false)
+            }} />
+        </Show>
+        <Toaster position="top-center" />
+      </main>
+    </>
   )
 }

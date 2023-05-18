@@ -28,6 +28,7 @@ export interface MjChatMessage {
   imageUrl: string,
   errorMessage?: string,
   seed?: string,
+  gmtCreate?: string,
 }
 
 export type Role = "system" | "user" | "assistant" | "error"

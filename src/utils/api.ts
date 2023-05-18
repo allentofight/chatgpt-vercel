@@ -62,10 +62,14 @@ export const updateMjMessage = async (body: MjUpdateChatMessage) => {
   }
 };
 
-export const fetchMjMessageList = async () => {
+export const fetchMjMessageList = async (earliestGmtCreate: string | undefined) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
-    const response = await fetch(`${apiHost}/api/mj/messageList`, {
+    let url = `${apiHost}/api/mj/messageList`
+    if (earliestGmtCreate?.length) {
+      url = `${url}?earliestGmtCreate=${earliestGmtCreate}`
+    }
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
