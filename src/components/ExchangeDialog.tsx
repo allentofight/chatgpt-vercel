@@ -31,7 +31,7 @@ export default function ExchangeDialog(props: {
         exchangeCode: exchangeCode()
       }),
     }).then(async (response) => {
-      // Check if the response status is OK (200)
+      // Check if the response status is OK (200) 
       if (!response.ok) {
         let error = await response.json()
         throw new Error(error.message);
@@ -66,7 +66,7 @@ export default function ExchangeDialog(props: {
           <Show when={props.showTitle}>
             <h2 class="text-2xl text-center mb-3 text-red-500">VIP 已过期!</h2>
           </Show>
-          <div class="text-xl text-center mb-2">领取兑换码可获得1小时的 VIP 资格</div>
+          <div class="text-xl text-center mb-2">按以下3步骤领取兑换码可获得1小时的 VIP 资格</div>
           <div class="text-lg text-red text-center font-bold mb-2">兑换码每小时更新一次哦</div>
           <div class="max-h-96 overflow-y-auto border border-gray-300 rounded p-2 shadow-md">
             <div>
