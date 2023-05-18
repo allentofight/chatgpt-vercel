@@ -50,7 +50,7 @@ export default function ExchangeDialog(props: {
       toast.success('兑换成功，恭喜获得 1小时 VIP 体验资格', {
         duration: 3000
       })
-      localStorage.setItem('expireDay', res.expiredDay.toString())
+      localStorage.setItem('gpt3ExpireDay', res.expiredDay.toString())
       setShowSuccess(true)
     }
   }
