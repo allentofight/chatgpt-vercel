@@ -71,15 +71,15 @@ export default function ExchangeDialog(props: {
           <div class="max-h-96 overflow-y-auto border border-gray-300 rounded p-2 shadow-md">
             <div>
               <h3 class="text-lg">步骤一: 使用微信扫码打开小程序</h3>
-              <img src="https://cdn-us.imgs.moe/2023/05/03/645201aca638c.jpg" alt="QR Code" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
+              <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/645201aca638c.jpg" alt="QR Code" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
             </div>
             <div class="mt-8">
               <h3 class="text-lg">步骤二: 点击第三个tab，点击图中所示按钮</h3>
-              <img src="https://cdn-us.imgs.moe/2023/05/03/645201eb72968.png" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
+              <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/645201eb72968-1.png" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
             </div>
             <div class="mt-8">
               <h3 class="text-lg">步骤三: 稍等片刻之后，点击复制，即可拿到兑换码</h3>
-              <img src="https://cdn-us.imgs.moe/2023/05/03/6452021944ea3.jpg" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
+              <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/6452021944ea3.jpg" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
             </div>
           </div>
           <div class="mt-4 flex flex-col items-center">
