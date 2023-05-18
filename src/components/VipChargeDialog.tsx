@@ -14,7 +14,7 @@ const VipChargeDialog = (props: Props) => {
     {
       id: 1,
       title: '月度会员',
-      desc: ['GPT3.5 不限字数，不限问题数', 'GPT4 每天提问5次，不限字数', 'Midjourney 不限作图次数'],
+      desc: ['GPT3.5 无限提问', 'GPT4 每天提问5次，不限字数', 'Midjourney 不限作图次数'],
       prices: {
         GPT3: 39.9,
         GPT4: 39.9,
@@ -27,7 +27,7 @@ const VipChargeDialog = (props: Props) => {
     {
       id: 2,
       title: '季度会员',
-      desc: ['GPT3.5 不限字数，不限问题数', 'GPT4 每天提问5次，不限字数', 'Midjourney 不限作图次数'],
+      desc: ['GPT3.5 无限提问', 'GPT4 每天提问5次，不限字数', 'Midjourney 不限作图次数'],
       prices: {
         GPT3: 109,
         GPT4: 109,
@@ -40,7 +40,7 @@ const VipChargeDialog = (props: Props) => {
     {
       id: 3,
       title: '年度会员',
-      desc: ['GPT3.5 不限字数，不限问题数', 'GPT4 每天提问5次，不限字数', 'Midjourney 不限作图次数'],
+      desc: ['GPT3.5 无限提问', 'GPT4 每天提问5次，不限字数', 'Midjourney 不限作图次数'],
       prices: {
         GPT3: 410,
         GPT4: 410,
