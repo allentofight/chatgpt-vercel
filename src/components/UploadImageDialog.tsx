@@ -46,8 +46,8 @@ const UploadImageDialog = (props: {
     const file = image();
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
-      if (fileSizeInMB > 2) {
-        toast.error('图片不能大于 2M， 请重新选择')
+      if (fileSizeInMB > 4) {
+        toast.error('图片不能大于 4M， 请重新选择')
         return
       }
 
@@ -72,7 +72,7 @@ const UploadImageDialog = (props: {
 
   return (
     <>
-      <div class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="fixed inset-0 flex items-center justify-center z-101">
         <div class="absolute inset-0 bg-black opacity-50"></div>
 
         <div class="bg-white p-6 rounded-md z-10 absolute">
