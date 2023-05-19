@@ -60,7 +60,6 @@ const UploadImageDialog = (props: {
       });
 
       const data = await response.json();
-      console.log('data = ', data)
       if (data.success) {
         setImageUrl(data.data);
         props.clickToDraw(`/imagine ${data.data} `)
