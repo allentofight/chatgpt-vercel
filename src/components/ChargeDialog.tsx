@@ -14,24 +14,14 @@ const ChargeDialog = (props: ChargeDialogProps) => {
     return
   }
 
-  let expireDate = localStorage.getItem('expireDay')
-  let date = null
-  if (expireDate) {
-    date = new Date(parseInt(expireDate))
-  }
+  const [endDate, setEndDate] = createSignal<Date | null>(null);
+  const [gpt4EndDate, setGpt4EndDate] = createSignal<Date | null>(null);
+  const [mjEndDate, setMjEndDate] = createSignal<Date | null>(null);
 
-  const [endDate, setEndDate] = createSignal<Date | null>(date);
+  const [isGPT3Expired, setIsGPT3Expired] = createSignal(false);
+  const [isGPT4Expired, setIsGPT4Expired] = createSignal(false);
+  const [isMJExpired, setIsMJExpired] = createSignal(false);
 
-  const [isExpired, setIsExpired] = createSignal(false);
-
-  const [isUrgent, setIsUrgent] = createSignal(false);
-
-  function isLessThanFiveDays(date1: Date, date2: Date) {
-    const millisecondsPerDay = 1000 * 60 * 60 * 24;
-    const differenceInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
-    const differenceInDays = differenceInMilliseconds / millisecondsPerDay;
-    return differenceInDays < 5;
-  }
 
   onMount(() => {
     let sessionId = localStorage.getItem('sessionId')
@@ -51,14 +41,29 @@ const ChargeDialog = (props: ChargeDialogProps) => {
     }).then((data) => {
       localStorage.setItem('gpt3ExpireDay', data.gpt3ExpireDay.toString())
       setEndDate(new Date(data.gpt3ExpireDay))
-      if (endDate()! < new Date()) {
-        setIsExpired(true)
-      } else {
-        if (isLessThanFiveDays(endDate()!, new Date())) {
-          console.log('urgent...')
-          setIsUrgent(true)
-        }
+
+      if (data.gpt4ExpireDay) {
+        localStorage.setItem('gpt4ExpireDay', data.gpt4ExpireDay.toString())
+        setGpt4EndDate(new Date(data.gpt4ExpireDay))
       }
+
+      if (data.midjourneyExpireDay) {
+        localStorage.setItem('midjourneyExpireDay', data.midjourneyExpireDay.toString())
+        setMjEndDate(new Date(data.midjourneyExpireDay))
+      }
+
+      if (endDate()! < new Date()) {
+        setIsGPT3Expired(true)
+      }
+
+      if (gpt4EndDate() && gpt4EndDate()! < new Date()) {
+        setIsGPT4Expired(true)
+      }
+
+      if (mjEndDate() && mjEndDate()! < new Date()) {
+        setIsMJExpired(true)
+      }
+
     }).catch((error) => {
       console.error('Error delete chat:', error);
     });
@@ -71,43 +76,62 @@ const ChargeDialog = (props: ChargeDialogProps) => {
         <button class="absolute top-2 right-2 p-1" onClick={props.closeDialog}>
           <CloseIcon />
         </button>
-        <div class="flex items-center justify-center mb-6">
+        <div class="flex items-center mb-3 ml-6">
           <img
             src="http://7niu.kaokao.mobi/ai_pro_icon@2x.png"
             alt="VIP icon"
             class="w-7 h-4.5 mr-3"
           />
-          <Show when={isExpired()}>
-            <span class="text-lg text-red-500">VIP已到期!</span>
+          <Show when={isGPT3Expired()}>
+            <span class="text-lg text-red-500">GPT3 已到期!请及时续费哦~</span>
           </Show>
-
-          <Show when={!isExpired()}>
-            <span class="text-lg">VIP 到期时间：</span>
+          <Show when={!isGPT3Expired()}>
+            <span class="text-lg">GPT3 到期时间：</span>
             <Show when={endDate() != null}>
               <span class="text-lg font-bold text-indigo-600">{dateformat(endDate()!, 'yyyy-mm-dd HH:MM')}</span>
             </Show>
           </Show>
+        </div>
 
-        </div>
-        <div class="mb-6 px-6">
-          <Show when={!isExpired()}>
-            <Show when={isUrgent()}>
-              <p class="text-gray-600">
-                尊敬的VIP会员，您的VIP服务即将到期，请扫码及时续费，以免影响使用体验。
-              </p>
+        <Show when={gpt4EndDate() != null}>
+          <div class="flex items-center mb-3  ml-6">
+            <img
+              src="http://7niu.kaokao.mobi/ai_pro_icon@2x.png"
+              alt="VIP icon"
+              class="w-7 h-4.5 mr-3"
+            />
+            <Show when={isGPT4Expired()}>
+              <span class="text-lg text-red-500">GPT4 已到期!请及时续费哦~</span>
             </Show>
-            <Show when={!isUrgent()}>
-              <p class="text-gray-600">
-                尊敬的VIP会员，提前续费可享受不间断特权。扫描下方二维码，感谢您的支持！
-              </p>
+            <Show when={!isGPT3Expired()}>
+              <span class="text-lg">GPT4 到期时间：</span>
+              <Show when={endDate() != null}>
+                <span class="text-lg font-bold text-indigo-600">{dateformat(gpt4EndDate()!, 'yyyy-mm-dd HH:MM')}</span>
+              </Show>
             </Show>
-          </Show>
-          <Show when={isExpired()}>
-            <p class="text-gray-600">
-              尊敬的VIP会员，您的VIP服务已到期，请扫码及时续费哦
-            </p>
-          </Show>
-        </div>
+          </div>
+        </Show>
+
+
+        <Show when={mjEndDate() != null}>
+          <div class="flex items-center mb-3  ml-6">
+            <img
+              src="http://7niu.kaokao.mobi/ai_pro_icon@2x.png"
+              alt="VIP icon"
+              class="w-7 h-4.5 mr-3"
+            />
+            <Show when={isMJExpired()}>
+              <span class="text-lg text-red-500">MJ 已到期!请及时续费哦~</span>
+            </Show>
+            <Show when={!isMJExpired()}>
+              <span class="text-lg w-35">MJ 到期时间：</span>
+              <Show when={endDate() != null}>
+                <span class="text-lg font-bold text-indigo-600">{dateformat(mjEndDate()!, 'yyyy-mm-dd HH:MM')}</span>
+              </Show>
+            </Show>
+          </div>
+        </Show>
+
 
         <div class="flex flex-col items-center mt-6">
           <img
@@ -116,7 +140,7 @@ const ChargeDialog = (props: ChargeDialogProps) => {
             alt="QR code"
           />
           <p class="text-gray-600 mt-2">
-            请扫码添加后续费哦
+            扫码添加坤哥微信围观朋友圈关注产品最新动态
           </p>
         </div>
       </div>
