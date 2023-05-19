@@ -8,6 +8,7 @@ import { Fzf } from "fzf"
 import throttle from "just-throttle"
 import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
+import UploadImageDialog from './UploadImageDialog'
 import { useAuth } from "~/utils/useAuth"
 
 import toast, { Toaster } from 'solid-toast'
@@ -38,7 +39,7 @@ export default function (props: {
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showChargeDialog, setShowChargeDialog] = createSignal(false)
-
+  const [showUploadImageDialog, setShowUploadImageDialog] = createSignal(false)
   const [isRefreshing, setIsRefreshing] = createSignal(false)
   let [isLoading, setIsLoading] = createSignal(false);
   let [hasMore, setHasMore] = createSignal(true);
@@ -215,6 +216,9 @@ export default function (props: {
 
     if (inputContent().includes('showPrompt')) {
       setShowMJGeneratorDialog(true)
+      setInputContent('')
+    } else if (inputContent().includes('/垫图')) {
+      setShowUploadImageDialog(true)
       setInputContent('')
     }
   })
@@ -653,6 +657,14 @@ export default function (props: {
             setPrompt={setPrompt}
             handleClick={() => {
               setShowMJGeneratorDialog(false)
+            }} />
+        </Show>
+        <Show when={showUploadImageDialog()}>
+          <UploadImageDialog
+            onClose={() => { setShowUploadImageDialog(false) }}
+            clickToDraw={(prompt) => {
+              setInputContent(prompt)
+              setShowUploadImageDialog(false)
             }} />
         </Show>
         <Toaster position="top-center" />
