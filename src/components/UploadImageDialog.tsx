@@ -61,9 +61,9 @@ const UploadImageDialog = (props: {
 
       const data = await response.json();
       console.log('data = ', data)
-      if (!data.err) {
-        setImageUrl(data.url);
-        props.clickToDraw(`/imagine ${data.url} `)
+      if (data.success) {
+        setImageUrl(data.data);
+        props.clickToDraw(`/imagine ${data.data} `)
       } else {
         toast.error('上传失败成功!');
       }
