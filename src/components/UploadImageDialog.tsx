@@ -51,8 +51,8 @@ const UploadImageDialog = (props: {
 
       const formData = new FormData();
       formData.append("file", file);
-
-      const response = await fetch('https://api.superbed.cn/upload?token=c3eb4f0eb7404ee29885a2532c51aec2', {
+      const apiHost = import.meta.env.CLIENT_IMAGE_URL;
+      const response = await fetch(apiHost, {
         method: 'POST',
         body: formData,
       });
