@@ -2,6 +2,8 @@ import { createSignal, onMount } from "solid-js";
 import toast, { Toaster } from 'solid-toast';
 import CloseIcon from './CloseIcon'
 
+const apiHost = import.meta.env.CLIENT_IMAGE_URL;
+
 const UploadImageDialog = (props: {
   clickToDraw: (prompt: string) => void,
   onClose: () => void
@@ -51,7 +53,7 @@ const UploadImageDialog = (props: {
 
       const formData = new FormData();
       formData.append("file", file);
-      const apiHost = import.meta.env.CLIENT_IMAGE_URL;
+
       const response = await fetch(apiHost, {
         method: 'POST',
         body: formData,
