@@ -137,7 +137,7 @@ export function getRequestImageSize(originImageUrl: string, imageSize: string) {
     }
   }
 
-  if (!imageSize) {
+  if (originImageUrl?.includes('beisheng') || !imageSize) {
     return {
       previewUrl: originImageUrl,
       originUrl: originImageUrl
