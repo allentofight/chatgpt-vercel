@@ -315,6 +315,7 @@ export default function () {
     if (isGPT4Using) {
       let isQualifyFor4 = localStorage.getItem('isQualifyFor4')
       if (!isQualifyFor4) {
+        toast.error(`GPT4当天已体验完，请明天再试哦`)
         return
       }
     }
