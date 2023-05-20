@@ -235,13 +235,6 @@ export async function incrGPT4Cnt() {
     if (!response.ok) {
       throw new Error(data.message);
     }
-
-    if (data.isQualifyGPT4) {
-      localStorage.setItem('isQualifyFor4', '1')
-      localStorage.setItem('gpt4Cnt', data.cnt)
-    } else {
-      localStorage.removeItem('isQualifyFor4')
-    }
   } else {
     throw new Error('LocalStorage is not available.');
   }
