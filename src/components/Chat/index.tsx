@@ -313,8 +313,8 @@ export default function () {
     let isGPT4Using = !isGPT4Expired() && currentChat().model === ModelEnum.GPT_4
 
     if (isGPT4Using) {
-      let isGPT4Qualified = await isGPT4Qualify()
-      if (!isGPT4Qualified) {
+      let isQualifyFor4 = localStorage.getItem('isQualifyFor4')
+      if (!isQualifyFor4) {
         return
       }
     }
@@ -377,9 +377,6 @@ export default function () {
   }
 
   async function fetchGPT(messages: ChatMessage[], inputVal: string) {
-
-
-
     let isModelGPT = [ModelEnum.GPT_3, ModelEnum.GPT_4].includes(currentChat().model)
     let response;
     if (isModelGPT) {
