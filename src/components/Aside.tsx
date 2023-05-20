@@ -532,6 +532,7 @@ export default function ChatContainer() {
             <ExchangeDialog
               successClick={() => setShowExchangeDialog(false)}
               showTitle={false}
+              showChargeBtn={false}
               onClick={() => setShowExchangeDialog(false)} />
           </Show>
           <Show when={showVipDialog()}>

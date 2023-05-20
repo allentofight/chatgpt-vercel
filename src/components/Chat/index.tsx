@@ -492,6 +492,11 @@ export default function () {
             window.location.href = '/'
           }}
           showTitle={true}
+          showChargeBtn={true}
+          chargeBtnClick={() => {
+            setShowExchangeDialog(false)
+            setShowVipDialog(true)
+          }}
           onClick={() => setShowExchangeDialog(false)} />
       </Show>
       <Show when={showVipDialog()}>
