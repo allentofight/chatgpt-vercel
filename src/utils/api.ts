@@ -159,12 +159,7 @@ export async function fetchUserInfo() {
       localStorage.removeItem('isQualifyFor4')
     }
 
-
-    if (data.email) {
-      localStorage.setItem('email', data.email);
-    } else {
-      localStorage.removeItem('email')
-    }
+    localStorage.removeItem('email')
     if (data.isPaiedUser) {
       localStorage.setItem('isPaiedUser', data.isPaiedUser);
     } else {

@@ -10,7 +10,6 @@ export default function LoginDialog(props: {
 }) {
   let [phone, setPhone] = createSignal("");
   let [code, setCode] = createSignal("");
-  let [email, setEmail] = createSignal("");
   let [count, setCount] = createSignal(60);
   let [disabled, setDisabled] = createSignal(false);
   let [submitDisabled, setSubmitDisabled] = createSignal(true);
@@ -22,7 +21,6 @@ export default function LoginDialog(props: {
     if (inviteCode) {
       setInviteCode(inviteCode)
     }
-    setEmail(localStorage.getItem("email") ?? '')
   })
 
   function isPhoneValid() {
@@ -90,7 +88,6 @@ export default function LoginDialog(props: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: email(),
           phone: phone(),
           inviteCode: inviteCode()
         }),
