@@ -231,6 +231,7 @@ export async function incrGPT4Cnt() {
 
     if (data.isQualifyGPT4) {
       localStorage.setItem('isQualifyFor4', '1')
+      localStorage.setItem('gpt4Cnt', data.cnt)
     } else {
       localStorage.removeItem('isQualifyFor4')
     }
