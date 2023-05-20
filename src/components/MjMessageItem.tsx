@@ -9,6 +9,9 @@ import ImageWithSpinner from "./ImageWithSpinner"
 import MjMessageAction from "./MjMessageAction"
 import { isMobile } from "~/utils"
 
+import {
+  getRequestImageSize
+} from "~/utils"
 
 interface Props {
   message: MjChatMessage
@@ -40,6 +43,7 @@ export default (props: Props) => {
   const [buttonLabels, setButtonLabels] = createSignal<string[]>([]);
 
   const [imageUrl, setImageUrl] = createSignal(props.message.imageUrl);
+  const [originImageUrl, setOriginImageUrl] = createSignal(props.message.originImageUrl);
 
   const [clickedButtons, setClickedButtons] = createSignal(props.message.clickedButtons ?? []);
 
@@ -58,14 +62,18 @@ export default (props: Props) => {
         setErrorMessage(message)
       }
 
-      if (res.progress == 100) {
+      if (res.progress == 100 && res.imageSize) {
         if (res.messageId) {
           props.message.messageId = res.messageId
         }
         if (res.response.imageUrl) {
           setProcess('加载中')
           window.clearInterval(intervalId);
-          setImageUrl(`https://api-node.makechat.help/api/image/fetch?img=${res.response.imageUrl}`)
+
+          let imgRes = getRequestImageSize(res.response.imageUrl, res.imageSize)
+          setImageUrl(imgRes.previewUrl)
+          setOriginImageUrl(imgRes.originUrl)
+
           setRole(props.message.type == 1 ? 'prompt' : 'variation')
           props.message.buttonMessageId = res.response.buttonMessageId
         } else {
@@ -185,6 +193,7 @@ export default (props: Props) => {
             class="message prose prose-slate dark:prose-invert dark:text-slate mt-4 break-words overflow-hidden">
             <label class="mt-4">{props.message.content}</label>
             <ImageWithSpinner
+              originSrc={originImageUrl()}
               src={`${imageUrl()}`}
               process={process()}
               className="rounded-md"

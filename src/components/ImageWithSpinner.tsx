@@ -6,6 +6,7 @@ import ImageLargeDialog from './ImageLargeDialog'
 
 interface ImageWithSpinnerProps {
   src: string;
+  originSrc: string;
   className?: string;
   process?: string; // Add process property
 }
@@ -69,8 +70,8 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
           {(isDialogOpen: boolean, isOpen: boolean) => (
             <>
               <img
-                src={props.src}
                 loading="lazy"
+                src={isOpen ? props.originSrc : props.src}
                 alt="开始绘图"
                 ref={imgRef}
                 class={`${isLoading() ? 'w-[350px] h-[350px] object-none opacity-0' : 'object-contain max-w-full max-w-[550px] max-h-[350px] opacity-100'} ${isDialogOpen ? 'max-w-4xl max-h-4xl' : ''} ${props.className}`}
@@ -85,7 +86,7 @@ export default function ImageWithSpinner(props: ImageWithSpinnerProps) {
               />
               <Show when={isOpen}>
                 <div class="bg-transparent text-gray hover:text-white hover:underline" onClick={(event) => {
-                  window.open(props.src)
+                  window.open(props.originSrc)
                   event.stopPropagation();
                 }}>请在浏览器中打开</div>
               </Show>

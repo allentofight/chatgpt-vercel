@@ -14,6 +14,10 @@ import { useAuth } from "~/utils/useAuth"
 import toast, { Toaster } from 'solid-toast'
 import VipChargeDialog from './VipChargeDialog'
 
+import {
+  getRequestImageSize
+} from "~/utils"
+
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 const apiHost = import.meta.env.CLIENT_API_HOST;
@@ -159,6 +163,7 @@ export default function (props: {
     let earliestGmtCreate = messageList().length > 0 ? messageList()[0].gmtCreate : ""
     fetchMjMessageList(earliestGmtCreate).then((data) => {
       let result = data.list.map(item => {
+        let imageSizeRes = getRequestImageSize(item.imageUrl, item.imageSize)
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,
@@ -170,7 +175,8 @@ export default function (props: {
           clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
           type: item.type,
           errorMessage: item.errorMessage,
-          imageUrl: item.imageUrl?.includes('beisheng') ? item.imageUrl : (item.imageUrl ? `https://api-node.makechat.help/api/image/fetch?img=${item.imageUrl}` : "")
+          imageUrl: imageSizeRes.previewUrl,
+          originImageUrl: imageSizeRes.originUrl,
         } as MjChatMessage
       })
 

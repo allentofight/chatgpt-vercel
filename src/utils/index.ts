@@ -128,3 +128,57 @@ export function isEmoji(character: string) {
   )
   return regex.test(character)
 }
+
+export function getRequestImageSize(originImageUrl: string, imageSize: string) {
+  if (!originImageUrl) {
+    return {
+      previewUrl: '',
+      originUrl: ''
+    }
+  }
+
+  if (!imageSize) {
+    return {
+      previewUrl: originImageUrl,
+      originUrl: originImageUrl
+    }
+  }
+
+  if (imageSize) {
+    let [width, height] = imageSize.split('x').map(Number);
+    // Limits
+    const maxWidth = 550;
+    const maxHeight = 350;
+    const targetAspectRatio = maxWidth / maxHeight;
+
+    // Determine the image's aspect ratio
+    const imageAspectRatio = width / height;
+
+    // Calculate new dimensions based on aspect ratios
+    let newWidth, newHeight;
+    if (imageAspectRatio > targetAspectRatio) {
+      // If image aspect ratio is greater than target, limit by width
+      newWidth = maxWidth;
+      newHeight = Math.round(newWidth / imageAspectRatio);
+    } else {
+      // If image aspect ratio is less than target, limit by height
+      newHeight = maxHeight;
+      newWidth = Math.round(newHeight * imageAspectRatio);
+    }
+    let url = originImageUrl.replace('cdn.discordapp.com', 'media.discordapp.net')
+    let previewUrl = encodeURIComponent(`${url}?width=${newWidth}&height=${newHeight}`)
+    let originUrl = encodeURIComponent(originImageUrl)
+
+    let prefix = `https://api-node.makechat.help/api/image/fetch?img=`
+
+    return {
+      previewUrl: `${prefix}${previewUrl}`,
+      originUrl: `${prefix}${originUrl}`,
+    }
+  }
+
+  return {
+    previewUrl: '',
+    originUrl: ''
+  }
+}
