@@ -368,7 +368,7 @@ export default function (props: {
   }
 
   async function sendMessage(value?: string) {
-    const { showLogin, isExpired, isLogin, isMjExpired } = useAuth()
+    const { showLogin, isMjExpired } = useAuth()
 
     if (showLogin()) {
       setShowLoginDirectDialog(true)
@@ -376,12 +376,6 @@ export default function (props: {
     }
 
     fetchUserInfoAsync()
-
-    if (isLogin() && isExpired()) {
-      toast.error('VIP 会员已过期，请及时充值哦');
-      setShowChargeDialog(true)
-      return
-    }
 
     const inputValue = value ?? inputContent()
     if (!inputValue) {
@@ -395,7 +389,7 @@ export default function (props: {
     }
 
     if (isMjExpired()) {
-      // 付费用户才能使用 GPT4!
+      // 付费用户才能使用 MJ哦!
       setShowVipDialog(true)
       return
     }
