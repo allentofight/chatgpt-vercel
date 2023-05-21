@@ -13,7 +13,7 @@ const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { ModelEnum } from "~/types"
 import VipChargeDialog from './VipChargeDialog'
-import ChargeDialog from './ChargeDialog'
+import AccountInfoDialog from './AccountInfoDialog'
 
 interface Chat {
   id: string;
@@ -541,7 +541,10 @@ export default function ChatContainer() {
               onClose={closeVipDialog} />
           </Show>
           <Show when={showChargeDialog()}>
-            <ChargeDialog closeDialog={closeChargeDialog} />
+            <AccountInfoDialog closeDialog={closeChargeDialog} inviteBtnClick={() => {
+              setShowInviteDialog(true)
+              setShowChargeDialog(false)
+            }} />
           </Show>
         </aside >
       </div>

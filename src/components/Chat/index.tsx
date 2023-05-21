@@ -10,7 +10,6 @@ import VipChargeDialog from '../VipChargeDialog'
 import { type FakeRoleUnion, setActionState } from "./SettingAction"
 import LoginGuideDialog from '../LoginGuideDialog'
 import ExchangeDialog from '../ExchangeDialog'
-import ChargeDialog from '../ChargeDialog'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from '../MessagesStore'
 import toast, { Toaster } from 'solid-toast';
@@ -36,7 +35,6 @@ export default function () {
   )
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showVipDialog, setShowVipDialog] = createSignal(false);
-  const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
@@ -101,8 +99,6 @@ export default function () {
       } else {
         setStore("messageList", JSON.parse(chat.body))
       }
-    } else if (sharedStore.message?.type === 'showCharge') {
-      setShowChargeDialog(true)
     } else if (sharedStore.message?.type === 'delChat') {
       uploadChatList()
     }
@@ -138,10 +134,6 @@ export default function () {
         console.error(error);
       }
     }
-  }
-
-  function closeChargeDialog() {
-    setShowChargeDialog(false)
   }
 
   interface IResponse {
@@ -480,9 +472,6 @@ export default function () {
       />
       <Show when={showLoginDirectDialog()}>
         <LoginGuideDialog title={loginGuideTitle()} />
-      </Show>
-      <Show when={showChargeDialog()}>
-        <ChargeDialog closeDialog={closeChargeDialog} />
       </Show>
       <Show when={showExchangeDialog()}>
         <ExchangeDialog

@@ -29,7 +29,7 @@ const InviteDialog = (props: {
     if (inviteSuccess()) {
       setTimeout(() => {
         setInviteSuccess(false);
-      }, 2000);
+      }, 4000);
     }
   });
 
@@ -40,8 +40,8 @@ const InviteDialog = (props: {
           <button class="absolute top-2 right-2 p-1" onClick={props.closeDialog}>
             <CloseIcon />
           </button>
-          <h2 class="text-2xl font-bold mb-4">邀请好友享 VIP 权益</h2>
-          <p class="mb-6">每邀请一位好友，可增加 3 天 VIP 体验期！上不封顶!</p>
+          <h2 class="text-2xl font-bold mb-4 flex justify-center">邀请好友享 VIP 权益</h2>
+          <p class="mb-6">每邀请一位好友，可增加 3 天 VIP 体验期！上不封顶!<br />此外好友如果付费成为本站的会员，您可<span class="text-red-500 font-bold">终身</span>享有其<span class="text-red-500 font-bold">每一笔</span>会员费的10%分佣，可提现到支付宝哦!</p>
           {!inviteSuccess() && (
             <button
               class="font-bold py-2 px-4 rounded-md w-full bg-indigo-500 text-white"

@@ -5,10 +5,11 @@ const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 interface ChargeDialogProps {
-  closeDialog: () => void;
+  closeDialog: () => void,
+  inviteBtnClick: () => void,
 }
 
-const ChargeDialog = (props: ChargeDialogProps) => {
+const AccountInfoDialog = (props: ChargeDialogProps) => {
 
   if (!isLocalStorageAvailable()) {
     return
@@ -22,6 +23,7 @@ const ChargeDialog = (props: ChargeDialogProps) => {
   const [isGPT4Expired, setIsGPT4Expired] = createSignal(false);
   const [isMJExpired, setIsMJExpired] = createSignal(false);
 
+  const [balance, setBalance] = createSignal("0");
 
   onMount(() => {
     let sessionId = localStorage.getItem('sessionId')
@@ -64,6 +66,8 @@ const ChargeDialog = (props: ChargeDialogProps) => {
         setIsMJExpired(true)
       }
 
+      setBalance(data.balance)
+
     }).catch((error) => {
       console.error('Error delete chat:', error);
     });
@@ -86,7 +90,7 @@ const ChargeDialog = (props: ChargeDialogProps) => {
             <span class="text-lg text-red-500">GPT3 已到期!请及时续费哦~</span>
           </Show>
           <Show when={!isGPT3Expired()}>
-            <span class="text-lg">GPT3 到期时间：</span>
+            <span class="text-lg">GPT3.5 到期时间：</span>
             <Show when={endDate() != null}>
               <span class="text-lg font-bold text-indigo-600">{dateformat(endDate()!, 'yyyy-mm-dd HH:MM')}</span>
             </Show>
@@ -131,16 +135,24 @@ const ChargeDialog = (props: ChargeDialogProps) => {
             </Show>
           </div>
         </Show>
+        <div class="ml-6 flex items-center">
+          <span class="text-lg w-35">账户现金余额:{balance()}</span>
+          <button
+            onClick={props.inviteBtnClick}
+            class="font-bold px-4 py-2 rounded-md bg-indigo-500 text-white"
+          >
+            邀请好友赚现金余额
+          </button>
+        </div>
 
-
-        <div class="flex flex-col items-center mt-6">
+        <div class="flex flex-col items-center mt-2">
           <img
             style={{ width: "100%", height: "auto" }}
             src="https://i.imgtg.com/2023/05/04/CkYCM.png"
             alt="QR code"
           />
           <p class="text-gray-600 mt-2">
-            扫码添加坤哥微信围观朋友圈关注产品最新动态
+            如需提现到支付宝请扫码添加坤哥微信
           </p>
         </div>
       </div>
@@ -167,4 +179,4 @@ function CloseIcon() {
   );
 }
 
-export default ChargeDialog;
+export default AccountInfoDialog;

@@ -1,7 +1,6 @@
 import { createEffect, createSignal, For, onMount, Show } from "solid-js"
 import { createResizeObserver } from "@solid-primitives/resize-observer"
 import MjMessageItem from "./MjMessageItem"
-import ChargeDialog from "./ChargeDialog"
 import type { MjChatMessage, PromptItem } from "~/types"
 import MjPromptList from "./MjPromptList"
 import { Fzf } from "fzf"
@@ -42,7 +41,6 @@ export default function (props: {
   const [compatiblePrompt, setCompatiblePrompt] = createSignal<PromptItem[]>([])
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
-  const [showChargeDialog, setShowChargeDialog] = createSignal(false)
   const [showUploadImageDialog, setShowUploadImageDialog] = createSignal(false)
   const [isRefreshing, setIsRefreshing] = createSignal(false)
   let [isLoading, setIsLoading] = createSignal(false);
@@ -59,6 +57,7 @@ export default function (props: {
     buttonMessageId: '',
     type: 1,
     imageUrl: '',
+    originImageUrl: '',
     messageId: ''
   }
   const fzf = new Fzf(props.prompts, {
@@ -155,9 +154,6 @@ export default function (props: {
     delMjMessage(messageId)
   }
 
-  function closeChargeDialog() {
-    setShowChargeDialog(false)
-  }
 
   function fetchMessageList(onComplete?: () => void) {
     let earliestGmtCreate = messageList().length > 0 ? messageList()[0].gmtCreate : ""
@@ -333,6 +329,7 @@ export default function (props: {
           buttonMessageId: '',
           type: command.startsWith('U') ? 2 : 1,
           imageUrl: '',
+          originImageUrl: '',
           messageId: '',
           ref,
         } as MjChatMessage,
@@ -644,9 +641,6 @@ export default function (props: {
         </div>
         <Show when={showLoginDirectDialog()}>
           <LoginGuideDialog title={loginGuideTitle()} />
-        </Show>
-        <Show when={showChargeDialog()}>
-          <ChargeDialog closeDialog={closeChargeDialog} />
         </Show>
         <Show when={showVipDialog()}>
           <VipChargeDialog
