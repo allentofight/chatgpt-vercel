@@ -419,6 +419,7 @@ export default function (props: {
         type: 1,
         buttonMessageId: '',
         imageUrl: '',
+        originImageUrl: '',
         messageId: '',
       },
     ]);
