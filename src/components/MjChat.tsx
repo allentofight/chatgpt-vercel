@@ -385,7 +385,9 @@ export default function (props: {
       return
     }
 
-    if (isMjExpired()) {
+    let storageKey = 'mj_try_cnt'
+    let mjCnt = parseInt(localStorage.getItem(storageKey) || '0');
+    if (isMjExpired() && mjCnt > 10) {
       // 付费用户才能使用 MJ哦!
       setShowVipDialog(true)
       return
@@ -395,7 +397,6 @@ export default function (props: {
       return
     }
 
-    let storageKey = 'cnt_of_experience'
     const currentValue = parseInt(localStorage.getItem(storageKey) || '0') + 1;
     localStorage.setItem(storageKey, currentValue.toString())
 
