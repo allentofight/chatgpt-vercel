@@ -9,7 +9,7 @@ import { makeEventListener } from "@solid-primitives/event-listener"
 import LoginGuideDialog from './LoginGuideDialog'
 import UploadImageDialog from './UploadImageDialog'
 import { useAuth } from "~/utils/useAuth"
-
+import type { MjRole } from "~/types"
 import toast, { Toaster } from 'solid-toast'
 import VipChargeDialog from './VipChargeDialog'
 
@@ -424,17 +424,26 @@ export default function (props: {
     try {
       let res = await sendMjPrompt({ prompt })
       // Assuming res contains the messageId for the last message
+      let resultDict: { messageId?: string, errorMessage?: string, role?: MjRole };
       if (res.messageId) {
-        // Update the last item in messageList with the new messageId
-        setMessageList((prevMessageList) => {
-          const updatedMessageList = [...prevMessageList];
-          updatedMessageList[updatedMessageList.length - 1] = {
-            ...updatedMessageList[updatedMessageList.length - 1],
-            messageId: res.messageId,
-          };
-          return updatedMessageList;
-        });
+        resultDict = {
+          messageId: res.messageId,
+        }
+      } else if (res.bannedWord) {
+        resultDict = {
+          errorMessage: `使用了违禁词${res.bannedWord}`,
+          role: 'error'
+        }
       }
+      // Update the last item in messageList with the new messageId
+      setMessageList((prevMessageList) => {
+        const updatedMessageList = [...prevMessageList];
+        updatedMessageList[updatedMessageList.length - 1] = {
+          ...updatedMessageList[updatedMessageList.length - 1],
+          ...resultDict
+        };
+        return updatedMessageList;
+      });
     } catch (error: any) {
       console.log('error...', error)
       toast.error(error.message)

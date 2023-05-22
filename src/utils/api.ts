@@ -29,12 +29,12 @@ export const sendMjPrompt = async (body: MjPromptBody) => {
     });
 
     if (!response.ok) {
-      let error = await response.json()
-      throw new Error(error.message);
+      console.log('sendMJPrompt error...')
+      return await response.json()
     }
     return response.json();
   } catch (error) {
-    console.log('sendMJPrompt error = ', error)
+    console.log('sendMJPrompt error = ')
     throw error;
   }
 };
