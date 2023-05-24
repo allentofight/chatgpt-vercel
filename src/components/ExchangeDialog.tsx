@@ -105,6 +105,8 @@ export default function ExchangeDialog(props: {
               <div class="mt-8">
                 <h3 class="text-lg">步骤三: 稍等片刻之后，点击复制，即可拿到兑换码</h3>
                 <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/6452021944ea3.jpg" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
+                <img src="https://b1.beisheng.com/common/starchain_self_image/2305/24/Group.png" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
+
               </div>
             </div>
             <div class="mt-4 flex flex-col items-center">
