@@ -10,11 +10,12 @@ import VipChargeDialog from '../VipChargeDialog'
 import { type FakeRoleUnion, setActionState } from "./SettingAction"
 import LoginGuideDialog from '../LoginGuideDialog'
 import ExchangeDialog from '../ExchangeDialog'
+import NotifyDialog from '../NotifyDialog'
 import { useAuth } from "~/utils/useAuth"
 import { setSharedStore, sharedStore } from '../MessagesStore'
 import toast, { Toaster } from 'solid-toast';
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
-import { fetchUserInfo, incrGPT4Cnt, gpt4Check } from "~/utils/api"
+import { fetchUserInfo, incrGPT4Cnt } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import Login from "~/components/Login"
@@ -35,6 +36,7 @@ export default function () {
   )
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showVipDialog, setShowVipDialog] = createSignal(false);
+  const [showNotifyDialog, setShowNotifyDialog] = createSignal(false);
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
@@ -45,6 +47,17 @@ export default function () {
   const { store, setStore } = RootStore
   onMount(() => {
     fetchUserInfoAsync()
+
+    if (window.location.href.includes('codesea')) {
+      setShowNotifyDialog(true)
+    } else if (window.location.href.includes('nextaibots')) {
+      const queryParams = new URLSearchParams(window.location.search);
+      let sid = queryParams.get('sid')
+      if (sid) {
+        localStorage.setItem('sessionId', sid)
+        window.location.href = 'https://www.nextaibots.com'
+      }
+    }
 
     const eventListenerFunction = function (e: CustomEvent) {
       if (e.detail.index < ModelEnum.MJ) {
@@ -256,22 +269,6 @@ export default function () {
     }
   }
 
-  async function isGPT4Qualify() {
-    try {
-      let gpt4Verify = await gpt4Check()
-      console.log('gpt4Verify = ', gpt4Verify)
-      return gpt4Verify.success
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-        console.error('Error fetch qualify info:', error);
-      } else {
-        console.error(error);
-      }
-      return false
-    }
-  }
-
   async function sendMessage(value?: string, fakeRole?: FakeRoleUnion) {
 
     const { showLogin, isExpired, isLogin, isGPT4Expired } = useAuth()
@@ -373,6 +370,7 @@ export default function () {
     let isModelGPT = [ModelEnum.GPT_3, ModelEnum.GPT_4].includes(currentChat().model)
     let response;
     if (isModelGPT) {
+      let sessionId = localStorage.getItem('sessionId')
       response = await fetch("/api", {
         method: "POST",
         body: JSON.stringify({
@@ -380,7 +378,8 @@ export default function () {
           key: undefined,
           temperature: store.sessionSettings.APITemperature,
           password: store.globalSettings.password,
-          model: modelMap[currentChat().model]
+          model: modelMap[currentChat().model],
+          sessionId,
         }),
         signal: controller?.signal
       })
@@ -499,6 +498,9 @@ export default function () {
             setShowBindTelDialog(false)
           }}
         />
+      </Show>
+      <Show when={showNotifyDialog()}>
+        <NotifyDialog />
       </Show>
       <Toaster position="top-center" />
     </main>

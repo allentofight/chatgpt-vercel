@@ -189,27 +189,22 @@ export async function fetchUserInfo() {
   }
 }
 
-export async function gpt4Check() {
-  if (isLocalStorageAvailable()) {
-    let sessionId = localStorage.getItem('sessionId')
-    if (!sessionId) {
-      return
-    }
-    const response = await fetch(`${apiHost}/api/auth/gpt4Check`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${sessionId}`,
-      },
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message);
-    }
-    return data
-  } else {
-    throw new Error('LocalStorage is not available.');
+export async function gpt4Check(sessionId: string) {
+  if (!sessionId) {
+    return { success: false }
   }
+  const response = await fetch(`${apiHost}/api/auth/gpt4Check`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`,
+    },
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    return { success: false }
+  }
+  return data
 }
 
 export async function incrGPT4Cnt() {

@@ -4,6 +4,7 @@ import type { ChatMessage, Model } from "~/types"
 import { splitKeys, randomKey, fetchWithTimeout } from "~/utils"
 import { defaultEnv } from "~/env"
 import type { APIEvent } from "solid-start/api"
+import { gpt4Check } from "~/utils/api"
 
 export const config = {
   runtime: "edge",
@@ -51,6 +52,20 @@ const timeout = isNaN(+process.env.TIMEOUT!)
 
 const passwordSet = process.env.PASSWORD || defaultEnv.PASSWORD
 
+async function isGPT4Qualify(sessionId: string) {
+  try {
+    let gpt4Verify = await gpt4Check(sessionId)
+    return gpt4Verify.success
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Error fetch qualify info:', error);
+    } else {
+      console.error(error);
+    }
+    return false
+  }
+}
+
 export async function POST({ request }: APIEvent) {
   try {
     const body: {
@@ -59,10 +74,15 @@ export async function POST({ request }: APIEvent) {
       temperature: number
       password?: string
       model: Model
-
+      sessionId: string
     } = await request.json()
 
     if (body.model.includes('gpt-4')) {
+
+      let gp4Qualify = await isGPT4Qualify(body.sessionId)
+      if (!gp4Qualify) {
+        throw new Error("GPT4当天已体验完，请明天再试哦")
+      }
       localKey = process.env.OPEN_API_4_KEY!
     }
 
