@@ -405,7 +405,7 @@ export default function (props: {
     setInputContent("")
 
     if (!prompt.includes('--v')) {
-      prompt += ' --v 5'
+      prompt += ' --v 5.1'
     }
 
     setMessageList((prev) => [
