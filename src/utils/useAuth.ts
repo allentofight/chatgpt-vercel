@@ -7,12 +7,6 @@ export const useAuth = () => {
       return
     }
 
-    const storageKey = 'cnt_of_experience';
-    const currentValue = parseInt(localStorage.getItem(storageKey) || '0');
-    if (currentValue < 3) {
-      return false
-    }
-
     let sessionId = localStorage.getItem('sessionId')
     if (!sessionId) {
       return true
