@@ -364,6 +364,11 @@ export default function (props: {
     }
   }
 
+  function containsChineseCharacters(str: string) {
+    const regex = /[\u4E00-\u9FFF]/;
+    return regex.test(str);
+  }
+
   async function sendMessage(value?: string) {
     const { showLogin, isMjExpired } = useAuth()
 
@@ -382,6 +387,11 @@ export default function (props: {
     let prompt = getPrompt(inputValue)
     if (!prompt.length) {
       toast.error("Midjourney 绘画命令有误，请输入'/'来选择正确的命令");
+      return
+    }
+
+    if (containsChineseCharacters(prompt)) {
+      toast.error("绘图命令必须为英文，请输入 / 来选择唤出 prompt 生成器");
       return
     }
 
