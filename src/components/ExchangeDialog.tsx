@@ -83,7 +83,7 @@ export default function ExchangeDialog(props: {
       </style>
       <div class="fixed inset-0 z-10 flex items-center justify-center">
         <div class="absolute inset-0 bg-black opacity-50"></div>
-        <div class="bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl max-w-lg w-full z-100 relative">
+        <div class="bg-white rounded-lg mx-1 px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl max-w-lg w-full z-100 relative">
           <button class="absolute top-2 right-2 p-1" onClick={props.onClick}>
             <CloseIcon />
           </button>
