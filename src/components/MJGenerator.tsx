@@ -17,7 +17,7 @@ const generatePrompt = () => {
 
   // Add the other form elements
   formElements.forEach((element) => {
-    if (element.value.includes('showPrompt')) {
+    if (element.value.includes('prompt生成器')) {
       return;
     }
 

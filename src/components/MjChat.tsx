@@ -216,7 +216,7 @@ export default function (props: {
 
   createEffect(() => {
 
-    if (inputContent().includes('showPrompt')) {
+    if (inputContent().includes('prompt生成器')) {
       setShowMJGeneratorDialog(true)
       setInputContent('')
     } else if (inputContent().includes('/垫图')) {

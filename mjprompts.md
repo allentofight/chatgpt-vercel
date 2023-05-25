@@ -3,7 +3,7 @@
 Create images with Midjourney
 
 
-## /showPrompt
+## /prompt生成器
 
 显示prompt生成器
 
