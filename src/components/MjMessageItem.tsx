@@ -63,7 +63,7 @@ export default (props: Props) => {
       }
 
       if (res.progress == 100 && !res.response.imageUrl.length) {
-        errorCallback(res.response.content)
+        errorCallback(res.response.description)
         return
       }
 
