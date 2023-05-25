@@ -62,6 +62,11 @@ export default (props: Props) => {
         setErrorMessage(message)
       }
 
+      if (res.progress == 100 && !res.response.imageUrl.length) {
+        errorCallback(res.response.content)
+        return
+      }
+
       if (res.progress == 100 && res.imageSize) {
         if (res.messageId) {
           props.message.messageId = res.messageId
