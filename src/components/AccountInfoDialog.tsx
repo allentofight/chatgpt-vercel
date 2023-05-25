@@ -76,7 +76,7 @@ const AccountInfoDialog = (props: ChargeDialogProps) => {
   return (
     <div class="fixed inset-0 flex items-center justify-center z-50">
       <div class="fixed inset-0 bg-black opacity-50" onClick={props.closeDialog}></div>
-      <div class="bg-white w-[30rem] py-8 px-6 rounded-lg relative">
+      <div class="bg-white w-[30rem] mx-1 py-8 px-6 rounded-lg relative">
         <button class="absolute top-2 right-2 p-1" onClick={props.closeDialog}>
           <CloseIcon />
         </button>
