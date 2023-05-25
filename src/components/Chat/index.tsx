@@ -38,7 +38,7 @@ export default function () {
   const [showVipDialog, setShowVipDialog] = createSignal(false);
   const [showNotifyDialog, setShowNotifyDialog] = createSignal(false);
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
-  const [loginGuideTitle, setLoginGuideTitle] = createSignal("您的体验次数已结束，请登录以解锁更多功能")
+  const [loginGuideTitle, setLoginGuideTitle] = createSignal("请登录以解锁更多功能")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
   const [showBindTelDialog, setShowBindTelDialog] = createSignal(false)
 
