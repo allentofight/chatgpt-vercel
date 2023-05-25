@@ -142,7 +142,7 @@ const VipChargeDialog = (props: Props) => {
                 <Show when={index == 1}>
                   <div class="absolute bottom-1 left-0 right-0 mx-auto bold text-sm text-red-500">90%用户选择此套餐</div>
                 </Show>
-                <div class="mt-4">
+                <div class={`${isMobile() ? 'mt-6' : 'mt-4'}`}>
                   <span class="text-lg font-bold text-blue-500">¥{calculatePrice(index).price}</span>
                   <Show when={calculatePrice(index).itemsCnt > 1}>
                     <span class="text-sm text-red-500 ml-2">已省 ¥{calculatePrice(index).saved.toFixed(1)}</span>
