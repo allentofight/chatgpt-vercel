@@ -8,7 +8,6 @@ declare global {
 
 const options = [
   { title: 'GPT-3.5', description: 'GPT-3.5，仅对充值用户提供。此模型支持 4k token（大约 2000 字）的上下文会话' },
-  { title: 'New Bing', description: 'New Bing 是微软最新推出的搜索引擎，底层基于 OpenAI ChatGPT 4 模型，可以让你和它进行智能对话，获取网上最新信息' },
   { title: 'GPT-4', description: '当今世界最强人工智能模型，此模型支持 8k token（大约 4000 字）的上下文会话' },
   { title: 'Midjourney', description: '世界知名 AI 绘画工具' },
 ];
