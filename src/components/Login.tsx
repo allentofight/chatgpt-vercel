@@ -2,6 +2,8 @@ import { createSignal, Show, onMount } from "solid-js";
 import toast, { Toaster } from 'solid-toast';
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
+import LoginSuccessDialog from './LoginSuccessDialog'
+
 export default function LoginDialog(props: {
   title: string,
   buttonTitle: string,
@@ -13,6 +15,7 @@ export default function LoginDialog(props: {
   let [count, setCount] = createSignal(60);
   let [disabled, setDisabled] = createSignal(false);
   let [submitDisabled, setSubmitDisabled] = createSignal(true);
+  let [showLoginSuccess, setShowLoginSuccess] = createSignal(false);
   const [inviteCode, setInviteCode] = createSignal('');
 
   onMount(async () => {
@@ -108,7 +111,7 @@ export default function LoginDialog(props: {
         props.successCallback!()
       } else {
         toast.success('登录成功，欢迎体验^_^');
-        window.location.href = '/'
+        setShowLoginSuccess(true)
       }
     } else {
       toast.error(result.message);
@@ -159,6 +162,9 @@ export default function LoginDialog(props: {
         </div>
       </div>
       <Toaster position="top-center" />
+      <Show when={showLoginSuccess()}>
+        <LoginSuccessDialog />
+      </Show>
     </div>
   );
 }

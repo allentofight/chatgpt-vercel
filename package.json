@@ -50,6 +50,7 @@
     "markdown-it-highlightjs": "^4.0.1",
     "markdown-it-katex": "^2.0.3",
     "markdown-it-kbd": "^2.2.2",
+    "midjourney": "^2.3.42",
     "moment": "^2.29.4",
     "qrcode": "^1.5.3",
     "solid-js": "^1.7.3",
