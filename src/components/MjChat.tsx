@@ -395,9 +395,7 @@ export default function (props: {
       return
     }
 
-    let storageKey = 'mj_try_cnt'
-    let mjCnt = parseInt(localStorage.getItem(storageKey) || '0');
-    if (isMjExpired() && mjCnt > 10) {
+    if (isMjExpired()) {
       // 付费用户才能使用 MJ哦!
       setShowVipDialog(true)
       return
@@ -406,9 +404,6 @@ export default function (props: {
     if (!isLocalStorageAvailable()) {
       return
     }
-
-    const currentValue = parseInt(localStorage.getItem(storageKey) || '0') + 1;
-    localStorage.setItem(storageKey, currentValue.toString())
 
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")

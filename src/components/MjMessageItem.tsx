@@ -197,7 +197,7 @@ export default (props: Props) => {
               process={process()}
               className="rounded-md"
             />
-            <Show when={buttonLabels().length && buttonLabels().length >= 9}>
+            <Show when={buttonLabels().length && buttonLabels().length >= 9 && false}>
               <Show when={!isMobile()}>
                 <div
                   class={`grid mt-2 grid-cols-5 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
@@ -267,7 +267,7 @@ export default (props: Props) => {
               </Show>
 
             </Show>
-            <Show when={buttonLabels().length === 1}>
+            <Show when={buttonLabels().length === 1 && false}>
               <div
                 class={`grid mt-2 grid-cols-2 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}
               >
