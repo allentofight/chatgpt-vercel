@@ -2,7 +2,7 @@ import type { APIEvent } from "solid-start/api"
 import { Midjourney } from "midjourney";
 
 export const config = {
-  runtime: "edge",
+  runtime: "server",
   /**
    * https://vercel.com/docs/concepts/edge-network/regions#region-list
    * disable hongkong
