@@ -293,6 +293,12 @@ export default function () {
       return
     }
 
+    if (currentChat().model === ModelEnum.GPT_New_Bing) {
+      // 付费用户才能使用 GPT4!
+      toast.error('new bing 暂不开放哦')
+      return
+    }
+
     if (isGPT4Expired() && currentChat().model === ModelEnum.GPT_4) {
       // 付费用户才能使用 GPT4!
       setShowVipDialog(true)
