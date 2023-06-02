@@ -62,25 +62,19 @@ export default (props: Props) => {
         setErrorMessage(message)
       }
 
-      if (res.progress == 100 && !res.response.imageUrl.length) {
-        errorCallback(res.response.description)
-        return
-      }
-
-      if (res.progress == 100 && res.imageSize) {
+      if (res.imageSize) {
         if (res.messageId) {
           props.message.messageId = res.messageId
         }
-        if (res.response.imageUrl) {
+        if (res.imageURL) {
           setProcess('加载中')
           window.clearInterval(intervalId);
 
-          let imgRes = getRequestImageSize(res.response.imageUrl, res.imageSize)
+          let imgRes = getRequestImageSize(res.imageURL, res.imageSize)
           setImageUrl(imgRes.previewUrl)
           setOriginImageUrl(imgRes.originUrl)
 
           setRole(props.message.type == 1 ? 'prompt' : 'variation')
-          props.message.buttonMessageId = res.response.buttonMessageId
         } else {
           errorCallback(res.response.content)
         }
