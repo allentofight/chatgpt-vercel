@@ -1,12 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { APIEvent } from "solid-start/api"
 import { Midjourney } from "midjourney";
 import { ResponseError } from "../../interfaces";
 export const config = {
   runtime: "edge",
 };
 
-const handler = async (req: Request) => {
-  const { prompt } = await req.json();
+export async function POST({ request }: APIEvent) {
+  const { prompt } = await request.json();
   console.log("imagine.handler", prompt);
   const client = new Midjourney({
     ServerId: '1112940597846749225',
@@ -38,4 +39,3 @@ const handler = async (req: Request) => {
   });
   return new Response(readable, {});
 };
-export default handler;

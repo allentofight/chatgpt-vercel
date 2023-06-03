@@ -44,7 +44,7 @@ const streamFetch = async (
 };
 
 export const Imagine = (body: string, loading?: (uri: MJMessage) => void) => {
-  return streamFetch("api/imagine/", body, loading);
+  return streamFetch("api/imagine", body, loading);
 };
 
 export const Upscale = (body: string, loading?: (uri: MJMessage) => void) => {
