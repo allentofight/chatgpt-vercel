@@ -8,7 +8,7 @@ interface MjPromptBody {
   prompt?: string;
   button?: string;
   ref?: string;
-  buttonMessageId?: string;
+  messageId?: string;
 }
 
 interface MjUpdateChatMessage {
@@ -20,6 +20,29 @@ export const sendMjPrompt = async (body: MjPromptBody) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
     const response = await fetch(`${apiHost}/api/mj/sendToTemp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      console.log('sendMJPrompt error...')
+      return await response.json()
+    }
+    return response.json();
+  } catch (error) {
+    console.log('sendMJPrompt error = ')
+    throw error;
+  }
+};
+
+export const mjUpscale = async (body: MjPromptBody) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/mj/upscale`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

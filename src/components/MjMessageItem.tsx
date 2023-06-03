@@ -115,7 +115,7 @@ export default (props: Props) => {
 
   createEffect(() => {
     let buttonInfo: ButtonInfo = {
-      prompt: ["U1", "U2", "U3", "U4", "🔄", "V1", "V2", "V3", "V4", "seed"],
+      prompt: ["U1", "U2", "U3", "U4"],
       variation: [
         '🪄 Make Variations',
       ],
@@ -197,7 +197,7 @@ export default (props: Props) => {
               process={process()}
               className="rounded-md"
             />
-            <Show when={buttonLabels().length && buttonLabels().length >= 9 && false}>
+            <Show when={buttonLabels().length >= 4}>
               <Show when={!isMobile()}>
                 <div
                   class={`grid mt-2 grid-cols-5 gap-x-2 gap-y-1 w-[350px] ${!imageUrl()?.length ? 'opacity-50' : ''}`}

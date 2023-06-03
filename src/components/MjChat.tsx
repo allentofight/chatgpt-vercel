@@ -21,7 +21,7 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
-import { sendMjPrompt, updateMjMessage, delMjMessage, fetchMjMessageList } from "~/utils/api"
+import { sendMjPrompt, mjUpscale, updateMjMessage, delMjMessage, fetchMjMessageList } from "~/utils/api"
 
 import MJGenerator from "./MJGenerator"
 
@@ -320,39 +320,29 @@ export default function (props: {
         ref = match ? `- Image #${match[0]}` : '';
       }
 
-      setMessageList((prev) => [
-        ...prev,
-        {
-          role: command.startsWith('U') ? "variation" : "prompt",
-          content: message.prompt + " " + ref,
-          prompt: message.prompt,
-          buttonMessageId: '',
-          type: command.startsWith('U') ? 2 : 1,
-          imageUrl: '',
-          originImageUrl: '',
-          messageId: '',
-          ref,
-        } as MjChatMessage,
-      ]);
-
-      let res = await sendMjPrompt({
+      let res = await mjUpscale({
         prompt: message.prompt,
         button: command,
         ref,
-        buttonMessageId: message.buttonMessageId
+        messageId: message.messageId,
       })
 
-      // Assuming res contains the messageId for the last message
-      if (res.messageId) {
-        // Update the last item in messageList with the new messageId
-        setMessageList((prevMessageList) => {
-          const updatedMessageList = [...prevMessageList];
-          updatedMessageList[updatedMessageList.length - 1] = {
-            ...updatedMessageList[updatedMessageList.length - 1],
-            messageId: res.messageId,
-          };
-          return updatedMessageList;
-        });
+      if (res.imageUrl) {
+        let imageSizeRes = getRequestImageSize(res.imageUrl, res.imageSize)
+        setMessageList((prev) => [
+          ...prev,
+          {
+            role: command.startsWith('U') ? "variation" : "prompt",
+            content: message.prompt + " " + ref,
+            prompt: message.prompt,
+            buttonMessageId: '',
+            type: command.startsWith('U') ? 2 : 1,
+            imageUrl: imageSizeRes.previewUrl,
+            originImageUrl: imageSizeRes.originUrl,
+            messageId: res.taskId,
+            ref,
+          } as MjChatMessage,
+        ]);
 
         updateMjMessage({
           messageId: message.messageId,
@@ -408,10 +398,6 @@ export default function (props: {
     // @ts-ignore
     if (window?.umami) umami.trackEvent("chat_generate")
     setInputContent("")
-
-    if (!prompt.includes('--v')) {
-      prompt += ' --v 5.1'
-    }
 
     setMessageList((prev) => [
       ...prev,
