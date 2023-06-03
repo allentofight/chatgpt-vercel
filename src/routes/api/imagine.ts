@@ -2,9 +2,11 @@
 // import type { APIEvent } from "solid-start/api"
 import { Midjourney } from "midjourney";
 import { ResponseError } from "../../interfaces";
+/**
 export const config = {
   runtime: "edge",
 };
+ */
 
 export async function POST({ request }) {
   const { prompt } = await request.json();
