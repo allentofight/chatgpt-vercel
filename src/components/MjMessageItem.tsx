@@ -82,6 +82,8 @@ export default (props: Props) => {
         errorCallback(res.response.content)
       } else if (res.progress) {
         setProcess(`${res.progress}%`)
+      } else if (res.status === 'midjourney-blocked-by-ai-moderation') {
+        errorCallback('触发敏感词，请换一个关键词再画')
       }
     } catch (error) {
       console.error('Error fetching data:', error);
