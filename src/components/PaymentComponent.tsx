@@ -81,22 +81,9 @@ export default function PaymentComponent() {
 
   createEffect(async () => {
     if (parseInt(productId()) > 0) {
-      let key = `productid_${productId()}`
-      let storage = getItemWithExpiration(key)
-      let outTradeNo = ''
-      if (storage) {
-        storage = JSON.parse(storage)
-        outTradeNo = storage.outTradeNo
-        setQRDataURL(storage.qrCode)
-      } else {
-        let result = await requestPayment(productId(), options())
-        outTradeNo = result.outTradeNo
-        setItemWithExpiration(key, JSON.stringify({
-          qrCode: result.qrCode,
-          outTradeNo: result.outTradeNo
-        }), 1)
-        setQRDataURL(result.qrCode)
-      }
+      let result = await requestPayment(productId(), options())
+      let outTradeNo = result.outTradeNo
+      setQRDataURL(result.qrCode)
 
       intervalId = window.setInterval(() => {
         queryOrderStatus(outTradeNo)
