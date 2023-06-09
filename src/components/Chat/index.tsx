@@ -380,7 +380,7 @@ export default function () {
     if (isModelGPT) {
       let sessionId = localStorage.getItem('sessionId')
       let url = `/api${isGPT4 ? '/gpt4' : ''}`
-      response = await fetch(url, {
+      response = await fetch('/api', {
         method: "POST",
         body: JSON.stringify({
           messages,
@@ -457,12 +457,7 @@ export default function () {
               setStore("currentAssistantMessage", k => k + char)
             }
           } else {
-            if (isGPT4) {
-              console.log('char = ', char)
-              setStore("currentAssistantMessage", char)
-            } else {
-              setStore("currentAssistantMessage", k => k + char)
-            }
+            setStore("currentAssistantMessage", k => k + char)
           }
         }
       }

@@ -38,12 +38,7 @@ export const config = {
 
 export let localKey = process.env.OPENAI_API_KEY || ""
 
-export const baseURL =
-  process.env.NO_GFW !== "false"
-    ? defaultEnv.OPENAI_API_BASE_URL
-    : (
-      process.env.OPENAI_API_BASE_URL || defaultEnv.OPENAI_API_BASE_URL
-    ).replace(/^https?:\/\//, "")
+let baseURL = process.env.OPENAI_API_BASE_URL!.replace(/^https?:\/\//, "")
 
 // + 作用是将字符串转换为数字
 const timeout = isNaN(+process.env.TIMEOUT!)
@@ -83,7 +78,8 @@ export async function POST({ request }: APIEvent) {
       if (!gp4Qualify) {
         throw new Error("GPT4当天已体验完，请明天再试哦")
       }
-      localKey = process.env.OPEN_API_4_KEY!
+      localKey = process.env.OPENAI_GPT4_LG_API_KEY!
+      baseURL = process.env.OPENAI_GPT4_LG_API_HOST!
     }
 
 

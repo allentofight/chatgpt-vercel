@@ -125,7 +125,7 @@ export async function POST({ request }: APIEvent) {
         }
     */
 
-    const url = `https://${baseURL}/ask/stream?` + new URLSearchParams(data);
+    const url = `https://${baseURL}/ask?` + new URLSearchParams(data);
     console.log('url = ', url)
     const rawRes = await fetchWithTimeout(url, {
       method: 'GET',
