@@ -458,6 +458,7 @@ export default function () {
             }
           } else {
             if (isGPT4) {
+              console.log('char = ', char)
               setStore("currentAssistantMessage", char)
             } else {
               setStore("currentAssistantMessage", k => k + char)
