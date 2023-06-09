@@ -375,9 +375,11 @@ export default function () {
   async function fetchGPT(messages: ChatMessage[], inputVal: string) {
     let isModelGPT = [ModelEnum.GPT_3, ModelEnum.GPT_4].includes(currentChat().model)
     let response;
+    let isGPT4 = currentChat().model === ModelEnum.GPT_4
     if (isModelGPT) {
       let sessionId = localStorage.getItem('sessionId')
-      response = await fetch("/api", {
+      let url = `/api${isGPT4 ? '/gpt4' : ''}`
+      response = await fetch(url, {
         method: "POST",
         body: JSON.stringify({
           messages,
@@ -454,7 +456,11 @@ export default function () {
               setStore("currentAssistantMessage", k => k + char)
             }
           } else {
-            setStore("currentAssistantMessage", k => k + char)
+            if (isGPT4) {
+              setStore("currentAssistantMessage", char)
+            } else {
+              setStore("currentAssistantMessage", k => k + char)
+            }
           }
         }
       }
