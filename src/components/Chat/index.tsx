@@ -330,6 +330,7 @@ export default function () {
           content: inputValue
         }
       ])
+
       if (store.remainingToken < 0) {
         throw new Error(
           store.sessionSettings.continuousDialogue
