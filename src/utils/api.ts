@@ -213,7 +213,7 @@ export async function fetchUserInfo() {
 }
 
 export async function gpt4Check(sessionId: string) {
-  if (!sessionId) {
+  if (!sessionId || !sessionId.length) {
     return { success: false }
   }
   const response = await fetch(`${apiHost}/api/auth/gpt4Check`, {
