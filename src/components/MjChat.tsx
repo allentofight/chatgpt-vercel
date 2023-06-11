@@ -320,29 +320,39 @@ export default function (props: {
         ref = match ? `- Image #${match[0]}` : '';
       }
 
-      let res = await mjUpscale({
+      setMessageList((prev) => [
+        ...prev,
+        {
+          role: command.startsWith('U') ? "variation" : "prompt",
+          content: message.prompt + " " + ref,
+          prompt: message.prompt,
+          buttonMessageId: '',
+          type: command.startsWith('U') ? 2 : 1,
+          imageUrl: '',
+          originImageUrl: '',
+          messageId: message.messageId,
+          ref,
+        } as MjChatMessage,
+      ]);
+
+      let res = await sendMjPrompt({
         prompt: message.prompt,
+        messageId: message.messageId,
         button: command,
         ref,
-        messageId: message.messageId,
       })
 
-      if (res.imageUrl) {
-        let imageSizeRes = getRequestImageSize(res.imageUrl, res.imageSize)
-        setMessageList((prev) => [
-          ...prev,
-          {
-            role: command.startsWith('U') ? "variation" : "prompt",
-            content: message.prompt + " " + ref,
-            prompt: message.prompt,
-            buttonMessageId: '',
-            type: command.startsWith('U') ? 2 : 1,
-            imageUrl: imageSizeRes.previewUrl,
-            originImageUrl: imageSizeRes.originUrl,
-            messageId: res.taskId,
-            ref,
-          } as MjChatMessage,
-        ]);
+      // Assuming res contains the messageId for the last message
+      if (res.messageId) {
+        // Update the last item in messageList with the new messageId
+        setMessageList((prevMessageList) => {
+          const updatedMessageList = [...prevMessageList];
+          updatedMessageList[updatedMessageList.length - 1] = {
+            ...updatedMessageList[updatedMessageList.length - 1],
+            messageId: res.messageId,
+          };
+          return updatedMessageList;
+        });
 
         updateMjMessage({
           messageId: message.messageId,

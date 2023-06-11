@@ -117,7 +117,7 @@ export default (props: Props) => {
 
   createEffect(() => {
     let buttonInfo: ButtonInfo = {
-      prompt: ["U1", "U2", "U3", "U4"],
+      prompt: ["U1", "U2", "U3", "U4", "V1", "V2", "V3", "V4"],
       variation: [
         '🪄 Make Variations',
       ],
@@ -210,17 +210,7 @@ export default (props: Props) => {
                         class={`w-[64px] py-1 ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
                         onClick={(e) => clickButton(label, e)}
                         disabled={!imageUrl()?.length}>
-                        {index() === 4 ? (
-                          <img
-                            src="https://i.loli.wiki/public/230419/redo.svg"
-                            alt=""
-                            width="19"
-                            height="19"
-                            class="mx-auto"
-                          />
-                        ) : (
-                          label
-                        )}
+                        {label}
                       </button>
                     )}
                   </For>
@@ -229,7 +219,7 @@ export default (props: Props) => {
               <Show when={isMobile()}>
                 <div class="mt-2" style="width: 216px;">
                   <div class="first-container">
-                    <For each={buttonLabels().slice(0, 5)}>
+                    <For each={buttonLabels().slice(0, 4)}>
                       {(label, index) => (
                         <button
                           class={`button ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
@@ -250,7 +240,7 @@ export default (props: Props) => {
                     </For>
                   </div>
                   <div class="second-container">
-                    <For each={buttonLabels().slice(5)}>
+                    <For each={buttonLabels().slice(4)}>
                       {(label, index) => (
                         <button
                           class={`button ${clickedButtons()?.includes(label) ? 'bg-[#5164ED]' : 'bg-[#4e5058]'} text-white rounded-sm`}
