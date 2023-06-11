@@ -66,11 +66,11 @@ export default (props: Props) => {
         if (res.messageId) {
           props.message.messageId = res.messageId
         }
-        if (res.imageURL) {
+        if (res.imageUrl) {
           setProcess('加载中')
           window.clearInterval(intervalId);
 
-          let imgRes = getRequestImageSize(res.imageURL, res.imageSize)
+          let imgRes = getRequestImageSize(res.imageUrl, res.imageSize)
           setImageUrl(imgRes.previewUrl)
           setOriginImageUrl(imgRes.originUrl)
 
@@ -81,7 +81,7 @@ export default (props: Props) => {
       } else if (res.progress === 'incomplete') {
         errorCallback(res.response.content)
       } else if (res.progress) {
-        setProcess(`${res.progress}%`)
+        setProcess(res.progress)
       } else if (res.status === 'midjourney-blocked-by-ai-moderation') {
         errorCallback('触发敏感词，请换一个关键词再画')
       }
