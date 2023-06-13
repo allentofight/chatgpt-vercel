@@ -8,7 +8,7 @@ export default function ThemeToggle() {
     document.documentElement.classList.toggle("dark", flag)
     document
       ?.querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", flag ? "#16161a" : "#f6f8fa")
+      ?.setAttribute("content", flag ? "#2E2F39" : "#f6f8fa")
   }
 
   createEffect(() => {
@@ -21,7 +21,7 @@ export default function ThemeToggle() {
     const isDark = element.classList.contains("dark")
     document
       ?.querySelector('meta[name="theme-color"]')
-      ?.setAttribute("content", isDark ? "#16161a" : "#f6f8fa")
+      ?.setAttribute("content", isDark ? "#2E2F39" : "#f6f8fa")
     localStorage.setItem(LocalStorageKey.THEME, isDark ? "dark" : "light")
   }
 

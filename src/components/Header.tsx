@@ -52,38 +52,8 @@ export default function Header() {
 
   return (
     <>
-      <div
-        id="logo"
-        class="pl-1em cursor-pointer inline-block"
-        onClick={() => {
-          navigate("/", { replace: true })
-          loadSession("index")
-        }}
-      >
-        <Show
-          when={iconTitle().icon}
-          fallback={<div class="w-8em h-8em" innerHTML={logo} />}
-        >
-          <div class="text-7em h-1em mb-8">{iconTitle().icon}</div>
-        </Show>
-      </div>
-      <header class="px-4 py-2 sticky top-0 z-10 flex justify-between items-center">
-        <div
-          class="flex items-center text-2xl cursor-pointer"
-          onClick={() => {
-            scrollTo("main", -48)
-          }}
-        >
-          <span class="text-transparent font-extrabold bg-clip-text bg-gradient-to-r dark:from-yellow-300 from-yellow-600 dark:to-red-700 to-red-700 mr-1">
-            {title()}
-          </span>
-        </div>
-
-        <div class="flex-none">
-          <OptionSelector />
-        </div>
-
-        <ThemeToggle />
+      <header class="sticky top-0 z-10 flex justify-center items-center">
+        <OptionSelector />
       </header>
     </>
   )
