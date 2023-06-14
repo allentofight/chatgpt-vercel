@@ -16,13 +16,13 @@ export const defaultEnv = {
     saveSession: true,
     APITemperature: 0.6,
     continuousDialogue: true,
-    APIModel: "gpt-3.5-turbo" as Model
+    APIModel: "gpt-3.5-turbo-16k" as Model
   },
   CLIENT_DEFAULT_MESSAGE: `
   - [[Shift]] + [[Enter]] 换行。开头输入 [[/]] 或者 [[空格]] 搜索 Prompt 预设。[[↑]] 可编辑最近一次提问。点击顶部名称滚动到顶部，点击输入框滚动到底部。
   `,
   CLIENT_MAX_INPUT_TOKENS: {
-    "gpt-3.5-turbo": 4 * 1024,
+    "gpt-3.5-turbo-16k": 16 * 1024,
     "gpt-4": 8 * 1024,
     "gpt-4-32k": 32 * 1024
   } as Record<Model, number>,

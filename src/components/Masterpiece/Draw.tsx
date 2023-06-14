@@ -556,7 +556,7 @@ export default function Draw(props: {
         }],
         temperature: 0.6,
         password: '',
-        model: 'gpt-3.5-turbo'
+        model: 'gpt-3.5-turbo-16k'
       }),
     })
 

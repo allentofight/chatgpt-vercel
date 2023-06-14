@@ -54,7 +54,7 @@ export default function Root() {
   });
 
   return (
-    <Html lang="zh-cn">
+    <Html lang="zh-cn" class="dark">
       <Head>
         <PrefixTitle />
         <Meta charset="utf-8" />

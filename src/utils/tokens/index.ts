@@ -32,7 +32,7 @@ export function countTokensDollar(
   completion: boolean
 ) {
   switch (model) {
-    case "gpt-3.5-turbo":
+    case "gpt-3.5-turbo-16k":
       return (tokens / 1000) * 0.002
     case "gpt-4":
       return completion ? (tokens / 1000) * 0.03 : (tokens / 1000) * 0.06

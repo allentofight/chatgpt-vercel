@@ -130,8 +130,8 @@ https://user-images.githubusercontent.com/48356807/232432194-46ba797f-ad9d-476a-
 | `PASSWORD`                | 网站密码                                                                                                                                                                                            | 无                                                                                                        |
 | `CLIENT_DEFAULT_MESSAGE`  | 默认提示信息                                                                                                                                                                                        | - xx xx                                                                                                   |
 | `CLIENT_GLOBAL_SETTINGS`  | 默认全局设置                                                                                                                                                                                        | {"APIKey":"","password":"","enterToSend":true}                                                            |
-| `CLIENT_SESSION_SETTINGS` | 默认对话设置，对话设置在每个对话中都是独立的。                                                                                                                                                      | {"title":"","saveSession":true,"APITemperature":0.6,"continuousDialogue":true,"APIModel":"gpt-3.5-turbo"} |
-| `CLIENT_MAX_INPUT_TOKENS` | 有效上下文+输入的 token 数。OpenAI 不同模型的最大 token 不一样，价格也不同，可以分别设置。并且 OpenAI 会统计输入+输出之和，但我们这里只限制输入。                                                   | {"gpt-3.5-turbo":4096,"gpt-4":8192,"gpt-4-32k":32768}                                                     |
+| `CLIENT_SESSION_SETTINGS` | 默认对话设置，对话设置在每个对话中都是独立的。                                                                                                                                                      | {"title":"","saveSession":true,"APITemperature":0.6,"continuousDialogue":true,"APIModel":"gpt-3.5-turbo-16k"} |
+| `CLIENT_MAX_INPUT_TOKENS` | 有效上下文+输入的 token 数。OpenAI 不同模型的最大 token 不一样，价格也不同，可以分别设置。并且 OpenAI 会统计输入+输出之和，但我们这里只限制输入。                                                   | {"gpt-3.5-turbo-16k":4096,"gpt-4":8192,"gpt-4-32k":32768}                                                     |
 | `SEND_KEY`                | 使用 [Server 酱](https://sct.ftqq.com/sendkey) 推送帐号余额以及可用状态到微信，如果需要自行获取。推送时间为早上 8 点和晚上 8 点，在 vercel.json 文件中修改。如果 key 太多，超过 20 个，有可能失败。 | 无                                                                                                        |
 | `SEND_CHANNEL`            | [Server 酱](https://sct.ftqq.com/sendkey) 的推送通道，默认微信服务号。                                                                                                                              | 9                                                                                                         |
 
@@ -164,7 +164,7 @@ https://user-images.githubusercontent.com/48356807/232432194-46ba797f-ad9d-476a-
   "saveSession": true, // 记录当前对话内容，刷新不会丢失。关闭后仍然会记录锁定的对话。
   "APITemperature": 0.6, // 0-2，思维发散程度，越高 ChatGPT 思维就越发散，开始乱答，甚至会乱码，建议小于 1 。
   "continuousDialogue": true, // 开启连续对话，每次都需要将上下文传给 API。
-  "APIModel": "gpt-3.5-turbo" // 模型
+  "APIModel": "gpt-3.5-turbo-16k" // 模型
 }
 ```
 

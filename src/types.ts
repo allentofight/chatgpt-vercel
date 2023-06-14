@@ -36,7 +36,7 @@ export type Role = "system" | "user" | "assistant" | "error"
 
 export type MjRole = "hint" | "prompt" | "variation" | "help" | "error"
 
-export type Model = "gpt-3.5-turbo" | "gpt-4" | "gpt-4-32k"
+export type Model = "gpt-3.5-turbo-16k" | "gpt-4" | "gpt-4-32k"
 
 export enum ModelEnum {
   GPT_3 = 1,
