@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40" fill="none"><SCRIPT xmlns="" id="allow-copy_script">(function agent() {
+    let unlock = false
+    document.addEventListener('allow_copy', (event) =&gt; {
+      unlock = event.detail.unlock
+    })
+
+    const copyEvents = [
+      'copy',
+      'cut',
+      'contextmenu',
+      'selectstart',
+      'mousedown',
+      'mouseup',
+      'mousemove',
+      'keydown',
+      'keypress',
+      'keyup',
+    ]
+    const rejectOtherHandlers = (e) =&gt; {
+      if (unlock) {
+        e.stopPropagation()
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation()
+      }
+    }
+    copyEvents.forEach((evt) =&gt; {
+      document.documentElement.addEventListener(evt, rejectOtherHandlers, {
+        capture: true,
+      })
+    })
+  })()</SCRIPT>
+<g id="Frame 79054">
+<rect width="40" height="40" rx="20" fill="url(#paint0_linear_400_22110)"/>
+<path id="Vector" d="M20 8C13.3712 8 8 13.3712 8 20C8 26.6288 13.3712 32 20 32C21.6702 32 22.9798 30.7452 23.0144 29.2221C23.0462 27.7712 21.5635 26.15 22.0308 25.7692C22.7404 25.1894 24.0356 26.7471 25.8154 27.2635C27.2548 27.6817 29.45 27.1567 30.1481 26.4067C31.5413 24.9067 32 22.3538 32 19.9971C32 13.3712 26.6288 8 20 8ZM13.4692 21.8519C12.451 21.8519 11.6231 21.024 11.6231 20.0058C11.6231 18.9875 12.451 18.1596 13.4692 18.1596C14.4875 18.1596 15.3154 18.9875 15.3154 20.0058C15.3154 21.024 14.4904 21.8519 13.4692 21.8519ZM15.7827 16.7808C14.7644 16.7808 13.9365 15.9529 13.9365 14.9346C13.9365 13.9163 14.7644 13.0885 15.7827 13.0885C16.801 13.0885 17.6288 13.9163 17.6288 14.9346C17.6288 15.9529 16.801 16.7808 15.7827 16.7808ZM22.4231 16.7808C21.4048 16.7808 20.5769 15.9529 20.5769 14.9346C20.5769 13.9163 21.4048 13.0885 22.4231 13.0885C23.4413 13.0885 24.2692 13.9163 24.2692 14.9346C24.2692 15.9529 23.4413 16.7808 22.4231 16.7808ZM26.4269 21.8519C25.4087 21.8519 24.5808 21.024 24.5808 20.0058C24.5808 18.9875 25.4087 18.1596 26.4269 18.1596C27.4452 18.1596 28.2731 18.9875 28.2731 20.0058C28.2731 21.024 27.4481 21.8519 26.4269 21.8519Z" fill="white"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_400_22110" x1="3.96825" y1="36.25" x2="40.7563" y2="10.2674" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E0CE80"/>
+<stop offset="0.190131" stop-color="#B5C34F"/>
+<stop offset="0.560418" stop-color="#3CC46D"/>
+<stop offset="0.762228" stop-color="#56C59F"/>
+</linearGradient>
+</defs>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none"><SCRIPT xmlns="" id="allow-copy_script">(function agent() {
+    let unlock = false
+    document.addEventListener('allow_copy', (event) =&gt; {
+      unlock = event.detail.unlock
+    })
+
+    const copyEvents = [
+      'copy',
+      'cut',
+      'contextmenu',
+      'selectstart',
+      'mousedown',
+      'mouseup',
+      'mousemove',
+      'keydown',
+      'keypress',
+      'keyup',
+    ]
+    const rejectOtherHandlers = (e) =&gt; {
+      if (unlock) {
+        e.stopPropagation()
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation()
+      }
+    }
+    copyEvents.forEach((evt) =&gt; {
+      document.documentElement.addEventListener(evt, rejectOtherHandlers, {
+        capture: true,
+      })
+    })
+  })()</SCRIPT>
+<rect x="1" y="1" width="24" height="24" fill="white" fill-opacity="0.1"/>
+<path d="M1 4.69231V1H4.69231M21.3077 1H25V4.69231M25 21.3077V25H21.3077M4.69231 25H1V21.3077" stroke="url(#paint0_linear_400_27715)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<defs>
+<linearGradient id="paint0_linear_400_27715" x1="26" y1="-0.333333" x2="-5.50135" y2="17.4976" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E0CE80"/>
+<stop offset="0.234375" stop-color="#B5C34F" stop-opacity="0.765625"/>
+<stop offset="0.557292" stop-color="#3CC46D"/>
+<stop offset="0.723958" stop-color="#56C59F"/>
+</linearGradient>
+</defs>
+</svg>

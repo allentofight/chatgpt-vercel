@@ -47,6 +47,7 @@ specifiers:
   qrcode: ^1.5.3
   simple-git-hooks: ^2.8.1
   solid-js: ^1.7.3
+  solid-spinner: ^0.1.9
   solid-start: ^0.2.26
   solid-start-cloudflare-workers: ^0.2.26
   solid-start-netlify: ^0.2.26
@@ -54,6 +55,7 @@ specifiers:
   solid-start-vercel: ^0.2.26
   solid-toast: ^0.5.0
   spin.js: ^4.1.1
+  swiper: ^9.4.1
   ts-qrcode: ^0.0.4
   tsx: ^3.12.6
   typescript: ^5.0.4
@@ -94,9 +96,11 @@ dependencies:
   moment: 2.29.4
   qrcode: 1.5.3
   solid-js: 1.7.3
+  solid-spinner: 0.1.9_solid-js@1.7.3
   solid-start: 0.2.26_k7cq3lnzhrtazj2aycgxghc35u
   solid-toast: 0.5.0_solid-js@1.7.3
   spin.js: 4.1.1
+  swiper: 9.4.1
   ts-qrcode: 0.0.4
   undici: 5.22.0
 
@@ -8014,6 +8018,15 @@ packages:
       '@babel/types': 7.21.2
       solid-js: 1.7.3
 
+  /solid-spinner/0.1.9_solid-js@1.7.3:
+    resolution: {integrity: sha512-cwSmcvlSm134MzUHL1/Il5Mv0/eWTuj0D3A8TBEvVGgN00hBCyHV9wbtfkK2uOlk4gop4FvvI9UFo9mQnONx5g==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      solid-js: '*'
+    dependencies:
+      solid-js: 1.7.3
+    dev: false
+
   /solid-start-cloudflare-workers/0.2.26_sqz3tnbgiqyjstyl465zp6m6oq:
     resolution: {integrity: sha512-8dEqA7D/askoBp2EObkBBnXCICrexClTqfl4mClNDOIMtkhZg6Xpxq4v7qoe9MmAIZgZ/EvHna/FID+tiyugiQ==}
     peerDependencies:
@@ -8245,6 +8258,10 @@ packages:
       tweetnacl: 0.14.5
     dev: false
 
+  /ssr-window/4.0.2:
+    resolution: {integrity: sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==}
+    dev: false
+
   /stack-trace/0.0.10:
     resolution: {integrity: sha512-KGzahc7puUKkzyMt+IqAep+TVNbKP+k2Lmwhub39m1AsTSkaDutx56aDCo+HLDzf/D26BIHTJWNiTG1KAJiQCg==}
 
@@ -8423,6 +8440,13 @@ packages:
   /supports-preserve-symlinks-flag/1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  /swiper/9.4.1:
+    resolution: {integrity: sha512-1nT2T8EzUpZ0FagEqaN/YAhRj33F2x/lN6cyB0/xoYJDMf8KwTFT3hMOeoB8Tg4o3+P/CKqskP+WX0Df046fqA==}
+    engines: {node: '>= 4.7.0'}
+    dependencies:
+      ssr-window: 4.0.2
+    dev: false
 
   /synckit/0.8.5:
     resolution: {integrity: sha512-L1dapNV6vu2s/4Sputv8xGsCdAVlb5nRDMFU/E27D44l5U6cw1g0dGd45uLc+OXjNMmF4ntiMdCimzcjFKQI8Q==}

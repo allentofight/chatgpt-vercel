@@ -1,0 +1,243 @@
+.login {
+  display: inline-block;
+  width: 60px
+}
+
+.login-view {
+  width: 56px;
+  height: 30px;
+  background: var(--b-button-bg);
+  color: var(--b-button-color);
+  border: 0
+}
+
+.login-view:hover,
+.login-view:focus {
+  background: var(--b-button-hover-bg)
+}
+
+.login-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px
+}
+
+.base ._pages_nav {
+  box-shadow: inset 0 -.06rem #ffffff1a
+}
+
+.base ._pages_nav .text {
+  color: #fff
+}
+
+.base ._pages_nav .text:hover {
+  color: #14b8a6
+}
+
+.base ._pages_nav .active {
+  background: linear-gradient(42deg, #E0CE80 0%, #B5C34F 19%, #3CC46D 56%, #56C59F 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #14b8a6
+}
+
+.base ._pages_nav .line-line {
+  height: 2px;
+  background: linear-gradient(42deg, #E0CE80 0%, #B5C34F 19%, #3CC46D 56%, #56C59F 76%)
+}
+
+.base ._pages_nav .collect {
+  box-shadow: 0 0 0 .5px #2a713f inset;
+  color: #fff
+}
+
+.dark ._pages_nav {
+  box-shadow: inset 0 -.06rem #ffffff1a
+}
+
+.dark ._pages_nav .text {
+  color: #fff
+}
+
+.dark ._pages_nav .text:hover {
+  color: #14b8a6
+}
+
+.dark ._pages_nav .active {
+  background: linear-gradient(42deg, #E0CE80 0%, #B5C34F 19%, #3CC46D 56%, #56C59F 76%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #14b8a6
+}
+
+.dark ._pages_nav .line-line {
+  height: 2px;
+  background: linear-gradient(42deg, #E0CE80 0%, #B5C34F 19%, #3CC46D 56%, #56C59F 76%)
+}
+
+.dark ._pages_nav .collect {
+  box-shadow: 0 0 0 .5px #2a713f inset;
+  color: #fff
+}
+
+._pages_nav {
+  background-image: url(https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/page-nav-bg.png);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  min-height: 56px
+}
+
+._pages_nav * {
+  letter-spacing: 0
+}
+
+._pages_nav .icon {
+  color: #fff;
+  font-size: 24px
+}
+
+.pc.h-10 {
+  height: 40px
+}
+
+.collect {
+  font-size: 14px;
+  height: 32px
+}
+
+._pages_nav .text {
+  font-size: 16px;
+  width: 96px
+}
+
+._pages_nav .line {
+  width: 96px
+}
+
+.mobile {
+  display: none
+}
+
+@media (max-width: 768px) {
+  ._pages_nav {
+    min-height: 44px
+  }
+
+  ._pages_nav .text {
+    width: 100%
+  }
+
+  .pc {
+    display: none
+  }
+
+  .mobile {
+    display: block
+  }
+
+  .mobile-inner-header-icon {
+    color: #fff;
+    height: 44px;
+    font-size: 25px;
+    text-align: center;
+    float: right;
+    width: 44px;
+    position: relative;
+    transition: background .5s
+  }
+
+  .mobile-inner-header-icon span {
+    position: absolute;
+    left: calc((100% - 25px)/2);
+    top: calc((100% - 1px)/2);
+    width: 22px;
+    height: 2px;
+    background-color: #fff
+  }
+
+  .mobile-inner-header-icon span:nth-child(1) {
+    transform: translateY(4px) rotate(0)
+  }
+
+  .mobile-inner-header-icon span:nth-child(2) {
+    transform: translateY(-4px) rotate(0)
+  }
+
+  .mobile-inner-header-icon-click span:nth-child(1) {
+    animation-duration: .5s;
+    animation-fill-mode: both;
+    animation-name: clickfirst-6c6276dd
+  }
+
+  .mobile-inner-header-icon-click span:nth-child(2) {
+    animation-duration: .5s;
+    animation-fill-mode: both;
+    animation-name: clicksecond-6c6276dd
+  }
+
+  @keyframes clickfirst-6c6276dd {
+    0% {
+      transform: translateY(4px) rotate(0)
+    }
+
+    to {
+      transform: translateY(0) rotate(45deg)
+    }
+  }
+
+  @keyframes clicksecond-6c6276dd {
+    0% {
+      transform: translateY(-4px) rotate(0)
+    }
+
+    to {
+      transform: translateY(0) rotate(-45deg)
+    }
+  }
+
+  .mobile-inner-header-icon-out span:nth-child(1) {
+    animation-duration: .5s;
+    animation-fill-mode: both;
+    animation-name: outfirst-6c6276dd
+  }
+
+  .mobile-inner-header-icon-out span:nth-child(2) {
+    animation-duration: .5s;
+    animation-fill-mode: both;
+    animation-name: outsecond-6c6276dd
+  }
+
+  @keyframes outfirst-6c6276dd {
+    0% {
+      transform: translateY(0) rotate(-45deg)
+    }
+
+    to {
+      transform: translateY(-4px) rotate(0)
+    }
+  }
+
+  @keyframes outsecond-6c6276dd {
+    0% {
+      transform: translateY(0) rotate(45deg)
+    }
+
+    to {
+      transform: translateY(4px) rotate(0)
+    }
+  }
+
+  .mobile-nav {
+    top: 44px;
+    background-color: #000000e6
+  }
+
+  .mobile-nav .text {
+    font-size: 12px;
+    height: 44px;
+    line-height: 44px;
+    box-shadow: inset 0 -1px #ffffff1a
+  }
+}

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="108" viewBox="0 0 400 108" fill="none"><SCRIPT xmlns="" id="allow-copy_script">(function agent() {
+    let unlock = false
+    document.addEventListener('allow_copy', (event) =&gt; {
+      unlock = event.detail.unlock
+    })
+
+    const copyEvents = [
+      'copy',
+      'cut',
+      'contextmenu',
+      'selectstart',
+      'mousedown',
+      'mouseup',
+      'mousemove',
+      'keydown',
+      'keypress',
+      'keyup',
+    ]
+    const rejectOtherHandlers = (e) =&gt; {
+      if (unlock) {
+        e.stopPropagation()
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation()
+      }
+    }
+    copyEvents.forEach((evt) =&gt; {
+      document.documentElement.addEventListener(evt, rejectOtherHandlers, {
+        capture: true,
+      })
+    })
+  })()</SCRIPT>
+<g id="Frame 133728" clip-path="url(#clip0_638_8035)">
+<rect width="400" height="108" fill="#4D3BDC"/>
+<rect id="Rectangle 27115" x="365.314" y="-84" width="116" height="207" transform="rotate(53.4609 365.314 -84)" fill="#4937D9"/>
+<rect id="Rectangle 27113" x="261.143" y="-102.575" width="116" height="264.288" transform="rotate(34.6533 261.143 -102.575)" fill="#4D3BDC"/>
+</g>
+<defs>
+<clipPath id="clip0_638_8035">
+<rect width="400" height="108" fill="white"/>
+</clipPath>
+</defs>
+</svg>

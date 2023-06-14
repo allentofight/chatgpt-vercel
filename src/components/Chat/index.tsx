@@ -466,7 +466,7 @@ export default function () {
   }
 
   return (
-    <main ref={containerRef!} class="mt-4">
+    <main ref={containerRef!} id="mainContainer" class="mt-4 w-full flex justify-center" style={{ "max-width": "72ch", "font-size": "16px" }}>
       <MessageContainer
         sendMessage={sendMessage}
         inputBoxHeight={inputBoxHeight}

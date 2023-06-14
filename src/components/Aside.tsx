@@ -340,11 +340,22 @@ export default function ChatContainer() {
             border: none;
           }
           
+          .gpt-aside {
+            margin-top: 44px;
+            font-size: 16px;
+          }
 
+          .custom-text-color {
+            color: #ECECF1 !important;
+          }
 
           @media (min-width:768px) {
             .scrollbar-trigger ::-webkit-scrollbar-thumb {
               visibility: hidden
+            }
+
+            .gpt-aside {
+              margin-top: 56px;
             }
           
             .scrollbar-trigger:hover ::-webkit-scrollbar-thumb {
@@ -353,8 +364,8 @@ export default function ChatContainer() {
           }
         `}
       </style>
-      <div class="fixed inset-y-0 left-0 z-99">
-        <aside class={`dark left-0 top-0 h-full bg-gray-900 relative md:flex md:flex-col z-40 ${isVisible() ? 'flex' : 'hidden'
+      <div class="gpt-aside fixed inset-y-0 left-0 z-99">
+        <aside class={`left-0 top-0 h-full bg-gray-900 relative md:flex md:flex-col z-40 ${isVisible() ? 'flex' : 'hidden'
           }`}>
           <div class="absolute top-0 right-0 -mr-12 pt-2 opacity-100 md:hidden"><button type="button" class="ml-1 flex h-10 w-10 items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" tabindex="0" onClick={() => {
             setIsVisible(false);
@@ -362,7 +373,7 @@ export default function ChatContainer() {
           <div class="flex h-full min-h-0 flex-col ">
             <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
               <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20" onClick={createChat}>
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 border border-white/20 custom-text-color" onClick={createChat}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -377,7 +388,7 @@ export default function ChatContainer() {
                     {chats().map((chat) => (
                       <>
                         <Show when={chat.id !== selectedChat().id}>
-                          <a class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group" onClick={() => {
+                          <a class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group custom-text-color" onClick={() => {
                             setSelectedChat(chat)
                           }}>
                             <ChatIcon />
@@ -389,7 +400,7 @@ export default function ChatContainer() {
                         <Show when={chat.id === selectedChat().id}>
                           <Show when={!isEditable()}>
                             <Show when={!isDeletable()}>
-                              <a class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group">
+                              <a class="flex py-3 px-3 items-center gap-3 relative rounded-md cursor-pointer break-all pr-14 bg-gray-800 hover:bg-gray-800 group custom-text-color">
                                 <ChatIcon />
                                 <div
                                   ref={(el) => (divRef = el)}
@@ -450,7 +461,7 @@ export default function ChatContainer() {
                   </div>
                 </div>
 
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
                   if (showLogin()) {
                     return
                   }
@@ -464,7 +475,7 @@ export default function ChatContainer() {
                     <path d="M6 19h6"></path>
                     <path d="M12 19h6"></path>
                   </svg>购买 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
                   if (showLogin()) {
                     return
                   }
@@ -478,7 +489,7 @@ export default function ChatContainer() {
                     <path d="M6 19h6"></path>
                     <path d="M12 19h6"></path>
                   </svg>邀请好友享 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
                   if (showLogin()) {
                     return
                   }
@@ -488,7 +499,7 @@ export default function ChatContainer() {
                     <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>小程序中获取 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
                   if (showLogin()) {
                     return
                   }
@@ -498,7 +509,7 @@ export default function ChatContainer() {
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>我的账号信息</a>
-                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
                   setShowFaqDialog(true)
                 }}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -507,7 +518,7 @@ export default function ChatContainer() {
                     <line x1="10" y1="14" x2="21" y2="3"></line>
                   </svg>FAQ</a>
                 <Show when={isLogin()}>
-                  <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm" onClick={() => {
+                  <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
                     localStorage.removeItem('sessionId')
                     localStorage.removeItem('expireDay')
                     localStorage.removeItem('inviteCode')
@@ -549,10 +560,13 @@ export default function ChatContainer() {
         </aside >
       </div>
       <button
-        class="absolute top-0 left-0 m-4 md:hidden"
+        class="absolute top-20 left-0 m-4 md:hidden z-99"
         onClick={toggleAside}
       >
-        <svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
+          <path d="M0 0h24v24H0z" fill="none" />
+          <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" />
+        </svg>
       </button>
     </>
   );

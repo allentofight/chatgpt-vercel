@@ -67,6 +67,7 @@ function Store() {
     inputContent: "",
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
+    pageIndex: 0,   // 选择导航栏上的页面，如AI聊天，AI绘画
     loading: false,
     inputRef: null as HTMLTextAreaElement | null,
     get validContext() {
