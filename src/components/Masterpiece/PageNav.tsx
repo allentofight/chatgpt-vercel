@@ -19,7 +19,7 @@ export default function PageNav(props: {
 
   const { store, setStore } = RootStore
 
-  let optionTitles = isMobile() ? ['AI聊天', 'AI绘画', '收藏管理', '会员中心'] : ['AI聊天', 'AI绘画', '会员中心']
+  let optionTitles = isMobile() ? ['AI聊天', 'AI绘画', '收藏管理'] : ['AI聊天', 'AI绘画']
 
   function clickOption(index: number) {
     setSelectedIndex(index)
