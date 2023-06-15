@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none"><SCRIPT xmlns="" id="allow-copy_script">(function agent() {
+    let unlock = false
+    document.addEventListener('allow_copy', (event) =&gt; {
+      unlock = event.detail.unlock
+    })
+
+    const copyEvents = [
+      'copy',
+      'cut',
+      'contextmenu',
+      'selectstart',
+      'mousedown',
+      'mouseup',
+      'mousemove',
+      'keydown',
+      'keypress',
+      'keyup',
+    ]
+    const rejectOtherHandlers = (e) =&gt; {
+      if (unlock) {
+        e.stopPropagation()
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation()
+      }
+    }
+    copyEvents.forEach((evt) =&gt; {
+      document.documentElement.addEventListener(evt, rejectOtherHandlers, {
+        capture: true,
+      })
+    })
+  })()</SCRIPT>
+<g id="Group 78939">
+<circle id="Ellipse 3442" cx="16.5" cy="16.5" r="16.5" fill="url(#paint0_linear_400_31974)"/>
+<g id="Group 78938">
+<path id="Vector 3" d="M11 23.5001C12.1667 21.6667 18 18.5 22 23.5001" stroke="#363636" stroke-width="2" stroke-linecap="round"/>
+<g id="Group 78937">
+<circle id="Ellipse 3443" cx="10" cy="12" r="2" fill="#363636"/>
+<circle id="Ellipse 3444" cx="23" cy="12" r="2" fill="#363636"/>
+</g>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_400_31974" x1="31" y1="8" x2="5.65306" y2="31.2984" gradientUnits="userSpaceOnUse">
+<stop stop-color="#E0CE80"/>
+<stop offset="0.190131" stop-color="#B5C34F"/>
+<stop offset="0.560418" stop-color="#3CC46D"/>
+<stop offset="0.762228" stop-color="#56C59F"/>
+</linearGradient>
+</defs>
+</svg>
