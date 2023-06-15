@@ -334,7 +334,7 @@ export default function Draw(props: {
 
     let storageKey = 'mj_try_cnt'
     let mjCnt = parseInt(localStorage.getItem(storageKey) || '0');
-    if (isLogin() && isMjExpired() && mjCnt > 5) {
+    if (isMjExpired()) {
       toast.error('VIP 会员已过期，请及时充值哦');
       setShowVipDialog(true)
       return false
