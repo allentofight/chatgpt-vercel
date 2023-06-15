@@ -354,7 +354,7 @@ export default function Draw(props: {
     const stylizeRegex = /--(stylize|s) \d+/;
     const tileRegex = /--tile/;
     const versionRegex = /--(v|version) (1|2|3|4|5|5\.1)/;
-    const nijiRegex = /--niji (4|5)/;
+    const nijiRegex = /--niji/;
 
     const allParametersRegex = [aspectRegex, chaosRegex, noRegex, qualityRegex, repeatRegex, seedRegex, stopRegex, stylizeRegex, tileRegex, versionRegex, nijiRegex];
 
