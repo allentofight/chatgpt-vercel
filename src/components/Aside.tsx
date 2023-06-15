@@ -14,6 +14,8 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { ModelEnum } from "~/types"
 import VipChargeDialog from './VipChargeDialog'
 import AccountInfoDialog from './AccountInfoDialog'
+import { RootStore, loadSession } from "~/store"
+const { store, setStore } = RootStore
 
 interface Chat {
   id: string;
@@ -23,12 +25,12 @@ interface Chat {
   model?: ModelEnum;
 }
 
+interface AsideProps {
+  visible: () => boolean;
+}
 
-export default function ChatContainer() {
+export default function Aside({ visible }: AsideProps) {
   const [chats, setChats] = createSignal<Chat[]>([]);
-
-  const [isVisible, setIsVisible] = createSignal(false);
-
 
   const defaultChat = {
     id: '0',
@@ -70,10 +72,6 @@ export default function ChatContainer() {
   onMount(() => {
     fetchChats()
   })
-
-  const toggleAside = () => {
-    setIsVisible(!isVisible());
-  };
 
   function edit() {
     setIsEditable(!isEditable());
@@ -140,6 +138,7 @@ export default function ChatContainer() {
   createEffect(() => {
     if (selectedChat()) {
       setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
+      setStore("showChatList", false)
     }
   })
 
@@ -365,11 +364,9 @@ export default function ChatContainer() {
         `}
       </style>
       <div class="gpt-aside fixed inset-y-0 left-0 z-99">
-        <aside class={`left-0 top-0 h-full bg-gray-900 relative md:flex md:flex-col z-40 ${isVisible() ? 'flex' : 'hidden'
+        <aside class={`left-0 top-0 h-full bg-gray-900 relative md:flex md:flex-col z-40 ${store.showChatList ? 'flex' : 'hidden'
           }`}>
-          <div class="absolute top-0 right-0 -mr-12 pt-2 opacity-100 md:hidden"><button type="button" class="ml-1 flex h-10 w-10 items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" tabindex="0" onClick={() => {
-            setIsVisible(false);
-          }} ><span class="sr-only">Close sidebar</span><svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-gray-800" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
+          <div class="absolute top-0 right-0 -mr-12 pt-2 opacity-100 md:hidden"><button type="button" class="ml-1 flex h-10 w-10 items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" tabindex="0" ><span class="sr-only">Close sidebar</span><svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-gray-800" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
           <div class="flex h-full min-h-0 flex-col ">
             <div class="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
               <nav class="flex h-full flex-1 flex-col space-y-1 p-2">
@@ -559,15 +556,6 @@ export default function ChatContainer() {
           </Show>
         </aside >
       </div>
-      <button
-        class="absolute top-20 left-0 m-4 md:hidden z-99"
-        onClick={toggleAside}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#ffffff">
-          <path d="M0 0h24v24H0z" fill="none" />
-          <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z" />
-        </svg>
-      </button>
     </>
   );
 }

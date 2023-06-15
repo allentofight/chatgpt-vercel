@@ -85,6 +85,9 @@ export default function Draw(props: {
     '创作记录都在左侧哦，点击即可出现相关信息',
   ]
 
+  // 查询绘图进度次数
+  let processQueryCount = 0
+
   let previousIndex = -1;
   let [isAssistantHintVisible, setIsAssistantHintVisible] = createSignal(false);
   createEffect(() => {
@@ -444,10 +447,21 @@ export default function Draw(props: {
   }
 
 
-  const fetchData = async (messageId: string) => {
+  const queryDrawingProcess = async (messageId: string) => {
     try {
       const res = await queryPromptStatus(messageId)
+      processQueryCount++
+
+      if (res?.status !== 'SUCCESS') {
+        let fiveMinutes = 5 * 60 * 1000
+        if (processQueryCount * 5000 > fiveMinutes) {
+          res.status = 'FAILURE'
+          res.failReason = '任务超时，请重试'
+        }
+      }
+
       if (res?.status === 'SUCCESS') {
+        processQueryCount = 0
         clearInterval(queryIntervalId)
         let imageSizeRes = getRequestImageSize(res.imageUrl, '358x358')
         let isUpscaling = command().startsWith('U')
@@ -474,12 +488,30 @@ export default function Draw(props: {
         setType(isUpscaling ? 2 : 1)
         setShowErrorHint(false)
       } else if (res?.status === 'FAILURE') {
+        setIsMjWorking(false)
+        processQueryCount = 0
         clearInterval(queryIntervalId)
+
+        setMessageList((prev) => [
+          {
+            role: 'error',
+            content: res.prompt,
+            prompt: res.prompt,
+            messageId: res.id,
+            imageUrl: '',
+            errorMessage: res.failReason
+          } as MjChatMessage,
+          ...prev,
+        ]);
+
         setShowErrorHint(true)
+        setActiveIndex(0)
       } else if (res?.status === 'IN_PROGRESS') {
         setDrawingProgress(res.progress.length > 0 ? res.progress : '0%')
       }
     } catch (error) {
+      setIsMjWorking(false)
+      processQueryCount = 0
       console.error('Error fetching data:', error);
     }
   };
@@ -488,7 +520,7 @@ export default function Draw(props: {
   async function sendPrompt(body: MjSendBody) {
     let res = await sendMjPrompt(body)
 
-    queryIntervalId = window.setInterval(() => fetchData(res.messageId), 5000);
+    queryIntervalId = window.setInterval(() => queryDrawingProcess(res.messageId), 5000);
     setStore('currentAssistantMessage', '')
     setDrawingProgress('0%')
   }
@@ -590,9 +622,7 @@ export default function Draw(props: {
   function fetchMessageList(onComplete?: () => void) {
     let earliestGmtCreate = messageList().length > 0 ? messageList()[messageList().length - 1].gmtCreate : ""
     fetchMjMessageList(earliestGmtCreate).then((data) => {
-      let result = data.list.filter(item => {
-        return item.imageUrl?.length > 0
-      }).map(item => {
+      let result = data.list.map(item => {
         let imageSizeRes = getRequestImageSize(item.imageUrl, '600x600')
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
@@ -802,12 +832,14 @@ export default function Draw(props: {
                         let errorMessage = messageList()[index()].errorMessage?.length ?? 0
                         setShowErrorHint(errorMessage > 0)
                       }}>
-                        <Show when={message.imageUrl.length}>
-                          <img alt="绘制失败，请重试" src={message.imageUrl.length ? message.imageUrl : 'https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/draw-center-error.png'} class="w-full" />
+                        <Show when={message.imageUrl?.length}>
+                          <img src={message.imageUrl} class="w-full" />
                         </Show>
-                        <Show when={!message.imageUrl.length}>
-                          <div class="flex justify-center w-full">
-                            <p class="text-white p-3">绘制失败</p>
+                        <Show when={!message.imageUrl?.length}>
+                          <div class="w-full flex items-center justify-center flex-col py-4">
+                            <img alt="绘制失败，请重试" class="w-1/3" src="/svg/draw-left-error.svg" />
+                            <div class="text px-4 text-center text-xs pt-2 leading-relaxed">{message.errorMessage}
+                            </div>
                           </div>
                         </Show>
                       </div>
@@ -949,7 +981,7 @@ export default function Draw(props: {
                         <img alt="" class="w-full" src="https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/draw-center-error.png" />
                       </div>
                       <div class="left-error text-xs text-center">
-                        <div class="pt-2">绘画失败，请重试</div>
+                        <div class="pt-2">{messageList()[activeIndex()].errorMessage}，请重试</div>
                       </div>
                     </div>
                   </Show>
@@ -1076,7 +1108,7 @@ export default function Draw(props: {
                   <div class="el-textarea flex-1">
                     <textarea
                       ref={setTextareaRef}
-                      class="el-textarea__inner" placeholder-class="placeholder" tabindex="0" autocomplete="off" placeholder={`请输入您的绘画描述...${isMobile() ? '' : 'enter发送、shift+enter换行'}`} id="input"
+                      class="el-textarea__inner" placeholder-class="placeholder" tabindex="0" autocomplete="off" placeholder={`请输入您的绘画描述，${isMobile() ? '' : 'enter发送、shift+enter换行'}`} id="input"
                       style="resize: none; min-height: 49px; height: 49px;"
                       onKeyDown={handleKeyDown}
                     ></textarea>

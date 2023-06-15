@@ -52,7 +52,7 @@ export default function Header() {
 
   return (
     <>
-      <header class="sticky top-0 z-10 flex justify-center items-center">
+      <header class="z-10 flex justify-center items-center">
         <OptionSelector />
       </header>
     </>

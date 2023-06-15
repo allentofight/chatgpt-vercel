@@ -1,17 +1,21 @@
 import '../../styles/pageNav.css';
-import { onMount, createSignal, For, Show, Setter, Accessor, onCleanup } from 'solid-js';
+import { onMount, createSignal, For, Show, Setter, Accessor, onCleanup, createEffect } from 'solid-js';
 import { RootStore, loadSession } from "~/store"
 import { isMobile } from "~/utils"
 import CourseDialog from "./CourseDialog"
+import { setSharedStore, sharedStore } from '../MessagesStore'
 
 export default function PageNav(props: {
   titleClicked: (title: string) => void,
+  chatListClicked: (showChat: boolean) => void,
 }) {
 
   const [selectedIndex, setSelectedIndex] = createSignal(0);
   const [showCourse, setShowCourse] = createSignal(false);
 
   const [showMenu, setShowMenu] = createSignal(false);
+
+  const [showChatList, setShowChatList] = createSignal(false);
 
   const { store, setStore } = RootStore
 
@@ -27,6 +31,10 @@ export default function PageNav(props: {
       setStore('pageIndex', index)
     }
   }
+
+  createEffect(() => {
+    setShowChatList(store.showChatList)
+  })
 
   return (
     <div class="_pages_nav h-14 w-full flex items-center justify-between relative">
@@ -47,6 +55,9 @@ export default function PageNav(props: {
       <div class="flex items-center">
         <div class={`mobile mobile-inner-header-icon ${!showMenu() ? 'mobile-inner-header-icon-out' : 'mobile-inner-header-icon-click'}`} onClick={() => {
           setShowMenu(!showMenu())
+          if (showChatList() && showMenu()) {
+            setStore("showChatList", false)
+          }
         }}>
           <span ></span>
           <span ></span>
@@ -72,6 +83,20 @@ export default function PageNav(props: {
           </For>
         </div>
       </div>
+      <Show when={store.pageIndex == 0}>
+        <div class="flex items-center text-white md:hidden flex items-center" onClick={() => {
+          setShowChatList(!showChatList())
+          props.chatListClicked(showChatList())
+          setStore("showChatList", showChatList())
+          if (showMenu() && showChatList()) {
+            setShowMenu(false)
+          }
+
+        }}>
+          会话列表
+          <i class={`iconfont icon-xiangxia keywords-icon text-sm ${showChatList() ? '' : 'expansion_icon'} `}></i>
+        </div>
+      </Show>
       <div class="flex items-center">
         <div class="pc collect flex items-center justify-center text-sm px-3 mr-4 rounded-xl cursor-pointer" onClick={() => {
           setStore('pageIndex', -1)

@@ -14,6 +14,7 @@ export default function MasterPiece() {
   const [title, setTitle] = createSignal('AI聊天');
   const { store, setStore } = RootStore
 
+  const [chatListVisible, setChatListVisible] = createSignal(false);
 
   createEffect(() => {
     if (store.pageIndex === -1) {
@@ -25,12 +26,16 @@ export default function MasterPiece() {
     <>
       <div id="page" class="flex items-center flex-col h-full w-screen" style="padding-top: constant(safe-area-inset-top); padding-bottom: constant(safe-area-inset-bottom);">
         <PageNav
-          titleClicked={(title: string) => { setTitle(title) }}></PageNav>
+          titleClicked={(title: string) => { setTitle(title) }}
+          chatListClicked={(showChat: boolean) => {
+            setChatListVisible(!chatListVisible())
+          }}
+        ></PageNav>
         <Switch>
           <Match when={title() === 'AI聊天'}>
             <Layout>
               <div class="flex justify-center">
-                <Aside />
+                <Aside visible={chatListVisible} />
                 <Chat />
               </div>
             </Layout >

@@ -47,7 +47,7 @@ export default function ({
 
   return (
     <div
-      class="px-1em"
+      class="px-1em w-full"
       id="message-container"
       style={{
         "margin-bottom": `calc(6em + ${paddingBottom() + "px"})`
