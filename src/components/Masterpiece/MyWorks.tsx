@@ -1,4 +1,5 @@
 import '../../styles/draw-mylist.css';
+import '../../styles/preview.css';
 import { onMount, createSignal, For, Show, createEffect, onCleanup } from 'solid-js';
 import {
   fetchMjMessageList,
@@ -11,18 +12,78 @@ import {
 } from "~/utils"
 
 interface Item {
+  id: string;
   imageUrl: string;
+  originUrl: string;
   prompt: string;
   gmtCreate: string;
 }
 
-export default function MyWorks() {
+function getExtensionFromQueryUrl(url: string): string {
+  const urlObject = new URL(url);
+  const imageUrl = urlObject.searchParams.get('img');
+  if (imageUrl) {
+    const imagePath = new URL(imageUrl).pathname;
+    const extension = imagePath.substring(imagePath.lastIndexOf('.'), imagePath.length);
+    return extension;
+  } else {
+    throw new Error('Image URL not found in query parameters');
+  }
+}
 
+export default function MyWorks() {
   const [messageList, setMessageList] = createSignal<Item[]>([])
   let [hasMore, setHasMore] = createSignal(true);
+  let [showImgPreview, setShowImgPreview] = createSignal(false);
+  let [curIndex, setCurIndex] = createSignal(0);
   let [isLoadingMore, setIsLoadingMore] = createSignal(false);
   const [viewportWidth, setViewportWidth] = createSignal(window.innerWidth);
   const [chunks, setChunks] = createSignal<Item[][]>([]);
+
+  let [currentImage, setCurrentImage] = createSignal('');
+  let [nextImage, setNextImage] = createSignal('');
+  let [isLoading, setIsLoading] = createSignal(false);
+  let [shouldAnimate, setShouldAnimate] = createSignal(false);
+
+  function downloadImage(): void {
+    let url = messageList()[curIndex()].originUrl
+    let filename = 'download' + getExtensionFromQueryUrl(url)
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const element = document.createElement('a');
+        element.href = blobUrl;
+        element.download = filename;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch(err => console.error(err));
+  }
+
+  const showPreview = (id: string) => {
+    setShowImgPreview(true)
+    for (let index = 0; index < messageList().length; index++) {
+      const item = messageList()[index];
+      if (item.id === id) {
+        setCurIndex(index)
+        setCurrentImage(messageList()[curIndex()].originUrl);
+      }
+    }
+  };
+
+  createEffect(() => {
+    if (shouldAnimate()) {
+      let timeout = setTimeout(() => {
+        setShouldAnimate(false);
+      }, 500);
+
+      onCleanup(() => clearTimeout(timeout));
+    }
+  });
+
 
   let scrollContainer: HTMLDivElement;
 
@@ -78,8 +139,10 @@ export default function MyWorks() {
       let result = data.list.map(item => {
         let imageSizeRes = getRequestImageSize(item.imageUrl, '300x300')
         return {
+          id: item._id,
           prompt: item.prompt,
           imageUrl: imageSizeRes.previewUrl,
+          originUrl: imageSizeRes.originUrl,
           gmtCreate: item.gmtCreate,
         } as Item
       }).filter(item => {
@@ -142,9 +205,7 @@ export default function MyWorks() {
                   <div class="container flex-1">
                     <For each={chunk}>
                       {item => (
-                        <div class="item" onClick={() => {
-                          toast.success('此功能即将开放，敬请期待')
-                        }}>
+                        <div class="item" onClick={() => showPreview(item.id)}>
                           <div class="w-full rounded-2xl overflow-hidden relative">
                             <img alt="" class="w-full cursor-pointer" src={item.imageUrl} />
                             <div class="absolute bottom-0 left-0 w-full p-2">
@@ -191,6 +252,73 @@ export default function MyWorks() {
           </Show>
         </div>
       </div>
+      <Show when={showImgPreview()}>
+        <div class="preview_bg">
+          <div class="preview">
+            <div class="close" onClick={() => {
+              setShowImgPreview(false)
+            }}>
+              <i class="iconfont  icon-guanbi icon"></i>
+            </div>
+            <Show when={curIndex() > 0}>
+              <div class="prev" onClick={() => {
+                setCurIndex(curIndex() - 1)
+                setNextImage(messageList()[curIndex()].originUrl)
+                console.log('next = ', nextImage())
+                // After a brief delay, make the next image the current image
+                setIsLoading(true);
+                setTimeout(() => {
+                  setCurrentImage('');
+                  setTimeout(() => {
+                    setCurrentImage(nextImage());
+                    setNextImage("");
+                  }, 0)
+
+                  setIsLoading(false);
+                }, 300); // 500ms = 0.5s
+              }}>
+                <i class="iconfont  icon-shangyiyehoutuifanhui icon"></i>
+              </div>
+            </Show>
+
+            <Show when={curIndex() < messageList().length - 1}>
+              <div class="next" onClick={() => {
+                setCurIndex(curIndex() + 1)
+                setNextImage(messageList()[curIndex()].originUrl)
+                console.log('next = ', nextImage())
+                // After a brief delay, make the next image the current image
+                setIsLoading(true);
+                setTimeout(() => {
+                  setCurrentImage('');
+                  setTimeout(() => {
+                    setCurrentImage(nextImage());
+                    setNextImage("");
+                  }, 0)
+
+                  setIsLoading(false);
+                }, 300); // 500ms = 0.5s
+              }}>
+                <i class="iconfont  icon-xiayiyeqianjinchakangengduo icon"></i>
+              </div>
+            </Show>
+            <div class="preview_view">
+              <img alt="" src={currentImage()} class={`preview-img ${isLoading() ? "list-leave-active list-leave-to" : ""}`} />
+              <Show when={isLoading()}>
+                <img alt="" src={nextImage()} class="preview-img list-enter-active list-enter-to" />
+              </Show>
+            </div>
+            <div class="buttons">
+              <div class="buttons_view">
+                <div class="download-container" onClick={() => {
+                  downloadImage()
+                }}>
+                  <i class="iconfont  icon-download-one icon" title="下载"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Show>
       <Toaster position="top-center" />
     </div>
   )
