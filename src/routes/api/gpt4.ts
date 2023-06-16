@@ -35,8 +35,6 @@ export const config = {
   ]
 }
 
-console.log('test....')
-
 
 export const baseURL = process.env.GPT4_API_BASE_URL!.replace(/^https?:\/\//, "")
 
@@ -94,7 +92,6 @@ function generatePrompt(messages: ChatMessage[]): string {
 
 export async function POST({ request }: APIEvent) {
   try {
-    console.log('test...')
     const body: {
       messages: ChatMessage[]
       sessionId: string
