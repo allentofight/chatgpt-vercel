@@ -101,7 +101,6 @@ export default function () {
       setShowLoginDirectDialog(true)
       setLoginGuideTitle('登录后可拥有保存会话功能')
     } else if (sharedStore.message?.type === 'selectedChat') {
-      console.log('chat 2....')
       let chat = sharedStore.message?.info as { id: string, title: string, body: string, model?: ModelEnum }
       let chatWithModel: { id: string, title: string, body: string, model: ModelEnum } = {
         ...chat,
