@@ -761,24 +761,17 @@ export default function Draw(props: {
   const handleImageUpload = async (file: File) => {
     setIsUploading(true);
 
-    const fileSizeInMB = file.size / (1024 * 1024);
-    if (fileSizeInMB > 2) {
-      toast.error('图片不能大于 2M， 请重新选择');
-      setIsUploading(false);
-      return;
-    }
-
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("https://api-tt.beisheng.com/japi/outer/api/auth?starchain.operate.upload.image", {
+    const response = await fetch("https://api.superbed.cn/upload?token=c3eb4f0eb7404ee29885a2532c51aec2", {
       method: "POST",
       body: formData,
     });
 
     const res = await response.json();
-    if (res.success) {
-      let url = res.data
+    if (!res.err) {
+      let url = res.url
       setUploadedImageUrls([...uploadedImageUrls(), url])
     } else {
       toast.error('上传失败成功!');
