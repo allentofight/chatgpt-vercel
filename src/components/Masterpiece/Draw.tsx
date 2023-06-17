@@ -725,6 +725,7 @@ export default function Draw(props: {
     // Clean up event listener when the effect ends
     onCleanup(() => {
       textarea.removeEventListener('input', autoResize);
+      setStore('currentAssistantMessage', '')
     });
   });
 

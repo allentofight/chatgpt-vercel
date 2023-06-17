@@ -33,6 +33,14 @@ export default function PageNav(props: {
   }
 
   createEffect(() => {
+    if (store.pageIndex === 1) {
+      setSelectedIndex(store.pageIndex)
+      props.titleClicked(optionTitles[store.pageIndex])
+      setShowMenu(false)
+    }
+  })
+
+  createEffect(() => {
     setShowChatList(store.showChatList)
   })
 

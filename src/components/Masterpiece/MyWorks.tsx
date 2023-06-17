@@ -6,6 +6,8 @@ import {
 } from "~/utils/api"
 import toast, { Toaster } from 'solid-toast';
 import type { MjChatMessage } from "~/types"
+import { RootStore } from "~/store"
+const { store, setStore } = RootStore
 
 import {
   getRequestImageSize
@@ -45,8 +47,7 @@ export default function MyWorks() {
   let [isLoading, setIsLoading] = createSignal(false);
   let [shouldAnimate, setShouldAnimate] = createSignal(false);
 
-  function downloadImage(): void {
-    let url = messageList()[curIndex()].originUrl
+  function downloadImage(url: string): void {
     let filename = 'download' + getExtensionFromQueryUrl(url)
     fetch(url)
       .then(response => response.blob())
@@ -212,11 +213,18 @@ export default function MyWorks() {
                               <div class="hover w-full rounded-2xl py-3 px-4">
                                 <div class="text text-base">{item.prompt}</div>
                                 <div class="flex items-center justify-between pt-4">
-                                  <div class="btn h-9 w-24 rounded-full text-sm leading-9 text-center cursor-pointer">
+                                  <div class="btn h-9 w-24 rounded-full text-sm leading-9 text-center cursor-pointer" onClick={() => {
+                                    // write the same pic
+                                    setStore('pageIndex', 1)
+                                    setStore('currentAssistantMessage', item.prompt)
+                                  }}>
                                     画同款
                                   </div>
                                   <div class="flex items-center">
-                                    <div class="icon rounded-xl w-9 h-9 flex items-center justify-center mr-3 cursor-pointer" title="下载">
+                                    <div class="icon rounded-xl w-9 h-9 flex items-center justify-center mr-3 cursor-pointer" title="下载" onClick={(event) => {
+                                      event.stopPropagation();
+                                      downloadImage(item.originUrl)
+                                    }}>
                                       <i class="iconfont  icon-guanjiancixinxi-xiazai i text-xl"></i>
                                     </div>
                                     <div class="icon rounded-xl w-9 h-9 flex items-center justify-center cursor-pointer" title="收藏">
@@ -310,7 +318,8 @@ export default function MyWorks() {
             <div class="buttons">
               <div class="buttons_view">
                 <div class="download-container" onClick={() => {
-                  downloadImage()
+                  let url = messageList()[curIndex()].originUrl
+                  downloadImage(url)
                 }}>
                   <i class="iconfont  icon-download-one icon" title="下载"></i>
                 </div>
