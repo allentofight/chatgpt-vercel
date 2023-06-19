@@ -279,8 +279,8 @@ export default function () {
     }
 
     if (isLogin() && isExpired() && currentChat().model === ModelEnum.GPT_3) {
-      toast.error('GPT3.5 会员已过期，请及时充值或观看广告兑换 VIP 权限哦');
-      setShowExchangeDialog(true)
+      toast.error('GPT3.5 会员已过期，请及时充值哦');
+      setShowVipDialog(true)
       return
     }
 
