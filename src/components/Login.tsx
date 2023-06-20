@@ -4,6 +4,8 @@ const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import LoginSuccessDialog from './LoginSuccessDialog'
 
+import CaptchaForm from './CaptchaForm'
+
 export default function LoginDialog(props: {
   title: string,
   buttonTitle: string,
@@ -38,6 +40,12 @@ export default function LoginDialog(props: {
       return
     }
 
+    const captchaResponse = (window as any).hcaptcha.getResponse();
+    if (!captchaResponse) {
+      toast.error('请先点击下方验证');
+      return
+    }
+
     setDisabled(true);
     let response = await fetch(`${apiHost}/api/auth/sendSmsCode`, {
       method: 'POST',
@@ -45,7 +53,8 @@ export default function LoginDialog(props: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        'phone': phone(),
+        phone: phone(),
+        token: captchaResponse
       })
     });
     const result = await response.json()
@@ -152,6 +161,9 @@ export default function LoginDialog(props: {
           </button>
         </div>
         <div class="flex justify-center">
+          <CaptchaForm />
+        </div>
+        <div class="flex justify-center mt-3">
           <button
             class={`w-full ${submitDisabled() ? 'bg-opacity-50' : ''} py-2 px-4 rounded bg-blue-500 text-white`}
             onClick={login}
