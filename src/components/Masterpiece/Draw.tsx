@@ -210,6 +210,10 @@ export default function Draw(props: {
     let messageId = messageList()[activeIndex()].messageId
     delMjMessage(messageId)
 
+    let updatedList = [...messageList()] // Create a copy of the current list
+    updatedList.splice(activeIndex(), 1) // Remove the item from the copied list
+    setMessageList(updatedList) // Update the signal with the new list
+
     setActiveIndex(-1)
   }
 
