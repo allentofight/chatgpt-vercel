@@ -4,6 +4,7 @@ import Draw from './Draw'
 import MyWorks from './MyWorks'
 import MemberCenter from './MemberCenter'
 import Layout from "~/layout"
+import MjTemplate from './MjTemplate'
 import Chat from "~/components/Chat"
 import { createSignal, Switch, Match, createEffect } from 'solid-js'
 import Aside from "~/components/Aside";
@@ -45,6 +46,9 @@ export default function MasterPiece() {
               setStore('pageIndex', -1)
               setTitle('收藏管理')
             }} />
+          </Match>
+          <Match when={title() === 'AI广场'}>
+            <MjTemplate />
           </Match>
           <Match when={title() === '会员中心'}>
             <MemberCenter />

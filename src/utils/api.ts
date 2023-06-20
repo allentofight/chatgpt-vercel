@@ -85,6 +85,31 @@ export const updateMjMessage = async (body: MjUpdateChatMessage) => {
   }
 };
 
+export const fetchMjTemplateList = async (earliestGmtCreate: string | undefined) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    let url = `${apiHost}/api/mj/templateList`
+    if (earliestGmtCreate?.length) {
+      url = `${url}?earliestGmtCreate=${earliestGmtCreate}`
+    }
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error udpate Mj chat:", error);
+    throw error;
+  }
+};
+
 export const fetchMjMessageList = async (earliestGmtCreate: string | undefined) => {
   try {
     let sessionId = localStorage.getItem('sessionId')

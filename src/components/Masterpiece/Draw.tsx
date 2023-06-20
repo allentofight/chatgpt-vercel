@@ -14,6 +14,7 @@ import LoginGuideDialog from '../LoginGuideDialog'
 import VipChargeDialog from '../VipChargeDialog'
 import ImageViewer from './ImageViewer'
 import { queryPromptStatus } from "~/utils/api"
+import { sendMjTranslate } from "~/utils/api"
 
 import {
   delMjMessage,
@@ -260,11 +261,6 @@ export default function Draw(props: {
     }
 
     if (isMjWorking()) {
-      return
-    }
-
-    if (containsChineseCharacters(prompt)) {
-      toast.error('绘画不支持中文哦，请先点击「优化关键词」哦')
       return
     }
 
@@ -529,11 +525,18 @@ export default function Draw(props: {
 
   let queryIntervalId: number;
   async function sendPrompt(body: MjSendBody) {
-    let res = await sendMjPrompt(body)
-
-    queryIntervalId = window.setInterval(() => queryDrawingProcess(res.messageId), 5000);
     setStore('currentAssistantMessage', '')
     setDrawingProgress('0%')
+
+    if (containsChineseCharacters(body.prompt!)) {
+      let translateRes = await sendMjTranslate({ prompt: body.prompt! })
+      body.prompt = translateRes.message.content
+      setMjWorkingPrompt(body.prompt!)
+    }
+
+    let res = await sendMjPrompt(body)
+    queryIntervalId = window.setInterval(() => queryDrawingProcess(res.messageId), 5000);
+
   }
 
   createEffect(() => {
