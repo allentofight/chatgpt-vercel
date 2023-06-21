@@ -346,6 +346,8 @@ export default function Draw(props: {
       setShowVipDialog(true)
       return false
     }
+    mjCnt++
+    localStorage.setItem(storageKey, mjCnt.toString())
     return true
   }
 
