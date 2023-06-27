@@ -35,9 +35,9 @@ export default function MasterPiece() {
         <Switch>
           <Match when={title() === 'AI聊天'}>
             <Layout>
-              <div class="flex justify-center">
-                <Aside visible={chatListVisible} />
+              <div class="flex items-center flex-col">
                 <Chat />
+                <Aside />
               </div>
             </Layout >
           </Match>

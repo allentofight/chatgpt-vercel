@@ -56,7 +56,7 @@ export default function FAQDialog(props: {
   return (
     <>
       <div
-        class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50"
+        class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-100"
         onClick={props.closeDialog}
       >
         <div class="bg-white p-4 rounded-md max-w-lg max-h-96 overflow-y-auto">

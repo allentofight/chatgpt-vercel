@@ -35,7 +35,7 @@ const InviteDialog = (props: {
 
   return (
     <div>
-      <div class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="fixed inset-0 flex items-center justify-center z-100">
         <div class="bg-white w-96 p-8 rounded-lg relative">
           <button class="absolute top-2 right-2 p-1" onClick={props.closeDialog}>
             <CloseIcon />
@@ -56,7 +56,7 @@ const InviteDialog = (props: {
         </div>
       </div>
       <div
-        class="fixed inset-0 bg-black opacity-50"
+        class="fixed inset-0 bg-black opacity-50 z-99"
         onClick={props.closeDialog}
       ></div>
     </div>

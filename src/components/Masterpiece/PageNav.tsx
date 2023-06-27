@@ -47,7 +47,7 @@ export default function PageNav(props: {
   return (
     <div class="_pages_nav h-14 w-full flex items-center justify-between relative">
       <Show when={showMenu()}>
-        <div class="mobile-nav absolute w-full z-50">
+        <div class="mobile-nav absolute w-full z-100">
           <For each={optionTitles}>
             {(title, index) => {
               return (
@@ -91,20 +91,6 @@ export default function PageNav(props: {
           </For>
         </div>
       </div>
-      <Show when={store.pageIndex == 0}>
-        <div class="flex items-center text-white md:hidden flex items-center" onClick={() => {
-          setShowChatList(!showChatList())
-          props.chatListClicked(showChatList())
-          setStore("showChatList", showChatList())
-          if (showMenu() && showChatList()) {
-            setShowMenu(false)
-          }
-
-        }}>
-          会话列表
-          <i class={`iconfont icon-xiangxia keywords-icon text-sm ${showChatList() ? '' : 'expansion_icon'} `}></i>
-        </div>
-      </Show>
       <div class="flex items-center">
         <div class="pc collect flex items-center justify-center text-sm px-3 mr-4 rounded-xl cursor-pointer" onClick={() => {
           setStore('pageIndex', -1)

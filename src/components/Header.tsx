@@ -1,6 +1,6 @@
 import logo from "/assets/logo.svg?raw"
 import ThemeToggle from "./ThemeToggle"
-import OptionSelector from "./OptionSelector"
+import OptionSelector from "./Chat/OptionSelector"
 import { RootStore, loadSession } from "~/store"
 import { Show, createEffect, createMemo } from "solid-js"
 import { useNavigate } from "solid-start"

@@ -25,11 +25,7 @@ interface Chat {
   model?: ModelEnum;
 }
 
-interface AsideProps {
-  visible: () => boolean;
-}
-
-export default function Aside({ visible }: AsideProps) {
+export default function Aside() {
   const [chats, setChats] = createSignal<Chat[]>([]);
 
   const defaultChat = {
@@ -44,8 +40,6 @@ export default function Aside({ visible }: AsideProps) {
   const [selectedChat, setSelectedChat] = createSignal<Chat>(initialItem);
 
   const [hasMore, setHasMore] = createSignal(false);
-
-  const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
 
   const [showInviteDialog, setShowInviteDialog] = createSignal(false);
 
@@ -128,6 +122,7 @@ export default function Aside({ visible }: AsideProps) {
 
     setChats(filteredChats)
     setSelectedChat(defaultChat)
+    setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
     setIsDeletable(false)
   }
 
@@ -136,11 +131,16 @@ export default function Aside({ visible }: AsideProps) {
   }
 
   createEffect(() => {
-    if (selectedChat()) {
-      setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
-      setStore("showChatList", false)
+    if (store.showChatList) {
+      document.querySelector("#chat-aside")?.classList.remove("off-screen")
+      document.querySelector("#chat-aside")?.classList.remove("slide-out")
+      document.querySelector("#chat-aside")?.classList.add("slide-in")
+    } else if (!document.querySelector("#chat-aside")?.classList.contains('off-screen')) {
+      document.querySelector("#chat-aside")?.classList.add("slide-out")
+      document.querySelector("#chat-aside")?.classList.remove("slide-in")
     }
   })
+
 
   createEffect(() => {
     if (sharedStore.message?.type === 'addChat') {
@@ -155,6 +155,7 @@ export default function Aside({ visible }: AsideProps) {
       setChats(originChats)
       setSharedStore('message', { type: 'none' })
       setSelectedChat(chats()[0])
+      setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
     } else if (sharedStore.message?.type === 'updateChatBody') {
       let chat = sharedStore.message?.info as Chat
       let filteredChats = chats().filter(item => {
@@ -267,6 +268,9 @@ export default function Aside({ visible }: AsideProps) {
     }
 
     setSelectedChat(defaultChat)
+    setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
+    setStore('showChatList', false)
+    setStore("chatType", 1)
   };
 
   const fetchChats = async () => {
@@ -344,6 +348,29 @@ export default function Aside({ visible }: AsideProps) {
             font-size: 16px;
           }
 
+          .slide-in {
+            animation: slidein 0.2s ease-in-out forwards;
+          }
+
+          .off-screen {
+            transform: translateX(-100%);
+          }
+          
+
+          @keyframes slidein {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(0); }
+          }
+          
+          @keyframes slideout {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+          }
+          
+          .slide-out {
+            animation: slideout 0.2s ease-in-out forwards;
+          }
+
           .custom-text-color {
             color: #ECECF1 !important;
           }
@@ -363,7 +390,7 @@ export default function Aside({ visible }: AsideProps) {
           }
         `}
       </style>
-      <div class="gpt-aside fixed inset-y-0 left-0 z-99">
+      <div id="chat-aside" class="gpt-aside fixed inset-y-0 left-0 z-99 off-screen">
         <aside class={`left-0 top-0 h-full bg-gray-900 relative md:flex md:flex-col z-40 ${store.showChatList ? 'flex' : 'hidden'
           }`}>
           <div class="absolute top-0 right-0 -mr-12 pt-2 opacity-100 md:hidden"><button type="button" class="ml-1 flex h-10 w-10 items-center justify-center focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" tabindex="0" ><span class="sr-only">Close sidebar</span><svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-gray-800" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>
@@ -386,7 +413,9 @@ export default function Aside({ visible }: AsideProps) {
                       <>
                         <Show when={chat.id !== selectedChat().id}>
                           <a class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group custom-text-color" onClick={() => {
+                            setStore("chatType", 1)
                             setSelectedChat(chat)
+                            setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
                           }}>
                             <ChatIcon />
                             <div class="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
@@ -450,7 +479,10 @@ export default function Aside({ visible }: AsideProps) {
                     ))}
 
                     <Show when={hasMore()}>
-                      <button class="btn relative btn-dark btn-small m-auto mb-2" onClick={loadMore} disabled={loading()}>
+                      <button class="btn relative btn-dark btn-small m-auto mb-2" onClick={(event) => {
+                        event.stopPropagation()
+                        loadMore()
+                      }} disabled={loading()}>
                         <div class="flex w-full items-center justify-center gap-2">
                           加载更多
                         </div></button>
@@ -458,7 +490,8 @@ export default function Aside({ visible }: AsideProps) {
                   </div>
                 </div>
 
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
+                  event.stopPropagation()
                   if (showLogin()) {
                     return
                   }
@@ -472,7 +505,8 @@ export default function Aside({ visible }: AsideProps) {
                     <path d="M6 19h6"></path>
                     <path d="M12 19h6"></path>
                   </svg>购买 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
+                  event.stopPropagation()
                   if (showLogin()) {
                     return
                   }
@@ -486,7 +520,8 @@ export default function Aside({ visible }: AsideProps) {
                     <path d="M6 19h6"></path>
                     <path d="M12 19h6"></path>
                   </svg>邀请好友享 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
+                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
+                  event.stopPropagation()
                   if (showLogin()) {
                     return
                   }
@@ -496,7 +531,8 @@ export default function Aside({ visible }: AsideProps) {
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                   </svg>我的账号信息</a>
-                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
+                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
+                  event.stopPropagation()
                   setShowFaqDialog(true)
                 }}>
                   <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
@@ -520,32 +556,25 @@ export default function Aside({ visible }: AsideProps) {
               </nav>
             </div>
           </div>
-          <Show when={showInviteDialog()}>
-            <InviteDialog closeDialog={closeInviteDialog} />
-          </Show>
-          <Show when={showFaqDialog()}>
-            <FaqDialog closeDialog={closeFaqDialog} />
-          </Show>
-          <Show when={showExchangeDialog()}>
-            <ExchangeDialog
-              successClick={() => setShowExchangeDialog(false)}
-              showTitle={false}
-              showChargeBtn={false}
-              onClick={() => setShowExchangeDialog(false)} />
-          </Show>
-          <Show when={showVipDialog()}>
-            <VipChargeDialog
-              title="VIP 套餐"
-              onClose={closeVipDialog} />
-          </Show>
-          <Show when={showChargeDialog()}>
-            <AccountInfoDialog closeDialog={closeChargeDialog} inviteBtnClick={() => {
-              setShowInviteDialog(true)
-              setShowChargeDialog(false)
-            }} />
-          </Show>
         </aside >
       </div>
+      <Show when={showInviteDialog()}>
+        <InviteDialog closeDialog={closeInviteDialog} />
+      </Show>
+      <Show when={showFaqDialog()}>
+        <FaqDialog closeDialog={closeFaqDialog} />
+      </Show>
+      <Show when={showVipDialog()}>
+        <VipChargeDialog
+          title="VIP 套餐"
+          onClose={closeVipDialog} />
+      </Show>
+      <Show when={showChargeDialog()}>
+        <AccountInfoDialog closeDialog={closeChargeDialog} inviteBtnClick={() => {
+          setShowInviteDialog(true)
+          setShowChargeDialog(false)
+        }} />
+      </Show>
     </>
   );
 }

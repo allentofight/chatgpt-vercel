@@ -13,7 +13,7 @@ import toast, { Toaster } from 'solid-toast';
 import LoginGuideDialog from '../LoginGuideDialog'
 import VipChargeDialog from '../VipChargeDialog'
 import ImageViewer from './ImageViewer'
-import { queryPromptStatus } from "~/utils/api"
+import { fetchUserInfo, queryPromptStatus } from "~/utils/api"
 import { sendMjTranslate } from "~/utils/api"
 
 import {
@@ -338,6 +338,8 @@ export default function Draw(props: {
       setShowLoginDirectDialog(true)
       return false
     }
+
+    fetchUserInfo()
 
     let storageKey = 'mj_try_cnt'
     let mjCnt = parseInt(localStorage.getItem(storageKey) || '0');

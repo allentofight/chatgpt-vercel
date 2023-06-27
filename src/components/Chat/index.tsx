@@ -11,7 +11,10 @@ import { type FakeRoleUnion, setActionState } from "./SettingAction"
 import LoginGuideDialog from '../LoginGuideDialog'
 import ExchangeDialog from '../ExchangeDialog'
 import NotifyDialog from '../NotifyDialog'
+import ChatNav from './ChatNav'
 import { useAuth } from "~/utils/useAuth"
+import PromptSelection from './PromptSelection'
+import PromptCategory from './PromptCategory'
 import { setSharedStore, sharedStore } from '../MessagesStore'
 import toast, { Toaster } from 'solid-toast';
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
@@ -35,9 +38,11 @@ export default function () {
     defaultInputBoxHeight
   )
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
+  const [showPromptList, setShowPromptList] = createSignal(false)
   const [showVipDialog, setShowVipDialog] = createSignal(false);
   const [showNotifyDialog, setShowNotifyDialog] = createSignal(false);
   const [showExchangeDialog, setShowExchangeDialog] = createSignal(false)
+  const [showPromptCategory, setShowPromptCategory] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("请登录以解锁更多功能")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
   const [showBindTelDialog, setShowBindTelDialog] = createSignal(false)
@@ -87,7 +92,23 @@ export default function () {
   })
 
 
+  createEffect(() => {
+    if (store.curPrompt.length) {
+      setCurrentChat({
+        id: '0',
+        title: "Empty chat",
+        body: '',
+        gmtModified: new Date(),
+        model: ModelEnum.GPT_3
+      })
 
+      setStore("messageList", [])
+      setShowPromptCategory(false)
+      setStore('chatType', 1)
+      sendMessage(store.curPrompt)
+      setStore('curPrompt', '')
+    }
+  })
 
   createEffect(() => {
     localStorage.setItem(
@@ -466,52 +487,74 @@ export default function () {
   }
 
   return (
-    <main ref={containerRef!} id="mainContainer" class="mt-4 w-full flex justify-center" style={{ "max-width": "72ch", "font-size": "16px" }}>
-      <MessageContainer
-        sendMessage={sendMessage}
-        inputBoxHeight={inputBoxHeight}
-      />
-      <InputBox
-        height={inputBoxHeight}
-        width={containerWidth}
-        setHeight={setInputBoxHeight}
-        sendMessage={sendMessage}
-        stopStreamFetch={stopStreamFetch}
-      />
-      <Show when={showLoginDirectDialog()}>
-        <LoginGuideDialog title={loginGuideTitle()} />
-      </Show>
-      <Show when={showExchangeDialog()}>
-        <ExchangeDialog
-          successClick={() => {
-            window.location.href = '/'
-          }}
-          showTitle={true}
-          showChargeBtn={true}
-          chargeBtnClick={() => {
-            setShowExchangeDialog(false)
-            setShowVipDialog(true)
-          }}
-          onClick={() => setShowExchangeDialog(false)} />
-      </Show>
-      <Show when={showVipDialog()}>
-        <VipChargeDialog
-          title="付费用户才能使用GPT4哦"
-          onClose={closeVipDialog} />
-      </Show>
-      <Show when={showBindTelDialog()}>
-        <Login title="请绑定手机号"
-          buttonTitle="绑定"
-          showBindSuccess={true}
-          successCallback={() => {
-            setShowBindTelDialog(false)
-          }}
+    <>
+    <ChatNav
+      clickSearch={() => {
+        setShowPromptList(true)
+      }}
+      clickChat={() => {
+        setShowPromptCategory(false)
+      }}
+      clickPromptCategory={() => {
+        setShowPromptCategory(true)
+      }} />
+      <main ref={containerRef!} id="mainContainer" class="mt-4 w-full flex justify-center" style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
+        <MessageContainer
+          sendMessage={sendMessage}
+          inputBoxHeight={inputBoxHeight}
         />
+        <InputBox
+          height={inputBoxHeight}
+          width={containerWidth}
+          setHeight={setInputBoxHeight}
+          sendMessage={sendMessage}
+          stopStreamFetch={stopStreamFetch}
+        />
+        <Show when={showLoginDirectDialog()}>
+          <LoginGuideDialog title={loginGuideTitle()} />
+        </Show>
+        <Show when={showExchangeDialog()}>
+          <ExchangeDialog
+            successClick={() => {
+              window.location.href = '/'
+            }}
+            showTitle={true}
+            showChargeBtn={true}
+            chargeBtnClick={() => {
+              setShowExchangeDialog(false)
+              setShowVipDialog(true)
+            }}
+            onClick={() => setShowExchangeDialog(false)} />
+        </Show>
+        <Show when={showVipDialog()}>
+          <VipChargeDialog
+            title="付费用户才能使用GPT4哦"
+            onClose={closeVipDialog} />
+        </Show>
+        <Show when={showBindTelDialog()}>
+          <Login title="请绑定手机号"
+            buttonTitle="绑定"
+            showBindSuccess={true}
+            successCallback={() => {
+              setShowBindTelDialog(false)
+            }}
+          />
+        </Show>
+        <Show when={showNotifyDialog()}>
+          <NotifyDialog />
+        </Show>
+        <Toaster position="top-center" />
+      </main>
+      <Show when={showPromptCategory()}>
+        <PromptCategory clickPrompt={() => {
+          setShowPromptCategory(false)
+        }} />
+      </Show >
+      <Show when={showPromptList()}>
+        <PromptSelection bgClick={() => {
+          setShowPromptList(false)
+        }} />
       </Show>
-      <Show when={showNotifyDialog()}>
-        <NotifyDialog />
-      </Show>
-      <Toaster position="top-center" />
-    </main>
+    </>
   )
 }

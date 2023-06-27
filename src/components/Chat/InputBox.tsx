@@ -165,7 +165,7 @@ export default function ({
         "background-color": "var(--c-bg)",
         width: width() === "init" ? "100%" : width()
       }}
-    >
+    >``
       <div
         style={{
           transition: "opacity 1s ease-in-out",
@@ -188,10 +188,6 @@ export default function ({
             </div>
           }
         >
-          <SlashSelector
-            options={candidateOptions()}
-            select={selectOption}
-          ></SlashSelector>
           <div class="flex items-end relative">
             <textarea
               ref={el => setStore("inputRef", el)}

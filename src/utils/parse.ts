@@ -1,11 +1,12 @@
 import type { Prompt } from "~/types"
-import md from "/prompts.md?raw"
+
+import rolemd from "/roleprompts.md?raw"
 
 import mjmd from "/mjprompts.md?raw"
 
-export function parsePrompts(type: string) {
+export function parsePrompts() {
 
-  let content = type === 'gpt' ? md : mjmd
+  let content = rolemd
   return content
     .split(/^## (.+)$/m)
     .filter(k => k.trim())

@@ -100,7 +100,7 @@ const VipChargeDialog = (props: Props) => {
   });
 
   return (
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-99">
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-100">
       <div class="bg-white px-6 py-4 rounded-lg flex flex-col items-center gap-4 z-10 w-11/12 sm:w-3/4 max-w-4xl relative">
         <button class="absolute top-4 right-4" onClick={props.onClose}>
           <CloseIcon />

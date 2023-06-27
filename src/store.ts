@@ -64,11 +64,13 @@ function Store() {
     sessionId: "index",
     globalSettings,
     sessionSettings,
+    chatType: 1,  // 1聊天，2选择 prompt, 3 弹出记录
     inputContent: "",
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
     pageIndex: 0,   // 选择导航栏上的页面，如AI聊天，AI绘画
     showChatList: false,
+    curPrompt: "",
     loading: false,
     inputRef: null as HTMLTextAreaElement | null,
     get validContext() {

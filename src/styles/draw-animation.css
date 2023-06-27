@@ -1,0 +1,19 @@
+.up-enter-active {
+  animation: bounce-fade .2s ease forwards
+}
+
+.up-leave-active {
+  animation: bounce-fade .2s ease forwards reverse
+}
+
+@keyframes bounce-fade {
+  0% {
+    transform: translateY(60%);
+    opacity: 0
+  }
+
+  to {
+    transform: translateY();
+    opacity: 1
+  }
+}
