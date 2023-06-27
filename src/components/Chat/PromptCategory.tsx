@@ -257,9 +257,6 @@ export default function PromptCategory(props: {
             </div>
           </div>
         </div>
-        <div class="chat-tips-button">
-          <i class="iconfont  icon-add img"></i>
-        </div>
       </div >
       <Show when={showPromptEdit()}>
         <PromptEdit option={selectedOption()} cancelClick={() => {
