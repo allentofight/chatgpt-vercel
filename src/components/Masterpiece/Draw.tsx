@@ -1208,7 +1208,7 @@ export default function Draw(props: {
                 </Show>
 
                 <Show when={!uploadedImageUrls().length}>
-                  <div class="empty pl-6 py-2">
+                <div class="upload-empty pl-6 py-2">
                     <div class="h-16 flex flex-col justify-around">
                       <div class="text-base">
                         上传参考图(选填)

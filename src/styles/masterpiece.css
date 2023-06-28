@@ -856,7 +856,7 @@ input[type='number'] {
   background: rgba(0, 0, 0, .4)
 }
 
-.dark .upload .empty {
+.dark .upload .upload-empty {
   font-weight: 400;
   color: #ffffffa6
 }
@@ -966,7 +966,7 @@ input[type='number'] {
   background: rgba(255, 255, 255, .1)
 }
 
-.base .upload .empty {
+.base .upload .upload-empty {
   font-weight: 400;
   color: #000c
 }
