@@ -133,6 +133,7 @@ export default function () {
       } else {
         setStore("messageList", JSON.parse(chat.body))
       }
+      setShowPromptCategory(false)
     } else if (sharedStore.message?.type === 'delChat') {
       uploadChatList()
     }
