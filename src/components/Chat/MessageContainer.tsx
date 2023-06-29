@@ -86,7 +86,7 @@ export default function ({
           <Show
             when={store.inputContentToken}
             fallback={
-              <span class="mx-1 text-slate/40">
+              <span class="mx-1 text-slate/50">
                 {`有效上下文 Tokens : ${store.contextToken
                   }/$${store.contextToken$.toFixed(4)}`}
               </span>

@@ -364,10 +364,11 @@ export default function Draw(props: {
     const stopRegex = /--stop [1-9]\d?|100/;
     const stylizeRegex = /--(stylize|s) \d+/;
     const tileRegex = /--tile/;
-    const versionRegex = /--(v|version) (1|2|3|4|5|5\.1)/;
+    const versionRegex = /--(v|version) (1|2|3|4|5|5\.1|5\.2)/;
     const nijiRegex = /--niji( (4|5))?/;
+    const iwRegex = /--iw\s+(-?\d+(\.\d+)?)/
 
-    const allParametersRegex = [aspectRegex, chaosRegex, noRegex, qualityRegex, repeatRegex, seedRegex, stopRegex, stylizeRegex, tileRegex, versionRegex, nijiRegex];
+    const allParametersRegex = [aspectRegex, chaosRegex, noRegex, qualityRegex, repeatRegex, seedRegex, stopRegex, stylizeRegex, tileRegex, versionRegex, nijiRegex, iwRegex];
 
     let replacedPrompt = allParametersRegex.reduce((currentPrompt, regex) => {
       return currentPrompt.replace(regex, '');
@@ -416,9 +417,9 @@ export default function Draw(props: {
       '--stop': /^(?:[1-9][0-9]|100)$/,
       '--stylize': /^(?:[0-9]+)$/,
       '--s': /^(?:[0-9]+)$/,
-      '--v': /^(?:1|2|3|4|5|5.1)$/,
+      '--v': /^(?:1|2|3|4|5|5.1|5.2)$/,
       '--niji': /^(?:4|5)$/,
-      '--version': /^(?:1|2|3|4|5|5.1)$/,
+      '--version': /^(?:1|2|3|4|5|5.1|5.2)$/,
       '--no': /^(?:\w+)$/
     };
 
