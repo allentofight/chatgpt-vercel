@@ -401,7 +401,6 @@ export default function () {
     let isGPT4 = currentChat().model === ModelEnum.GPT_4
     if (isModelGPT) {
       let sessionId = localStorage.getItem('sessionId')
-      let url = `/api${isGPT4 ? '/gpt4' : ''}`
       response = await fetch('/api', {
         method: "POST",
         body: JSON.stringify({
