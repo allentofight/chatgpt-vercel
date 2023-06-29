@@ -800,9 +800,6 @@ export default function Draw(props: {
 
   const handleFileChange = (event: Event) => {
 
-    toast.error('垫图暂不可用，请晚点再试哦')
-    return
-
     const file = (event.target as HTMLInputElement).files?.[0];
     if (file) {
       handleImageUpload(file);
