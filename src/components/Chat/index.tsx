@@ -128,6 +128,13 @@ export default function () {
         model: chat.model ?? ModelEnum.GPT_3
       };
       setCurrentChat(chatWithModel)
+
+      setStore(
+        "sessionSettings",
+        "APIModel",
+        modelMap[chatWithModel.model]
+      )
+
       if (!parseInt(chat.id)) {
         setStore("messageList", [])
       } else {
