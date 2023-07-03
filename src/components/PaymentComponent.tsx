@@ -63,19 +63,10 @@ export default function PaymentComponent() {
       if (!qrCodeCtx) return;
       qrCodeCtx.drawImage(qrCodeImage, 0, 0);
 
-      const logoImage = new Image();
-      logoImage.crossOrigin = 'anonymous'; // 添加这一行
-      logoImage.src = '/alipay.png';
-      logoImage.onload = () => {
-        const logoSize = 64;
-        const logoPosition = (qrCodeCanvas.width - logoSize) / 2;
-        qrCodeCtx.drawImage(logoImage, logoPosition, logoPosition, logoSize, logoSize);
-
-        const finalDataURL = qrCodeCanvas.toDataURL();
-        const finalImage = new Image();
-        finalImage.src = finalDataURL;
-        qrCodeContainer()!.appendChild(finalImage);
-      };
+      const finalDataURL = qrCodeCanvas.toDataURL();
+      const finalImage = new Image();
+      finalImage.src = finalDataURL;
+      qrCodeContainer()!.appendChild(finalImage);
     };
   });
 
@@ -124,10 +115,11 @@ export default function PaymentComponent() {
   return (
     <div class="flex flex-col items-center justify-center mt-10">
       <div class="w-full flex justify-center mb-2">
-        <h2 class="text-xl text-center">ChatGPT<strong class="text-blue-500">{title()}</strong>购买</h2>
+        <h2 class="text-xl text-center text-white">ChatGPT<strong class="text-blue-500">{title()}</strong>购买</h2>
       </div>
       <div ref={setQRCodeContainer}>
       </div>
+      <p class="mt-3 text-white text-xl">请使用支付宝扫码付款</p>
       <p class="mt-4 bg-[#fef7ea]">{hintText()}</p>
       <Show when={showDialog()}>
         <PaymentSuccessDialog />
