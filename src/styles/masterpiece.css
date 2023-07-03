@@ -115,7 +115,7 @@ input[type='number'] {
   display: block;
 }
 
-.dark .left .empty-text {
+.dark .left .empty-draw-text {
   color: #fffffff2;
 }
 
@@ -166,7 +166,7 @@ input[type='number'] {
   display: none;
 }
 
-.base .left .empty-text {
+.base .left .empty-draw-text {
   color: #000000f2;
 }
 

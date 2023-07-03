@@ -878,7 +878,7 @@ export default function Draw(props: {
               <div class="not-record">
                 <img alt="" class="img w-1/2" src="/images/draw-left-empty.png" />
                 <img alt="" class="img1 w-1/2" src="/images/draw-left-empty1.png" />
-                <div class="empty-text text-xs pt-3">
+                <div class="empty-draw-text text-xs pt-3">
                   还没有绘画记录哦
                 </div>
               </div>
