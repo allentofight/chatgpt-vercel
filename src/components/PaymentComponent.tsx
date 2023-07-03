@@ -53,21 +53,10 @@ export default function PaymentComponent() {
       errorCorrectionLevel: 'H',
     });
 
-    const qrCodeImage = new Image();
-    qrCodeImage.src = qrCodeDataURL;
-    qrCodeImage.onload = () => {
-      const qrCodeCanvas = document.createElement('canvas');
-      qrCodeCanvas.width = 256;
-      qrCodeCanvas.height = 256;
-      const qrCodeCtx = qrCodeCanvas.getContext('2d');
-      if (!qrCodeCtx) return;
-      qrCodeCtx.drawImage(qrCodeImage, 0, 0);
 
-      const finalDataURL = qrCodeCanvas.toDataURL();
-      const finalImage = new Image();
-      finalImage.src = finalDataURL;
-      qrCodeContainer()!.appendChild(finalImage);
-    };
+    const finalImage = new Image();
+    finalImage.src = qrCodeDataURL;
+    qrCodeContainer()!.appendChild(finalImage);
   });
 
   createEffect(async () => {
