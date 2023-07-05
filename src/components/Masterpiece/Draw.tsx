@@ -291,8 +291,6 @@ export default function Draw(props: {
       scrollToTop(previewListRef()!)
     }
 
-    prompt = prompt.replace(/--seed \d+\s?/g, '');
-    prompt = `${prompt} --seed ${generateSeed()}`
     setMjWorkingPrompt(prompt)
     let body: MjSendBody = {
       prompt
