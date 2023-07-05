@@ -1076,13 +1076,13 @@ export default function Draw(props: {
                         <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
                           左上
                         </div>
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V2')}>
                           右上
                         </div>
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V3')}>
                           左下
                         </div>
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V4')}>
                           右下
                         </div>
                       </div>
