@@ -1064,28 +1064,31 @@ export default function Draw(props: {
                           右下
                         </div>
                       </div>
-                      <div class="top py-4">
-                        <div class="text text-lg font-semibold">
-                          变体图片
+                      <Show when={false}>
+                        <div class="top py-4">
+                          <div class="text text-lg font-semibold">
+                            变体图片
+                          </div>
+                          <div class="text1 text-xs pt-1">
+                            对左侧的其中一张图片进行多样化修改
+                          </div>
                         </div>
-                        <div class="text1 text-xs pt-1">
-                          对左侧的其中一张图片进行多样化修改
+                        <div class="cell flex justify-between mb-4 h-10">
+                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
+                            左上
+                          </div>
+                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V2')}>
+                            右上
+                          </div>
+                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V3')}>
+                            左下
+                          </div>
+                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V4')}>
+                            右下
+                          </div>
                         </div>
-                      </div>
-                      <div class="cell flex justify-between mb-4 h-10">
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
-                          左上
-                        </div>
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V2')}>
-                          右上
-                        </div>
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V3')}>
-                          左下
-                        </div>
-                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V4')}>
-                          右下
-                        </div>
-                      </div>
+                      </Show>
+                      
                     </Show>
                     <Show when={type() == 2}>
                       <div class="top flex py-4 items-end justify-between">
