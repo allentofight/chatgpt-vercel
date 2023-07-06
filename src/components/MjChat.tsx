@@ -123,10 +123,6 @@ export default function (props: {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
 
-    setTimeout(() => {
-      document.querySelector("#root")?.classList.remove("before")
-    })
-    document.querySelector("#root")?.classList.add("after")
 
     const setting = localStorage.getItem("setting")
     const session = localStorage.getItem("session")

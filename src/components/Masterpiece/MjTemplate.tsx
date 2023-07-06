@@ -180,7 +180,7 @@ export default function MyWorks() {
                                 <div class="flex items-center justify-between pt-4">
                                   <div class="btn h-9 w-24 rounded-full text-sm leading-9 text-center cursor-pointer" onClick={() => {
                                     // write the same pic
-                                    setStore('pageIndex', 1)
+                                    setStore('menuTitle', 'AI绘画')
                                     setStore('currentAssistantMessage', item.prompt)
                                   }}>
                                     画同款

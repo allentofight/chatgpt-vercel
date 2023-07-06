@@ -15,6 +15,7 @@ import { ModelEnum } from "~/types"
 import VipChargeDialog from './VipChargeDialog'
 import AccountInfoDialog from './AccountInfoDialog'
 import { RootStore, loadSession } from "~/store"
+import toast from 'solid-toast';
 const { store, setStore } = RootStore
 
 interface Chat {
@@ -87,6 +88,34 @@ export default function Aside() {
     setShowVipDialog(false)
   }
 
+  function clearAllChats() {
+
+    let sessionId = localStorage.getItem('sessionId')
+    if (!sessionId) {
+      toast.error('请先登录')
+      return
+    }
+    fetch(`${apiHost}/api/chat/deleteAll`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionId}`
+      },
+      body: JSON.stringify({}),
+    }).then((response) => {
+      // Check if the response status is OK (200)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      // Parse the response as JSON
+      return { message: 'deleteSuccess' };
+    }).then((data) => {
+      console.log('删除成功!')
+    }).catch((error) => {
+      console.error('Error delete chat:', error);
+    });
+  }
+
   function confirmDel() {
 
     if (!isLocalStorageAvailable()) {
@@ -131,13 +160,22 @@ export default function Aside() {
   }
 
   createEffect(() => {
+    let chatAside = document.querySelector("#chat-aside") as HTMLElement
     if (store.showChatList) {
-      document.querySelector("#chat-aside")?.classList.remove("off-screen")
-      document.querySelector("#chat-aside")?.classList.remove("slide-out")
-      document.querySelector("#chat-aside")?.classList.add("slide-in")
+      chatAside?.classList.remove("off-screen")
+      chatAside?.classList.remove("slide-out")
+      chatAside?.classList.add("slide-in")
+      setTimeout(() => {
+        chatAside?.classList.remove("slide-in")  
+        chatAside!.style.transform = "translateX(0)";
+      }, 200)
     } else if (!document.querySelector("#chat-aside")?.classList.contains('off-screen')) {
-      document.querySelector("#chat-aside")?.classList.add("slide-out")
-      document.querySelector("#chat-aside")?.classList.remove("slide-in")
+      chatAside?.classList.add("slide-out")
+      chatAside?.classList.remove("slide-in")
+      setTimeout(() => {
+        chatAside?.classList.remove("slide-out")
+        chatAside!.style.transform = "translateX(-100%)";
+      }, 200)
     }
   })
 
@@ -489,69 +527,20 @@ export default function Aside() {
                     </Show>
                   </div>
                 </div>
-
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
-                  event.stopPropagation()
-                  if (showLogin()) {
-                    return
-                  }
-                  setShowVipDialog(true)
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="10" cy="7" r="4"></circle>
-                    <circle cx="14" cy="7" r="4"></circle>
-                    <path d="M9 15v4"></path>
-                    <path d="M15 15v4"></path>
-                    <path d="M6 19h6"></path>
-                    <path d="M12 19h6"></path>
-                  </svg>购买 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
-                  event.stopPropagation()
-                  if (showLogin()) {
-                    return
-                  }
-                  setShowInviteDialog(true)
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="10" cy="7" r="4"></circle>
-                    <circle cx="14" cy="7" r="4"></circle>
-                    <path d="M9 15v4"></path>
-                    <path d="M15 15v4"></path>
-                    <path d="M6 19h6"></path>
-                    <path d="M12 19h6"></path>
-                  </svg>邀请好友享 VIP 权益</a>
-                <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
-                  event.stopPropagation()
-                  if (showLogin()) {
-                    return
-                  }
-                  setShowChargeDialog(true)
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>我的账号信息</a>
-                <a target="_blank" class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
-                  event.stopPropagation()
-                  setShowFaqDialog(true)
-                }}>
-                  <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                  </svg>FAQ</a>
                 <Show when={isLogin()}>
-                  <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={() => {
-                    localStorage.removeItem('sessionId')
-                    localStorage.removeItem('expireDay')
-                    localStorage.removeItem('inviteCode')
-                    window.location.href = '/login'
+                  <a class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm custom-text-color" onClick={(event) => {
+                    event.stopPropagation()
+                    if (chats().length == 0) {
+                      console.log('会话已是空的')
+                      return
+                    }
+                    setChats([])
+                    clearAllChats()
                   }}>
                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                      <polyline points="16 17 21 12 16 7"></polyline>
-                      <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>登出 </a>
+                      <path d="M6 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"></path>
+                      <path d="M16 9l-7 7m0 -7l7 7"></path>
+                    </svg>清空所有会话 </a>
                 </Show>
               </nav>
             </div>

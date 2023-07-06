@@ -643,7 +643,7 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   border-right: 1px solid #464649
 }
 
-.width {
+.vip-width {
   max-width: 1280px;
   margin: 0 auto;
   width: 100%
@@ -661,9 +661,6 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   color: #fff
 }
 
-.button-ordinary {
-  display: none
-}
 
 .button-monthly {
   background: #FFFAF2;
@@ -740,6 +737,27 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   box-shadow: 0 .25rem .94rem #25149a5e
 }
 
+.button-ordinary {
+  background: #FBF9FF;
+  border-radius: 8px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #D1DDEB;
+  color: #546782;
+  margin: 0 20px
+}
+
+.button-ordinary:hover {
+  cursor: pointer;
+}
+
+.button-annual:hover {
+  cursor: pointer;
+}
+
 .tables .vip-logo {
   background: #FBCA4E;
   color: #fff
@@ -811,7 +829,7 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
 }
 
 .mobile {
-  display: none
+  display: none;
 }
 
 .pc {
@@ -837,6 +855,6 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   }
 
   .mobile {
-    display: block
+    display: block;
   }
 }

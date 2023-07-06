@@ -95,10 +95,6 @@ export default function PaymentComponent() {
       }
     }
 
-    setTimeout(() => {
-      document.querySelector("#root")?.classList.remove("before")
-    })
-    document.querySelector("#root")?.classList.add("after")
   });
 
   return (

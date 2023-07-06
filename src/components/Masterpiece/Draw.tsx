@@ -811,9 +811,19 @@ export default function Draw(props: {
     inputElement.value = "";
   };
 
+  const [className, setClassName] = createSignal('');
+
+  createEffect(() => {
+    if (!store.hasAiDrawClicked) {
+      setClassName('flex')
+    } else {
+      setClassName(store.menuTitle === 'AI绘画' ? 'flex' : 'hidden')
+    }
+  })
+
   return (
     <>
-      <div class="_draw flex flex-1 w-full overflow-hidden">
+      <div class={`_draw flex-1 w-full overflow-hidden ${className()}`}>
         <div class="left-container left flex flex-col w-56">
           <div class="left-top h-14 flex items-center justify-between px-4 cursor-pointer">
             <span class="span text-sm">绘画记录</span>

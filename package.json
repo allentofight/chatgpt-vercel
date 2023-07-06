@@ -24,6 +24,7 @@
     ]
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "@solid-primitives/event-listener": "^2.2.10",
     "@solid-primitives/media": "^2.1.6",
     "@solid-primitives/resize-observer": "^2.0.15",

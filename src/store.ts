@@ -64,11 +64,13 @@ function Store() {
     sessionId: "index",
     globalSettings,
     sessionSettings,
+    hasAiDrawClicked: false,  // 是否AI绘画已经点击过
     chatType: 1,  // 1聊天，2选择 prompt, 3 弹出记录
     inputContent: "",
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
-    pageIndex: 0,   // 选择导航栏上的页面，如AI聊天，AI绘画
+    menuTitle: 'AI聊天',
+    showUserPopover: false,
     showChatList: false,
     curPrompt: "",
     loading: false,

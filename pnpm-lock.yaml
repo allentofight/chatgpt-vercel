@@ -4,6 +4,7 @@ specifiers:
   '@cloudflare/kv-asset-handler': ^0.3.0
   '@iconify-json/carbon': ^1.1.16
   '@iconify-json/ri': ^1.1.7
+  '@popperjs/core': ^2.11.8
   '@solid-primitives/event-listener': ^2.2.10
   '@solid-primitives/media': ^2.1.6
   '@solid-primitives/resize-observer': ^2.0.15
@@ -66,6 +67,7 @@ specifiers:
   workbox-window: ^6.5.4
 
 dependencies:
+  '@popperjs/core': 2.11.8
   '@solid-primitives/event-listener': 2.2.10_solid-js@1.7.3
   '@solid-primitives/media': 2.1.6_solid-js@1.7.3
   '@solid-primitives/resize-observer': 2.0.15_solid-js@1.7.3
@@ -1995,6 +1997,10 @@ packages:
 
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
+
+  /@popperjs/core/2.11.8:
+    resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+    dev: false
 
   /@rollup/plugin-babel/5.3.1_4tnfxcmsyr7y5qv3uwkivwqysm:
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}

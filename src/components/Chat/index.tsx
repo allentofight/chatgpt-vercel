@@ -84,10 +84,7 @@ export default function () {
     createResizeObserver(containerRef, ({ width }, el) => {
       if (el === containerRef) setContainerWidth(`${width}px`)
     })
-    setTimeout(() => {
-      document.querySelector("#root")?.classList.remove("before")
-    })
-    document.querySelector("#root")?.classList.add("after")
+
     if (q) sendMessage(q)
   })
 

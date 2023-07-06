@@ -3,10 +3,10 @@ import { onMount, createSignal, For, Show, Setter, Accessor, onCleanup, createEf
 import { RootStore, loadSession } from "~/store"
 import { isMobile } from "~/utils"
 import CourseDialog from "./CourseDialog"
-import { setSharedStore, sharedStore } from '../MessagesStore'
+
+import { createPopper } from '@popperjs/core';
 
 export default function PageNav(props: {
-  titleClicked: (title: string) => void,
   chatListClicked: (showChat: boolean) => void,
 }) {
 
@@ -19,29 +19,39 @@ export default function PageNav(props: {
 
   const { store, setStore } = RootStore
 
-  let optionTitles = isMobile() ? ['AI聊天', 'AI绘画', 'AI广场', '收藏管理'] : ['AI聊天', 'AI绘画', 'AI广场']
+  let optionTitles = isMobile() ? ['AI聊天', 'AI绘画', 'AI广场', '收藏管理', '会员中心'] : ['AI聊天', 'AI绘画', 'AI广场', '会员中心']
 
   function clickOption(index: number) {
     setSelectedIndex(index)
-    props.titleClicked(optionTitles[index])
+    setStore('menuTitle', optionTitles[index])
     setShowMenu(false)
-    if (optionTitles[index] === '收藏管理') {
-      setStore('pageIndex', -1)
-    } else {
-      setStore('pageIndex', index)
-    }
   }
 
+  let clickHandler = () => {
+    setStore('showUserPopover', false)
+  }
+
+  onMount(() => {
+    document.body.addEventListener('click', clickHandler);
+  })
+
+  onCleanup(() => {
+    document.body.removeEventListener('click', clickHandler);
+  });
+
   createEffect(() => {
-    if (store.pageIndex === 1) {
-      setSelectedIndex(store.pageIndex)
-      props.titleClicked(optionTitles[store.pageIndex])
-      setShowMenu(false)
+    setShowChatList(store.showChatList)
+  })
+
+  createEffect(() => {
+    if (!store.showUserPopover) {
+      const tooltip = document.querySelector('#tooltip')!;
+      tooltip.classList.add("hidden")
     }
   })
 
   createEffect(() => {
-    setShowChatList(store.showChatList)
+    setSelectedIndex(optionTitles.indexOf(store.menuTitle))
   })
 
   return (
@@ -74,7 +84,7 @@ export default function PageNav(props: {
           <img alt="" class="w-full" src="/images/logo.png" />
         </div>
         <div class="pc flex items-center relative h-10">
-          <Show when={store.pageIndex > -1}>
+          <Show when={!isMobile() && selectedIndex() > -1}>
             <div class="line absolute h-full flex items-end justify-center" style={`left: ${selectedIndex() * 96}px;`}>
               <div class="line-line w-9"></div>
             </div>
@@ -83,7 +93,7 @@ export default function PageNav(props: {
           <For each={optionTitles}>
             {(title, index) => {
               return (
-                <div class={`text text-center cursor-pointer ${selectedIndex() === index() && store.pageIndex > -1 ? 'active' : ''}`} onClick={() => clickOption(index())}>
+                <div class={`text text-center cursor-pointer ${selectedIndex() === index() ? 'active' : ''}`} onClick={() => clickOption(index())}>
                   {title}
                 </div>
               )
@@ -93,7 +103,7 @@ export default function PageNav(props: {
       </div>
       <div class="flex items-center">
         <div class="pc collect flex items-center justify-center text-sm px-3 mr-4 rounded-xl cursor-pointer" onClick={() => {
-          setStore('pageIndex', -1)
+          setStore('menuTitle', '收藏管理')
         }}>
           <i class="iconfont  icon-guanjiancixinxi-shoucang text-sm mr-1"></i>
           <span >收藏管理</span>
@@ -102,10 +112,58 @@ export default function PageNav(props: {
           <i class="iconfont  icon-rijian1 icon mr-1"></i>
         </div>
         <div class="login">
-          <div class="el-dropdown">
-            <div id="el-id-7412-0" role="button" tabindex="0" class="el-tooltip__trigger" aria-controls="el-id-7412-1" aria-expanded="false" aria-haspopup="menu">
-              <img alt="" class="w-10" src="https://b1.beisheng.com/common/starchain_self_image/2306/13/3x_1682755768971.png" />
+          <div>
+            <img id="button" alt="" class="w-10" src="https://b1.beisheng.com/common/starchain_self_image/2306/13/3x_1682755768971.png" onClick={() => {
+              setStore('showUserPopover', !store.showUserPopover)
+              const tooltip = document.querySelector('#tooltip')!;
+              if (store.showUserPopover) {
+                const button = document.querySelector('#button')!;
+                tooltip.classList.remove("hidden")
+
+                // create a popper instance
+                const popperInstance = createPopper(button, tooltip, {
+                  placement: 'bottom',
+                  modifiers: [
+                    {
+                      name: 'offset',
+                      options: {
+                        offset: [-5, 8],
+                      },
+                    },
+                  ],
+                });
+                // update popper instance
+                popperInstance.update();  
+              } else {
+                tooltip.classList.add("hidden")
+              }
+
+              
+          }} />
+          </div>
+          <div class="hidden z-100" id="tooltip" role="tooltip">
+            <div class="el-scrollbar">
+              <div class="el-scrollbar__wrap el-scrollbar__wrap--hidden-default">
+                <div class="el-scrollbar__view el-dropdown__list" style="">
+                <ul data-v-b22f1d6d="" class="el-dropdown-menu overflow-hidden" tabindex="-1" role="menu" aria-labelledby="el-id-512-0" id="el-id-512-1" style="outline: none;">
+                  <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
+                    const tooltip = document.querySelector('#tooltip')!;
+                    tooltip.classList.add("hidden")
+                    setStore('showUserPopover', false)
+                    setStore('menuTitle', '个人中心')
+                  }}>
+                  个人中心</li>
+                  <li role="separator" class="el-dropdown-menu__item--divided"></li>
+                  <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
+                    localStorage.removeItem('sessionId')
+                    window.location.href = '/login'
+                  }}>
+                    退出登录 </li>
+                </ul>
+                </div>
+              </div>
             </div>
+            <div id="arrow" data-popper-arrow></div>
           </div>
         </div>
       </div>

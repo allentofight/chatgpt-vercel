@@ -226,6 +226,11 @@ export async function fetchUserInfo() {
       localStorage.setItem('midjourneyExpireDay', data.midjourneyExpireDay.toString())
     }
 
+
+    if (data.phone) {
+      localStorage.setItem('phone', data.phone);
+    }
+
     if (data.isTelBinded) {
       localStorage.setItem('isTelBinded', '1');
     } else {
