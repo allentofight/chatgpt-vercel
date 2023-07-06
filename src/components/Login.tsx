@@ -26,6 +26,11 @@ export default function LoginDialog(props: {
     if (inviteCode) {
       setInviteCode(inviteCode)
     }
+
+    let sessionId = localStorage.getItem('sessionId')
+    if (sessionId) {
+      window.location.href = '/'
+    }
   })
 
   function isPhoneValid() {
