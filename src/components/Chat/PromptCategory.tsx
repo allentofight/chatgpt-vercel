@@ -1,9 +1,20 @@
-import { Show, createSignal, For } from 'solid-js';
+import { Show, createSignal, For, onMount } from 'solid-js';
 import PromptEdit from './PromptEdit'
+import CreatePromptDialog from './CreatePromptDialog'
 import { parsePrompts } from "~/utils"
 import type { Option } from "~/types"
 import { RootStore, loadSession } from "~/store"
 const { store, setStore } = RootStore
+import {
+  listPrompt,
+} from "~/utils/api"
+
+function hexToRGBA(hex: string, alpha = 0.2) {
+  let r = parseInt(hex.slice(1, 3), 16),
+    g = parseInt(hex.slice(3, 5), 16),
+    b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 export default function PromptCategory(props: {
   clickPrompt: () => void
@@ -11,11 +22,15 @@ export default function PromptCategory(props: {
 
   const [showPromptEdit, setShowPromptEdit] = createSignal(false)
 
+  const [showCreatePrompt, setShowCreatePrompt] = createSignal(false)
+
   let promptOptions = parsePrompts().map(
     k => ({ title: k.desc, desc: k.detail } as Option)
   )
 
   const [selectedOption, setSelectedOption] = createSignal(promptOptions[0])
+
+  const [myPrompt, setMyPrompt] = createSignal([])
 
   let promptsList = [{
     title: '提高生产率',
@@ -74,7 +89,7 @@ export default function PromptCategory(props: {
       collectClass: 'icon-a-13',
       collectIconColor: 'color: rgb(236, 72, 152)'
     }, {
-      title: '励志演讲者',
+      title: '面试官',
       iconClass: 'icon-a-9',
       backgroundColor: 'background: rgba(59, 130, 246, 0.2)',
       iconClassColor: 'rgb(59, 130, 246)',
@@ -179,6 +194,17 @@ export default function PromptCategory(props: {
     }]
   }]
 
+  onMount(() => {
+    fetchMyPrompts()
+  })
+
+  let fetchMyPrompts = () => {
+    listPrompt().then(data => {
+      setMyPrompt(data.prompts)
+      console.log('myPrompts = ', myPrompt())
+    })
+  }
+
   return (
     <div class="chat w-full">
       < div class="chat-info" style={{ "margin-top": "64px" }} >
@@ -198,7 +224,7 @@ export default function PromptCategory(props: {
                   <div id="tipScroll" class="scroll-to-div"></div>
                 </div>
               </div>
-              <div style="display: none;">
+              <Show when={myPrompt().length > 0}>
                 <div class="chat-tips-title">
                   <div class="text">
                     我的提示
@@ -208,10 +234,31 @@ export default function PromptCategory(props: {
                   </div>
                 </div>
                 <div class="chat-tips-list">
-                  <div id="tipScroll1" class="scroll-to-div"></div>
+                  <For each={myPrompt()}>
+                    {(prompt, index) => (
+                      <div class="chat-tips-list-item" style={`background:${hexToRGBA(prompt.color)};`} onClick={() => {
+                        setSelectedOption({
+                          id: prompt.id,
+                          title: prompt.title,
+                          desc: prompt.prompt,
+                          icon: prompt.icon,
+                          color: prompt.color,
+                        } as Option)
+                        setShowPromptEdit(true)
+                      }}>
+                        <div class="mask"></div>
+                        <div class="icons">
+                          <i class={`iconfont ${prompt.icon} icon`} style={`color: ${prompt.color};`}></i>
+                          <i class="iconfont  icon-a-13 icon1" style={`color:${prompt.color};`}></i>
+                        </div>
+                        <div class="chat-tips-text" style={`color:${prompt.color};`}>
+                          {prompt.title}
+                        </div>
+                      </div>
+                    )}
+                  </For>
                 </div>
-              </div>
-
+              </Show>
 
               <For each={promptsList}>
                 {(prompt, index) => (
@@ -231,6 +278,7 @@ export default function PromptCategory(props: {
                             let filteredItems = promptOptions.filter(item => {
                               return item.title === iconInfo.title
                             })
+                            console.log('promptOptions = ', promptOptions, 'iconInfo = ', iconInfo)
                             setSelectedOption({
                               title: iconInfo.title,
                               desc: filteredItems[0].desc,
@@ -257,6 +305,9 @@ export default function PromptCategory(props: {
             </div>
           </div>
         </div>
+        <div class="chat-tips-button" onClick={() => {
+          setShowCreatePrompt(true)
+        }}><i class="iconfont  icon-add add-img"></i></div>
       </div >
       <Show when={showPromptEdit()}>
         <PromptEdit option={selectedOption()} cancelClick={() => {
@@ -264,12 +315,24 @@ export default function PromptCategory(props: {
           setTimeout(() => {
             setShowPromptEdit(false)
           }, 200)
+          fetchMyPrompts()
         }} confirmClick={(inputText: string) => {
           setShowPromptEdit(false)
           setStore("chatType", 1)
           props.clickPrompt()
           setStore("curPrompt", inputText)
 
+        }} />
+      </Show>
+      <Show when={showCreatePrompt()}>
+        <CreatePromptDialog cancelClick={() => {
+          document.querySelector("#create-prompt-container")?.classList.add("up-leave-active")
+          setTimeout(() => {
+            setShowCreatePrompt(false)
+          }, 200)
+        }} confirmClick={() => {
+          fetchMyPrompts()
+          setShowCreatePrompt(false)
         }} />
       </Show>
     </div>

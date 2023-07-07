@@ -283,6 +283,68 @@ export async function incrGPT4Cnt() {
   }
 }
 
+export async function createOrUpdatePrompt(body: string) {
+  let sessionId = localStorage.getItem('sessionId')
+  const response = await fetch(`${apiHost}/api/chat/createPrompt`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`,
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message);
+  } else {
+    return await response.json();
+  }
+}
+
+export async function listPrompt() {
+  let sessionId = localStorage.getItem('sessionId')
+  const response = await fetch(`${apiHost}/api/chat/listPrompt`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`,
+    },
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message);
+  } else {
+    return await response.json();
+  }
+}
+
+
+export const delPrompt = async (id: string) => {
+  let sessionId = localStorage.getItem('sessionId')
+  await fetch(`${apiHost}/api/chat/delPrompt`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`
+    },
+    body: JSON.stringify({
+      id,
+    }),
+  }).then((response) => {
+    console.log('response = ', response)
+    // Check if the response status is OK (200)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    // Parse the response as JSON
+    return true;
+  }).catch((error) => {
+    console.error('Error delete chat:', error);
+  });
+}
+
 export const requestPayment = async (productId: string, options: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')

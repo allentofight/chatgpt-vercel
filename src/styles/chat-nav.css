@@ -105,15 +105,6 @@
   left: 0
 }
 
-.mask-info {
-  flex: 1;
-  overflow: auto;
-  padding: 15vh 0;
-  display: flex;
-  justify-content: center;
-  align-items: center
-}
-
 .mask-content {
   margin: 0 auto;
   width: 576px;
@@ -832,82 +823,6 @@
   }
 }
 
-@media only screen and (max-width: 768px) {
-  .width {
-    width: auto !important;
-    padding: 0 1rem;
-    flex: 1
-  }
-
-  .chat-nav-left {
-    padding: 1rem !important
-  }
-
-  .chat-list-item {
-    margin-left: 1rem
-  }
-
-  .msg {
-    width: 100%
-  }
-
-  .msg .md_info {
-    font-size: 14px
-  }
-
-  .mask-content {
-    width: auto;
-    margin: 0 5px
-  }
-
-  .mask-putcell-label {
-    padding: 1rem 0 !important
-  }
-
-  .chat-tips-list-item {
-    width: 10.2rem !important;
-    min-height: 10rem !important
-  }
-
-  .chat-tips-list-item:last-child {
-    margin-right: 0 !important
-  }
-
-  .chat-tips-list-item .icons {
-    padding: 1rem !important
-  }
-
-  .chat-tips-list-item .icons .icon {
-    font-size: 2.5rem !important
-  }
-
-  .chat-tips-list-item .chat-tips-text {
-    padding: 1rem !important;
-    font-size: 1.5rem !important;
-    bottom: 0
-  }
-
-  .chat-tips-button {
-    z-index: 10
-  }
-
-  .history {
-    padding: 0 1rem
-  }
-
-  .empty-subtitle {
-    width: auto !important
-  }
-
-  .empty-text {
-    font-size: 18px
-  }
-
-  .empty-text1 {
-    font-size: 12px
-  }
-}
-
 .chat-tips {
   flex: 1;
   display: flex;
@@ -1012,7 +927,7 @@
   bottom: 64px;
   width: 50px;
   height: 50px;
-  background: var(--h-bg);
+  background: #14b8a6;
   box-shadow: 0 4px 6px #0595f552;
   border-radius: 50%;
   display: flex;
@@ -1024,9 +939,9 @@
   cursor: pointer
 }
 
-.chat-tips-button .img {
+.chat-tips-button .add-img {
   font-size: 18px;
-  color: var(--h-color)
+  color: #fff
 }
 
 .scroll-to-div {
@@ -1184,6 +1099,11 @@
   overflow: hidden
 }
 
+.chat-nav {
+  display: flex;
+  justify-content: space-between
+}
+
 .chat-nav-left {
   display: flex;
   padding: 10px 30px
@@ -1330,6 +1250,19 @@
   font-weight: 500;
   color: #9ca3af;
   cursor: pointer
+}
+
+.mask-buttons .bottom-button {
+  flex: 1;
+  margin-right: 1rem;
+  border-radius: 8px;
+  line-height: 46px;
+  text-align: center;
+  font-size: 14px;
+  font-family: PingFang SC-Medium, PingFang SC;
+  font-weight: 500;
+  color: #9ca3af;
+  cursor: pointer;
 }
 
 .mask-buttons .cancel {
@@ -1762,85 +1695,4 @@
   font-size: 12px;
   padding-right: 4px;
   color: #525252
-}
-
-@media only screen and (max-width: 768px) {
-  .width {
-    width: auto !important;
-    padding: 0 1rem;
-    flex: 1
-  }
-
-  .chat-nav-left {
-    padding: 1rem !important
-  }
-
-  .chat-list-item {
-    margin-left: 1rem
-  }
-
-  .msg {
-    width: 100%
-  }
-
-  .msg .md_info {
-    font-size: 14px
-  }
-
-  .mask-content {
-    width: auto;
-    margin: 0 5px
-  }
-
-  .mask-putcell-label {
-    padding: 1rem 0 !important
-  }
-
-  .chat-tips-list-item {
-    width: 10.2rem !important;
-    min-height: 10rem !important
-  }
-
-  .chat-tips-list-item:last-child {
-    margin-right: 0 !important
-  }
-
-  .chat-tips-list-item .icons {
-    padding: 1rem !important
-  }
-
-  .chat-tips-list-item .icons .icon {
-    font-size: 2.5rem !important
-  }
-
-  .chat-tips-list-item .chat-tips-text {
-    padding: 1rem !important;
-    font-size: 1.5rem !important;
-    bottom: 0
-  }
-
-  .chat-tips-button {
-    z-index: 10
-  }
-
-  .chat-tips-width {
-    width: 100% !important;
-    padding: 0 1rem
-  }
-
-  .history {
-    padding: 0 1rem
-  }
-
-  .empty-subtitle {
-    width: auto !important
-  }
-
-  .empty-text {
-    font-size: 18px
-  }
-
-  .empty-text1 {
-    font-size: 12px
-  }
 }

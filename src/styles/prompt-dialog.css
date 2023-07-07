@@ -1,0 +1,71 @@
+.el-input__suffix {
+    display: inline-flex;
+    white-space: nowrap;
+    flex-shrink: 0;
+    flex-wrap: nowrap;
+    height: 100%;
+    text-align: center;
+    color: #a8abb2;
+    transition: all .3s;
+    pointer-events: none;
+}
+
+.el-input__suffix-inner {
+    pointer-events: all;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.el-select .el-input .el-select__caret {
+    color: #a8abb2;
+    font-size: 14px;
+    transition: transform .3s;
+    transform: rotate(0);
+    cursor: pointer;
+}
+
+.el-select .el-input .el-select__caret.el-icon {
+    position: relative;
+    height: inherit;
+    z-index: 2;
+}
+
+.el-icon {
+    height: 1em;
+    width: 1em;
+    line-height: 1em;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    fill: currentColor;
+    color: #a8abb2;
+    font-size: inherit;
+}
+
+.dropdown {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    background: #fff;
+    margin-top: 10px;
+    z-index: 1000; /* Make sure dropdown appears above other elements */
+    max-height: 100px; /* Change this value to fit your design */
+    overflow-y: auto; /* Add scroll if content exceeds max-height */
+    color: #606266;
+  }
+
+.dropdown li {
+    padding: 10px;
+    list-style: none;
+    cursor: pointer;
+}
+
+.dropdown li:hover {
+    background: #f1f1f1;
+}
+  

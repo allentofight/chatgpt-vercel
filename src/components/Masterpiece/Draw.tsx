@@ -292,7 +292,7 @@ export default function Draw(props: {
     }
 
     if (prompt.indexOf('--seed') < 0) {
-      prompt = `${prompt} --seed ${generateSeed()}`  
+      prompt = `${prompt} --seed ${generateSeed()}`
     }
     setMjWorkingPrompt(prompt)
     let body: MjSendBody = {
@@ -1074,7 +1074,7 @@ export default function Draw(props: {
                           右下
                         </div>
                       </div>
-                      <Show when={false}>
+                      <Show when={true}>
                         <div class="top py-4">
                           <div class="text text-lg font-semibold">
                             变体图片
@@ -1098,7 +1098,7 @@ export default function Draw(props: {
                           </div>
                         </div>
                       </Show>
-                      
+
                     </Show>
                     <Show when={type() == 2}>
                       <div class="top flex py-4 items-end justify-between">
@@ -1223,7 +1223,7 @@ export default function Draw(props: {
                 </Show>
 
                 <Show when={!uploadedImageUrls().length}>
-                <div class="upload-empty pl-6 py-2">
+                  <div class="upload-empty pl-6 py-2">
                     <div class="h-16 flex flex-col justify-around">
                       <div class="text-base">
                         上传参考图(选填)
