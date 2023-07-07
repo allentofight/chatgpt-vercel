@@ -113,7 +113,7 @@ export default function PageNav(props: {
         </div>
         <div class="login">
           <div>
-            <img id="button" alt="" class="w-10" src="https://b1.beisheng.com/common/starchain_self_image/2306/13/3x_1682755768971.png" onClick={() => {
+            <img id="button" alt="" class="w-10" src="http://tc.cos.cdn.jchdnet.cn/tables/24@3x_1682756184038.png?imageMogr2/thumbnail/70x70" onClick={() => {
               setStore('showUserPopover', !store.showUserPopover)
               const tooltip = document.querySelector('#tooltip')!;
               if (store.showUserPopover) {
