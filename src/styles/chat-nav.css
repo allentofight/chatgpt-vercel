@@ -971,7 +971,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background: var(--b-mask-bg);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
   border-radius: 8px
 }
