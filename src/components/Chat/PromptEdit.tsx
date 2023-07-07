@@ -2,6 +2,10 @@ import '../../styles/chat-nav.css';
 import type { Option } from "~/types"
 import { createSignal, onMount, For, batch, Show } from 'solid-js';
 import { makeEventListener } from "@solid-primitives/event-listener"
+import {
+  delPrompt
+} from "~/utils/api"
+
 export default function (props: {
   option: Option,
   cancelClick: () => void,
@@ -81,6 +85,15 @@ export default function (props: {
               </div>
             </div>
           </div>
+          <Show when={props.option.id}>
+            <div class="mask-del" onClick={async () => {
+              await delPrompt(props.option.id)
+              props.cancelClick()
+            }}>
+              <div class="text"> 删除自定义提示 </div>
+            </div>
+          </Show>
+
           <div class="mask-buttons">
             <div class="cancel custom-button" onClick={props.cancelClick}>
               取消

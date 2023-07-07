@@ -65,7 +65,10 @@ export interface Session {
 
 export interface Option {
   desc: string
+  id?: string
   title: string
+  icon?: string
+  color?: string
   positions?: Set<number>
   extra?: any
 }
