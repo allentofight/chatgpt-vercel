@@ -1290,14 +1290,14 @@
   padding: 20px 0 0
 }
 
-.mask-del .text {
+.mask-del .del-text {
   font-size: 14px;
   font-weight: 400;
   color: #14b8a6;
   text-decoration: underline
 }
 
-.mask-del .text:hover {
+.mask-del .del-text:hover {
   color: #2dd4bf;
   cursor: pointer
 }

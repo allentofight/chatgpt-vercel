@@ -90,7 +90,7 @@ export default function (props: {
               await delPrompt(props.option.id)
               props.cancelClick()
             }}>
-              <div class="text"> 删除自定义提示 </div>
+              <div class="del-text"> 删除自定义提示 </div>
             </div>
           </Show>
 
