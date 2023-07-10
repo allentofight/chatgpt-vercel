@@ -399,57 +399,36 @@ export default function () {
   }
 
   async function fetchGPT(messages: ChatMessage[], inputVal: string) {
-    let isModelGPT = [ModelEnum.GPT_3, ModelEnum.GPT_4].includes(currentChat().model)
-    let response;
-    let isGPT4 = currentChat().model === ModelEnum.GPT_4
-    if (isModelGPT) {
-      let sessionId = localStorage.getItem('sessionId')
-      response = await fetch('/api', {
-        method: "POST",
-        body: JSON.stringify({
-          messages,
-          key: undefined,
-          temperature: store.sessionSettings.APITemperature,
-          password: store.globalSettings.password,
-          model: modelMap[currentChat().model],
-          sessionId,
-        }),
-        signal: controller?.signal
-      })
-    } else {
-      let index = -1;
-      const roleToFind = 'assistant';
-      // 寻找上一条 asssistant 消息
-      for (let i = store.messageList.length - 1; i >= 0; i--) {
-        if (store.messageList[i].role === roleToFind) {
-          index = i;
-          break;
-        }
+    const messagesCopy = [...messages]; // Make a copy of the array
+    if (store.useWebSearch) {
+      const messageCopy = { ...messagesCopy[messagesCopy.length - 1] }; // Make a copy of the last object
+      const url = `https://ddg-search-iota.vercel.app/?search_term=${encodeURIComponent(messageCopy.content)}`;
+      let searchResult = await fetch(url)
+      let result = await searchResult.json()
+      console.log('result = ', result.message)
+      if (result.message) {
+        messageCopy.content = `你需要优先根据以下背景信息来回答我的问题
+          背景信息: ${result.message}
+          我的问题是:${messageCopy.content}
+        `
+        messagesCopy[messagesCopy.length - 1] = messageCopy; // Replace the last item in the copied array
       }
-      let initial
-
-      if (index > -1) {
-        let messageItem = store.messageList[index]
-        initial = {
-          conversationSignature: messageItem.conversationSignature,
-          conversationId: messageItem.conversationId,
-          clientId: messageItem.clientId,
-          invocationId: messageItem.invocationId,
-          message: inputVal,
-        }
-      } else {
-        initial = {
-          message: inputVal,
-        }
-      }
-
-      // 如果是 NewBing
-      response = await fetch("/api/bing", {
-        method: "POST",
-        body: JSON.stringify(initial),
-        signal: controller?.signal
-      })
     }
+
+    let sessionId = localStorage.getItem('sessionId')
+    let response = await fetch('/api', {
+      method: "POST",
+      body: JSON.stringify({
+        messages: messagesCopy,
+        key: undefined,
+        temperature: store.sessionSettings.APITemperature,
+        password: store.globalSettings.password,
+        model: modelMap[currentChat().model],
+        sessionId,
+      }),
+      signal: controller?.signal
+    })
+
 
     if (!response.ok) {
       const res = await response.json()
@@ -471,18 +450,7 @@ export default function () {
           continue
         }
         if (char) {
-          if (!isModelGPT) {
-            if (char.startsWith("{\"conversationId")) {
-              let result = JSON.parse(char)
-              let response = result.response
-              setStore("currentAssistantMessage", response)
-              return result
-            } else {
-              setStore("currentAssistantMessage", k => k + char)
-            }
-          } else {
-            setStore("currentAssistantMessage", k => k + char)
-          }
+          setStore("currentAssistantMessage", k => k + char)
         }
       }
       done = readerDone
@@ -491,16 +459,16 @@ export default function () {
 
   return (
     <>
-    <ChatNav
-      clickSearch={() => {
-        setShowPromptList(true)
-      }}
-      clickChat={() => {
-        setShowPromptCategory(false)
-      }}
-      clickPromptCategory={() => {
-        setShowPromptCategory(true)
-      }} />
+      <ChatNav
+        clickSearch={() => {
+          setShowPromptList(true)
+        }}
+        clickChat={() => {
+          setShowPromptCategory(false)
+        }}
+        clickPromptCategory={() => {
+          setShowPromptCategory(true)
+        }} />
       <main ref={containerRef!} id="mainContainer" class="mt-4 w-full flex justify-center" style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
         <MessageContainer
           sendMessage={sendMessage}

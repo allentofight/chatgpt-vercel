@@ -67,6 +67,7 @@ function Store() {
     hasAiDrawClicked: false,  // 是否AI绘画已经点击过
     chatType: 1,  // 1聊天，2选择 prompt, 3 弹出记录
     inputContent: "",
+    useWebSearch: false,
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
     menuTitle: 'AI聊天',

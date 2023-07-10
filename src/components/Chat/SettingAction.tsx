@@ -1,6 +1,7 @@
 import { toBlob, toJpeg } from "html-to-image"
 import { Match, Show, Switch, type JSXElement } from "solid-js"
 import { createStore } from "solid-js/store"
+import WebSearch from "./WebSearch"
 import { defaultEnv } from "~/env"
 import { clickOutside } from "~/hooks"
 import { RootStore, loadSession } from "~/store"
@@ -19,6 +20,7 @@ import { useNavigate } from "solid-start"
 
 export const [actionState, setActionState] = createStore({
   showSetting: "none" as "none" | "global" | "session",
+  showWebSearch: "none" as "none" | "web",
   success: false as false | "markdown" | "link",
   genImg: "normal" as ImgStatusUnion,
   fakeRole: "normal" as FakeRoleUnion,
@@ -163,6 +165,7 @@ export default function SettingAction() {
             icon="i-carbon:settings-services"
             label="对话设置"
           />
+          <WebSearch />
         </div>
         <Switch
           fallback={

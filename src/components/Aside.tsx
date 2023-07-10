@@ -166,7 +166,7 @@ export default function Aside() {
       chatAside?.classList.remove("slide-out")
       chatAside?.classList.add("slide-in")
       setTimeout(() => {
-        chatAside?.classList.remove("slide-in")  
+        chatAside?.classList.remove("slide-in")
         chatAside!.style.transform = "translateX(0)";
       }, 200)
     } else if (!document.querySelector("#chat-aside")?.classList.contains('off-screen')) {
@@ -305,6 +305,7 @@ export default function Aside() {
       return
     }
 
+    setStore('useWebSearch', false)
     setSelectedChat(defaultChat)
     setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
     setStore('showChatList', false)
@@ -452,6 +453,7 @@ export default function Aside() {
                         <Show when={chat.id !== selectedChat().id}>
                           <a class="flex py-3 px-3 items-center gap-3 relative rounded-md hover:bg-[#2A2B32] cursor-pointer break-all hover:pr-4 group custom-text-color" onClick={() => {
                             setStore("chatType", 1)
+                            setStore('useWebSearch', false)
                             setSelectedChat(chat)
                             setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })
                           }}>
