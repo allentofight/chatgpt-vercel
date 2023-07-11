@@ -970,7 +970,7 @@ export default function Draw(props: {
               <Show when={activeIndex() === -1 && !isMjWorking()}>
                 <div class="info-empty flex flex-col items-center justify-center rounded-lg w-3/4 h-3/4">
                   <div class="w-40">
-                    <img alt="" class="w-full" src="https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/draw-center-empty.png" />
+                    <img alt="" class="w-full" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-center-empty-4f4ca3ef.png" />
                   </div>
                   <div class="text text-xs text-center tracking-wider pt-6">
                     <div >探索AI世界的奥秘，释放您无限的创造潜能！
