@@ -909,7 +909,7 @@ export default function Draw(props: {
                 <div class="left flex-1 h-full justify-center flex p-6">
                   <div class="info-empty flex flex-col items-center justify-center rounded-lg w-3/4 h-3/4 relative">
                     <div class="pageLoading">
-                      <img alt="" class="center-img" src="https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/loading.gif" />
+                      <img alt="" class="center-img" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/drawing.gif" />
                       <div class="num text-xs">正在绘画中{drawingProgress()}...</div>
                       <div class="loding">
                         <div class="bar" style={`width: ${drawingProgress()};`}></div>

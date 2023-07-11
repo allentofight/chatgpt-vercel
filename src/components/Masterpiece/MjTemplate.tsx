@@ -217,7 +217,7 @@ export default function MyWorks() {
               </div>
             </div>
             <div class="flex flex-1 h-full items-center flex-col justify-center" style="display: none;">
-              <img alt="" class="w-52" src="https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/draw-center-empty.png" />
+              <img alt="" class="w-52" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-center-empty-4f4ca3ef.png" />
               <div class="text1 text-xs pt-3">
                 您还没有收藏哦！
               </div>
