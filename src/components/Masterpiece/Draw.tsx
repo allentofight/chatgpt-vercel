@@ -861,7 +861,7 @@ export default function Draw(props: {
                         </Show>
                         <Show when={!message.imageUrl?.length}>
                           <div class="w-full flex items-center justify-center flex-col py-4">
-                            <img alt="绘制失败，请重试" class="w-1/3" src="/svg/draw-left-error.svg" />
+                            <img alt="绘制失败，请重试" class="w-1/3" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
                             <div class="text px-4 text-center text-xs pt-2 leading-relaxed">{message.errorMessage}
                             </div>
                           </div>
@@ -1002,7 +1002,7 @@ export default function Draw(props: {
                   <Show when={showErrorHint()}>
                     <div class="left flex-1 rounded-2xl flex items-center justify-center flex-col">
                       <div class="w-20">
-                        <img alt="" class="w-full" src="https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/draw-center-error.png" />
+                        <img alt="" class="w-full" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
                       </div>
                       <div class="left-error text-xs text-center">
                         <div class="pt-2">{messageList()[activeIndex()].errorMessage}，请重试</div>
