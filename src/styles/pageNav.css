@@ -83,7 +83,7 @@
 }
 
 ._pages_nav {
-  background-image: url(https://jchd-chat.oss-cn-hangzhou.aliyuncs.com/images/page-nav-bg.png);
+  background-image: url(https://b1.beisheng.com/common/starchain_self_image/2307/11/bg.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
   min-height: 56px
@@ -262,19 +262,19 @@
   transform: rotate(45deg);
 }
 
-#tooltip[data-popper-placement^='top'] > #arrow {
+#tooltip[data-popper-placement^='top']>#arrow {
   bottom: -4px;
 }
 
-#tooltip[data-popper-placement^='bottom'] > #arrow {
+#tooltip[data-popper-placement^='bottom']>#arrow {
   top: -4px;
 }
 
-#tooltip[data-popper-placement^='left'] > #arrow {
+#tooltip[data-popper-placement^='left']>#arrow {
   right: -4px;
 }
 
-#tooltip[data-popper-placement^='right'] > #arrow {
+#tooltip[data-popper-placement^='right']>#arrow {
   left: -4px;
 }
 
@@ -335,7 +335,8 @@
   border-top: 1px solid #ebeef5;
 }
 
-.el-zoom-in-top-enter-active,.el-zoom-in-top-leave-active {
+.el-zoom-in-top-enter-active,
+.el-zoom-in-top-leave-active {
   opacity: 1;
   transform: scaleY(1);
   transition: transform .3s;
