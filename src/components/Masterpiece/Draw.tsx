@@ -345,7 +345,7 @@ export default function Draw(props: {
     let storageKey = 'mj_try_cnt'
     let mjCnt = parseInt(localStorage.getItem(storageKey) || '0');
     if (isMjExpired() && mjCnt > 5) {
-      toast.error('VIP 会员已过期，请先到会员中心续费哦');
+      toast.error('AI绘画会员已过期，请先到会员中心续费哦');
       return false
     }
     mjCnt++
