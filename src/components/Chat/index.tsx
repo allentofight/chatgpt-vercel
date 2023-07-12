@@ -305,7 +305,7 @@ export default function () {
     }
 
     if (isLogin() && isExpired() && currentChat().model === ModelEnum.GPT_3) {
-      toast.error('GPT3.5 会员已过期，请先到会员中心续费哦');
+      toast.error('GPT3.5 会员已过期，请先到「会员中心」续费哦');
       return
     }
 
@@ -326,7 +326,7 @@ export default function () {
 
     if (isGPT4Expired() && currentChat().model === ModelEnum.GPT_4) {
       // 付费用户才能使用 GPT4!
-      setShowVipDialog(true)
+      toast.error('GPT4 会员已过期，请先到「会员中心」续费哦');
       return
     }
 
