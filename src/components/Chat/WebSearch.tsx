@@ -30,7 +30,7 @@ export default function (props: {
             </style>
             <div class="flex items-center">
                 <div
-                    class={`web-icon-container overflow-hidden flex items-center text-gray-900 bg-slate-400 ease-in-out ${isHovered() ? 'web-icon-container-expanded' : ''}`}
+                    class={`web-icon-container overflow-hidden flex items-center text-gray-900 ${store.useWebSearch ? 'bg-blue-500' : 'bg-slate-400'} ease-in-out ${isHovered() ? 'web-icon-container-expanded' : ''}`}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     onClick={() => {
