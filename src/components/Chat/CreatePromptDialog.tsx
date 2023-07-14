@@ -1,5 +1,6 @@
-import { Show, onMount, For, createSignal, batch } from "solid-js"
+import { Show, onMount, For, createSignal, batch, createEffect } from "solid-js"
 import { makeEventListener } from "@solid-primitives/event-listener"
+import axios, { AxiosResponse } from 'axios';
 
 import '../../styles/prompt-dialog.css';
 import toast, { Toaster } from 'solid-toast';
@@ -24,9 +25,13 @@ export default function (props: {
 
     const [isLoading, setIsLoading] = createSignal(false);
 
+    const [isGeneratingPrompt, setIsGeneratingPrompt] = createSignal(false);
+
     const [selectedIcon, setSelectedIcon] = createSignal('icon-a-7');
 
     const [title, setTitle] = createSignal('');
+
+    const [promptText, setPromptText] = createSignal('');
 
     onMount(() => {
         setTimeout(() => {
@@ -52,6 +57,74 @@ export default function (props: {
             )
         }
     })
+
+    createEffect(() => {
+        if (promptText().length) {
+            inputRef.value = promptText();
+            inputRef.scrollTo({
+                top: inputRef.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+
+    })
+
+    async function generatePrompt() {
+        if (isGeneratingPrompt()) {
+            return false
+        }
+        if (!title().length) {
+            toast.error('角色不能为空!')
+            return
+        }
+        let data = { prompt: title() };
+
+        setIsGeneratingPrompt(true)
+        fetch('https://allentofight.us-3.evennode.com/api/role', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.body) {
+                    setIsGeneratingPrompt(false)
+                    throw new Error("No response body found");
+                }
+
+                const reader = response.body.getReader();
+                const stream = new ReadableStream({
+                    start(controller) {
+                        function readNextChunk() {
+                            reader.read().then(({ done, value }) => {
+                                if (done) {
+                                    setPromptText('')
+                                    setIsGeneratingPrompt(false)
+                                    controller.close();
+                                } else {
+                                    controller.enqueue(value);
+                                    let decodedText = new TextDecoder("utf-8").decode(value)
+                                    setPromptText(promptText() + decodedText)
+                                    console.log();
+                                    readNextChunk();
+                                }
+                            }).catch(error => {
+                                console.error('Error:', error);
+                                controller.error(error);
+                            });
+                        }
+
+                        readNextChunk();
+                    }
+                });
+            })
+            .catch((error: Error) => {
+                console.error('Error:', error);
+            });
+
+
+    }
 
     async function handleInput() {
         // 重新设置高度，让输入框可以自适应高度，-1 是为了标记不是初始状态
@@ -188,18 +261,18 @@ export default function (props: {
                         创建新提示
                     </div>
                     <div class="mask-subtitle">
-                        这里是创建您自己的自定义提示的地方。
+                        这里输入您要创建的角色，如中国律师，爆款短视频创作者
                     </div>
                     <div class="mask-putcell">
                         <div class="mask-putcell-label">
-                            标题：
+                            角色：
                         </div>
                         <div class="mask-putcell-input">
                             <div class="el-input el-input--suffix input">
                                 <div class="el-input__wrapper">
                                     <input class="el-input__inner" value={title()}
                                         onInput={(event) => setTitle(event.target.value)}
-                                        placeholder-class="placeholder" type="text" autocomplete="off" tabindex="0" placeholder="请输入您的提示标题" id="el-id-4506-11" />
+                                        placeholder-class="placeholder" type="text" autocomplete="off" tabindex="0" placeholder="请输入您要创建的角色" id="el-id-4506-11" />
                                 </div>
                             </div>
                         </div>
@@ -238,9 +311,25 @@ export default function (props: {
                         </div>
                     </div>
                     <div class="mask-putcell">
-                        <div class="mask-putcell-label">
-                            自定义提示：
+                        <div class="flex justify-between">
+                            <div class="mask-putcell-label">
+                                自定义提示：
+                            </div>
+                            <div class="flex items-center" style="padding-top: 14px;">
+                                <Show when={isGeneratingPrompt()}>
+                                    <div class="chatloader"></div>
+                                </Show>
+                                <Show when={!isGeneratingPrompt()}>
+                                    <div class="mask-putcell-label mask-putcell-btn" onClick={() => {
+                                        generatePrompt()
+                                    }}>
+                                        点击生成
+                                    </div>
+                                </Show>
+
+                            </div>
                         </div>
+
                         <div class="mask-putcell-input textarea">
                             <div class="el-textarea input">
                                 <textarea class="el-textarea__inner"

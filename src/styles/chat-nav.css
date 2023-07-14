@@ -1880,3 +1880,16 @@
     font-size: 12px
   }
 }
+
+.mask-putcell-btn {
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 4px;
+  padding: 4px 6px;
+  background-color: #14b8a6;
+  color: white;
+  font-size: 14px;
+}
+
+.mask-putcell-btn:hover {
+  border: 1px solid #14b8a6;
+}
