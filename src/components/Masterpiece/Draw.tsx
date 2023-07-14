@@ -999,7 +999,7 @@ export default function Draw(props: {
                       </Show>
                     </div>
                   </Show>
-                  <Show when={showErrorHint()}>
+                  <Show when={showErrorHint() && messageList().length}>
                     <div class="left flex-1 rounded-2xl flex items-center justify-center flex-col">
                       <div class="w-20">
                         <img alt="" class="w-full" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
@@ -1028,7 +1028,7 @@ export default function Draw(props: {
                     </div>
                     <div class="keyword w-full rounded-xl py-3 pl-3 pr-2">
                       <div class="keyword-text text-sm max-h-60 overflow-y-auto pr-1 leading-normal">
-                        {activeIndex() > -1 ? messageList()[activeIndex()].content : ''}
+                        {activeIndex() > -1 && messageList().length > 0 ? messageList()[activeIndex()].content : ''}
                       </div>
                     </div>
                     <div class="top flex py-4 items-end justify-between">
@@ -1048,7 +1048,7 @@ export default function Draw(props: {
                     </div>
                     <div class="keyword w-full rounded-xl py-3 pl-3 pr-2">
                       <div class="keyword-text text-sm max-h-60 overflow-y-auto pr-1 leading-normal">
-                        {activeIndex() > -1 ? messageList()[activeIndex()].content : ''}
+                        {activeIndex() > -1 && messageList().length > 0 ? messageList()[activeIndex()].content : ''}
                       </div>
                     </div>
                     <Show when={type() == 1}>
