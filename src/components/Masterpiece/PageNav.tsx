@@ -133,33 +133,33 @@ export default function PageNav(props: {
                   ],
                 });
                 // update popper instance
-                popperInstance.update();  
+                popperInstance.update();
               } else {
                 tooltip.classList.add("hidden")
               }
 
-              
-          }} />
+
+            }} />
           </div>
           <div class="hidden z-100" id="tooltip" role="tooltip">
             <div class="el-scrollbar">
               <div class="el-scrollbar__wrap el-scrollbar__wrap--hidden-default">
                 <div class="el-scrollbar__view el-dropdown__list" style="">
-                <ul data-v-b22f1d6d="" class="el-dropdown-menu overflow-hidden" tabindex="-1" role="menu" aria-labelledby="el-id-512-0" id="el-id-512-1" style="outline: none;">
-                  <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
-                    const tooltip = document.querySelector('#tooltip')!;
-                    tooltip.classList.add("hidden")
-                    setStore('showUserPopover', false)
-                    setStore('menuTitle', '个人中心')
-                  }}>
-                  个人中心</li>
-                  <li role="separator" class="el-dropdown-menu__item--divided"></li>
-                  <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
-                    localStorage.removeItem('sessionId')
-                    window.location.href = '/login'
-                  }}>
-                    退出登录 </li>
-                </ul>
+                  <ul data-v-b22f1d6d="" class="el-dropdown-menu overflow-hidden" tabindex="-1" role="menu" aria-labelledby="el-id-512-0" id="el-id-512-1" style="outline: none;">
+                    <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
+                      const tooltip = document.querySelector('#tooltip')!;
+                      tooltip.classList.add("hidden")
+                      setStore('showUserPopover', false)
+                      setStore('menuTitle', '个人中心')
+                    }}>
+                      个人中心</li>
+                    <li role="separator" class="el-dropdown-menu__item--divided"></li>
+                    <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
+                      localStorage.clear();
+                      window.location.href = '/login'
+                    }}>
+                      退出登录 </li>
+                  </ul>
                 </div>
               </div>
             </div>
