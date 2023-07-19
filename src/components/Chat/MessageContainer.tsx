@@ -79,7 +79,7 @@ export default function ({
         </Show>
       </div>
       <Show
-        when={!store.loading && (store.contextToken || store.inputContentToken) && false}
+        when={!store.loading && store.sessionSettings.APIModel === 'gpt-4'}
       >
         <div class="flex items-center px-1em text-0.8em">
           <hr class="flex-1 border-slate/40" />
@@ -87,24 +87,12 @@ export default function ({
             when={store.inputContentToken}
             fallback={
               <span class="mx-1 text-slate/50">
-                {`有效上下文 Tokens : ${store.contextToken
-                  }/$${store.contextToken$.toFixed(4)}`}
+                {`剩余次数 : ${store.leftGPT4Cnt}`}
               </span>
             }
           >
-            <span class="mx-1 text-slate/40">
-              {`有效上下文+提问 Tokens : ${store.contextToken + store.inputContentToken
-                }(`}
-              <span
-                classList={{
-                  "text-red-500": store.remainingToken < 0
-                }}
-              >
-                {store.remainingToken}
-              </span>
-              {`)/$${(store.contextToken$ + store.inputContentToken$).toFixed(
-                4
-              )}`}
+            <span class="mx-1 text-slate/50">
+              {`剩余次数 : ${store.leftGPT4Cnt}`}
             </span>
           </Show>
           <hr class="flex-1  border-slate/30" />

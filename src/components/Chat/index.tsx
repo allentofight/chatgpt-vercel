@@ -333,9 +333,8 @@ export default function () {
     let isGPT4Using = !isGPT4Expired() && currentChat().model === ModelEnum.GPT_4
 
     if (isGPT4Using) {
-      let isQualifyFor4 = localStorage.getItem('isQualifyFor4')
-      if (!isQualifyFor4) {
-        toast.error(`GPT4当天已体验完，请明天再试哦`)
+      if (store.leftGPT4Cnt <= 0) {
+        toast.error(`GPT4次数已用尽，请及时续费哦`)
         return
       }
     }
@@ -380,6 +379,7 @@ export default function () {
       )
       if (isGPT4Using) {
         incrGPT4Cnt()
+        setStore('leftGPT4Cnt', store.leftGPT4Cnt - 1)
       }
     } catch (error: any) {
       setStore("loading", false)
@@ -432,7 +432,7 @@ export default function () {
 
     if (!response.ok) {
       const res = await response.json()
-      throw new Error(res.error.message)
+      throw new Error(res.error?.message ?? '当前请求繁忙，请稍后再试')
     }
     const data = response.body
     if (!data) {

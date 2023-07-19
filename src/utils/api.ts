@@ -1,4 +1,6 @@
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
+import { RootStore } from "~/store"
+const { store, setStore } = RootStore
 
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
@@ -207,6 +209,12 @@ export async function fetchUserInfo() {
       localStorage.removeItem('isQualifyFor4')
     }
 
+
+    if (data.leftGpt4Cnt) {
+      localStorage.setItem('leftGpt4Cnt', data.leftGpt4Cnt)
+      setStore('leftGPT4Cnt', data.leftGpt4Cnt)
+    }
+
     localStorage.removeItem('email')
     if (data.isPaiedUser) {
       localStorage.setItem('isPaiedUser', data.isPaiedUser);
@@ -246,7 +254,7 @@ export async function gpt4Check(sessionId: string) {
   if (!sessionId || !sessionId.length) {
     return { success: false }
   }
-  const response = await fetch(`${apiHost}/api/auth/gpt4Check`, {
+  const response = await fetch(`${apiHost}/api/auth/checkGpt4`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -266,7 +274,7 @@ export async function incrGPT4Cnt() {
     if (!sessionId) {
       return
     }
-    const response = await fetch(`${apiHost}/api/auth/vipConsume`, {
+    const response = await fetch(`${apiHost}/api/auth/gpt4Consume`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

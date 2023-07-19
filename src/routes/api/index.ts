@@ -4,7 +4,7 @@ import type { ChatMessage, Model } from "~/types"
 import { splitKeys, randomKey, fetchWithTimeout } from "~/utils"
 import { defaultEnv } from "~/env"
 import type { APIEvent } from "solid-start/api"
-import { gpt4Check } from "~/utils/api"
+import { gpt4Check, incrGPT4Cnt } from "~/utils/api"
 
 export const config = {
   runtime: "edge",
