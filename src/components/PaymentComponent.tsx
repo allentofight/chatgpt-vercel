@@ -6,8 +6,7 @@ import { requestPayment, queryPaymentStatus } from "~/utils/api"
 import PaymentSuccessDialog from "./PaymentSuccessDialog";
 import QRCode from 'qrcode';
 
-import { setItemWithExpiration, getItemWithExpiration } from "~/utils/orderStorage"
-
+import { useAuth } from "~/utils/useAuth"
 
 export default function PaymentComponent() {
 
@@ -77,6 +76,13 @@ export default function PaymentComponent() {
   })
 
   onMount(() => {
+
+    const { isLogin } = useAuth()
+    if (!isLogin()) {
+      window.location.href = '/login'
+      return
+    }
+
     // You can access the query parameters here or do any other initialization logic
     if (typeof window !== 'undefined') {
       const queryParams = new URLSearchParams(window.location.search);
