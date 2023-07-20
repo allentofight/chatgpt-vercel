@@ -72,6 +72,7 @@ export default function () {
           "APIModel",
           modelMap[e.detail.index as ModelEnum]
         )
+        setStore('useWebSearch', false)
       }
     };
 
@@ -131,6 +132,8 @@ export default function () {
         "APIModel",
         modelMap[chatWithModel.model]
       )
+
+      setStore('useWebSearch', false)
 
       if (!parseInt(chat.id)) {
         setStore("messageList", [])

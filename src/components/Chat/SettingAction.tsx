@@ -57,7 +57,7 @@ export default function SettingAction() {
   return (
     <div
       class="text-sm text-slate-7 dark:text-slate my-2"
-      use:clickOutside={() => {
+      use: clickOutside={() => {
         setActionState("showSetting", "none")
       }}
     >
@@ -165,7 +165,10 @@ export default function SettingAction() {
             icon="i-carbon:settings-services"
             label="对话设置"
           />
-          <WebSearch />
+          <Show when={store.sessionSettings.APIModel !== 'gpt-4'}>
+            <WebSearch />
+          </Show>
+
         </div>
         <Switch
           fallback={
@@ -300,8 +303,8 @@ function ActionItem(props: { onClick: any; icon: string; label?: string }) {
     <div
       class="flex items-center cursor-pointer mx-1 p-2 hover:(dark:bg-#23252A bg-#ECF0F4) rounded text-1.2em"
       onClick={props.onClick}
-      attr:tooltip={props.label}
-      attr:position="top"
+      attr: tooltip={props.label}
+      attr: position="top"
     >
       <button class={props.icon} title={props.label} />
     </div>
