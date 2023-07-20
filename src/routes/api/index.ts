@@ -110,7 +110,7 @@ export async function POST({ request }: APIEvent) {
       }
     }
 
-    const apiKey = randomKey(splitKeys(key))
+    const apiKey = key
 
     if (!apiKey) throw new Error("没有填写 OpenAI API key，或者 key 填写错误。")
 
