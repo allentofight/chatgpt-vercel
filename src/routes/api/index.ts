@@ -74,10 +74,12 @@ export async function POST({ request }: APIEvent) {
 
     if (body.model.includes('gpt-4')) {
 
+      /**
       let gp4Qualify = await isGPT4Qualify(body.sessionId)
       if (!gp4Qualify) {
         throw new Error("GPT4当天已体验完，请明天再试哦")
       }
+       */
       localKey = process.env.OPENAI_GPT4_LG_API_KEY!
       baseURL = process.env.OPENAI_GPT4_LG_API_HOST!
     }
