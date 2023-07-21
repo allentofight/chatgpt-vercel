@@ -25,7 +25,7 @@ import Login from "~/components/Login"
 
 let modelMap = {
   [ModelEnum.GPT_3]: "gpt-3.5-turbo-16k" as Model,
-  [ModelEnum.GPT_4]: "gpt-4-32k" as Model,
+  [ModelEnum.GPT_4]: "gpt-4" as Model,
   [ModelEnum.GPT_New_Bing]: "new-bing" as Model,
   [ModelEnum.MJ]: "mj" as Model,
 }
