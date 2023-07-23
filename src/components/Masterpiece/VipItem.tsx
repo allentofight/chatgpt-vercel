@@ -17,13 +17,14 @@ export default function VipItem(props: {
       title: '月度会员',
       prices: {
         GPT3: 39.9,
-        GPT4: 39.9,
+        GPT4: 49.9,
         Midjourney: 49.9,
-        mergeGPT: 70,
-        mergeGPTMJ: 80,
-        mergeALL: 113
+        mergeGPT3MJ: 68,
+        mergeGPT3And4: 68,
+        mergeGPT4MJ: 74,
+        mergeALL: 97
       },
-      gpt4Desc: '每月180次',
+      gpt4Desc: '每月600次',
       imgbg: '/svg/vip-ordinary-bg.svg',
       btnClass: 'button-ordinary',
       divFontColorClass: 'ordinary',
@@ -34,14 +35,15 @@ export default function VipItem(props: {
     [VipType.YEAR]: {
       title: '年度会员',
       prices: {
-        GPT3: 380,
-        GPT4: 380,
-        Midjourney: 500,
-        mergeGPT: 720,
-        mergeGPTMJ: 800,
-        mergeALL: 1100,
+        GPT3: 399,
+        GPT4: 499,
+        Midjourney: 499,
+        mergeGPT3MJ: 672,
+        mergeGPT3And4: 672,
+        mergeGPT4MJ: 748,
+        mergeALL: 950
       },
-      gpt4Desc: '每年2160次',
+      gpt4Desc: '每年7200次',
       imgbg: '/svg/vip-annual-bg.svg',
       btnClass: 'button-annual',
       divFontColorClass: 'annual',
@@ -52,14 +54,15 @@ export default function VipItem(props: {
     [VipType.SEASON]: {
       title: '季度会员',
       prices: {
-        GPT3: 109,
-        GPT4: 109,
+        GPT3: 106,
+        GPT4: 135,
         Midjourney: 135,
-        mergeGPT: 190,
-        mergeGPTMJ: 210,
-        mergeALL: 290,
+        mergeGPT3MJ: 180,
+        mergeGPT3And4: 180,
+        mergeGPT4MJ: 200,
+        mergeALL: 260
       },
-      gpt4Desc: '每季度540次',
+      gpt4Desc: '每季度1800次',
       imgbg: '/svg/vip-monthly-bg.svg',
       btnClass: 'button-monthly',
       divFontColorClass: 'monthly',
@@ -87,14 +90,14 @@ export default function VipItem(props: {
       const saved = option.prices.GPT3 + option.prices.GPT4 + option.prices.Midjourney - option.prices.mergeALL;
       return { price: option.prices.mergeALL, itemsCnt: 3, saved };
     } else if (services.GPT3 && services.Midjourney) {
-      const saved = option.prices.GPT3 + option.prices.Midjourney - option.prices.mergeGPTMJ;
-      return { price: option.prices.mergeGPTMJ, itemsCnt: 2, saved };
+      const saved = option.prices.GPT3 + option.prices.Midjourney - option.prices.mergeGPT3MJ;
+      return { price: option.prices.mergeGPT3MJ, itemsCnt: 2, saved };
     } else if (services.GPT4 && services.Midjourney) {
-      const saved = option.prices.GPT4 + option.prices.Midjourney - option.prices.mergeGPTMJ;
-      return { price: option.prices.mergeGPTMJ, itemsCnt: 2, saved };
+      const saved = option.prices.GPT4 + option.prices.Midjourney - option.prices.mergeGPT4MJ;
+      return { price: option.prices.mergeGPT4MJ, itemsCnt: 2, saved };
     } else if (services.GPT3 && services.GPT4) {
-      const saved = option.prices.GPT3 + option.prices.GPT4 - option.prices.mergeGPT;
-      return { price: option.prices.mergeGPT, itemsCnt: 2, saved };
+      const saved = option.prices.GPT3 + option.prices.GPT4 - option.prices.mergeGPT3And4;
+      return { price: option.prices.mergeGPT3And4, itemsCnt: 2, saved };
     } else if (services.GPT3) {
       return { price: option.prices.GPT3, itemsCnt: 1, saved: 0 };
     } else if (services.GPT4) {
