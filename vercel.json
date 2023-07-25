@@ -19,6 +19,13 @@
       "schedule": "0 12 * * *"
     }
   ],
+  "routes": [
+    {
+      "src": "/[^.]+",
+      "dest": "/",
+      "status": 200
+    }
+  ],
   "github": {
     "silent": true
   }
