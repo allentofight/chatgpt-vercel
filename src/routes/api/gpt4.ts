@@ -4,7 +4,7 @@ import type { ChatMessage, Model } from "~/types"
 import { splitKeys, randomKey, fetchWithTimeout } from "~/utils"
 import { defaultEnv } from "~/env"
 import type { APIEvent } from "solid-start/api"
-import { gpt4Check } from "~/utils/api"
+import { gpt4Check, incrGPT4Cnt } from "~/utils/api"
 
 export const config = {
   runtime: "edge",
@@ -36,13 +36,16 @@ export const config = {
 }
 
 
-export const baseURL = process.env.GPT4_API_BASE_URL!.replace(/^https?:\/\//, "")
+export let localKey = process.env.OPENAI_API_KEY || ""
+
+let baseURL = process.env.OPENAI_API_BASE_URL!.replace(/^https?:\/\//, "")
 
 // + 作用是将字符串转换为数字
 const timeout = isNaN(+process.env.TIMEOUT!)
   ? defaultEnv.TIMEOUT
   : +process.env.TIMEOUT!
 
+const passwordSet = process.env.PASSWORD || defaultEnv.PASSWORD
 
 async function isGPT4Qualify(sessionId: string) {
   try {
@@ -58,76 +61,80 @@ async function isGPT4Qualify(sessionId: string) {
   }
 }
 
-type DataType = {
-  prompt: string;
-  model: string;
-  messages?: string;
-};
-
-function generatePrompt(messages: ChatMessage[]): string {
-  let prompt = '';
-  const questions: string[] = [];
-  const answers: string[] = [];
-
-  for (let i = 0; i < messages.length; i++) {
-    if (messages[i].role === "user") {
-      questions.push(messages[i].content);
-    } else if (messages[i].role === "assistant") {
-      answers.push(messages[i].content);
-    }
-  }
-
-  const num = Math.min(questions.length, answers.length);
-  for (let i = 0; i < num; i++) {
-    prompt += "\n Q : " + questions[i];
-    prompt += "\n A : " + answers[i];
-  }
-
-  if (questions.length > num) {
-    prompt += "\n Q : " + questions[num] + "\n A : ";
-  }
-
-  return prompt;
-}
-
 export async function POST({ request }: APIEvent) {
   try {
     const body: {
-      messages: ChatMessage[]
+      messages?: ChatMessage[]
+      key?: string
+      temperature: number
+      password?: string
+      model: Model
       sessionId: string
     } = await request.json()
 
-
-    let gp4Qualify = await isGPT4Qualify(body.sessionId)
-    if (!gp4Qualify) {
-      throw new Error("GPT4当天已体验完，请明天再试哦")
+    if (body.model.includes('gpt-4')) {
+      /**
+      let gp4Qualify = await isGPT4Qualify(body.sessionId)
+      if (!gp4Qualify) {
+        throw new Error("GPT4当天已体验完，请明天再试哦")
+      }
+       */
+      localKey = process.env.OPENAI_GPT4_LG_API_KEY!
+      baseURL = process.env.OPENAI_GPT4_LG_API_HOST!
     }
 
+
+    const { messages, key = localKey, temperature, password, model } = body
+
+    if (passwordSet && password !== passwordSet) {
+      throw new Error("密码错误，请联系网站管理员。")
+    }
+
+    if (!messages?.length) {
+      throw new Error("没有输入任何文字。")
+    } else {
+      const content = messages.at(-1)!.content.trim()
+      if (content.startsWith("查询填写的 Key 的余额")) {
+        if (key !== localKey) {
+          const billings = await Promise.all(
+            splitKeys(key).map(k => fetchBilling(k))
+          )
+          return new Response(await genBillingsTable(billings))
+        } else {
+          throw new Error("没有填写 OpenAI API key，不会查询内置的 Key。")
+        }
+      } else if (content.startsWith("sk-")) {
+        const billings = await Promise.all(
+          splitKeys(content).map(k => fetchBilling(k))
+        )
+        return new Response(await genBillingsTable(billings))
+      }
+    }
+
+    const apiKey = key
+
+    if (!apiKey) throw new Error("没有填写 OpenAI API key，或者 key 填写错误。")
 
     const encoder = new TextEncoder()
     const decoder = new TextDecoder()
 
-    let prompt = body.messages[body.messages.length - 1].content
-
-    let data: DataType = {
-      prompt,
-      model: 'forefront',
-    };
-    /**
-        if (body.messages.length > 1) {
-          data = {
-            prompt: generatePrompt(body.messages),
-            model: 'forefront',
-          };
-        }
-    */
-
-    const url = `https://${baseURL}/ask?` + new URLSearchParams(data);
-    console.log('url = ', url)
-    const rawRes = await fetchWithTimeout(url, {
-      method: 'GET',
-      timeout: 10000,
-    }).catch((err: { message: any }) => {
+    const rawRes = await fetchWithTimeout(
+      `https://${baseURL}/v1/chat/completions`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`
+        },
+        timeout,
+        method: "POST",
+        body: JSON.stringify({
+          model: model,
+          messages: messages.map(k => ({ role: k.role, content: k.content })),
+          temperature,
+          stream: true
+        })
+      }
+    ).catch((err: { message: any }) => {
       return new Response(
         JSON.stringify({
           error: {
@@ -148,22 +155,20 @@ export async function POST({ request }: APIEvent) {
     const stream = new ReadableStream({
       async start(controller) {
         const streamParser = (event: ParsedEvent | ReconnectInterval) => {
-          console.log('event = ', event)
           if (event.type === "event") {
-            if (event.event === "done") {
+            const data = event.data
+            if (data === "[DONE]") {
               controller.close()
               return
             }
-            const data = event.data
             try {
-              const queue = encoder.encode(JSON.parse(data))
+              const json = JSON.parse(data)
+              const text = json.choices[0].delta?.content
+              const queue = encoder.encode(text)
               controller.enqueue(queue)
             } catch (e) {
-              console.log('result error = ', e)
               controller.error(e)
             }
-          } else if (event.type === 'error') {
-            throw new Error('请一分钟后再试')
           }
         }
         const parser = createParser(streamParser)
@@ -175,7 +180,6 @@ export async function POST({ request }: APIEvent) {
 
     return new Response(stream)
   } catch (err: any) {
-    console.log('err = ', err)
     return new Response(
       JSON.stringify({
         error: {
@@ -185,4 +189,84 @@ export async function POST({ request }: APIEvent) {
       { status: 400 }
     )
   }
+}
+
+type Billing = {
+  key: string
+  rate: number
+  totalGranted: number
+  totalUsed: number
+  totalAvailable: number
+}
+
+export async function fetchBilling(key: string): Promise<Billing> {
+  function formatDate(date: any) {
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, "0")
+    const day = date.getDate().toString().padStart(2, "0")
+    return `${year}-${month}-${day}`
+  }
+  try {
+    const now = new Date()
+    const startDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000)
+    const endDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+
+    // 设置API请求URL和请求头
+    const urlSubscription =
+      "https://api.openai.com/v1/dashboard/billing/subscription" // 查是否订阅
+    const urlUsage = `https://api.openai.com/v1/dashboard/billing/usage?start_date=${formatDate(
+      startDate
+    )}&end_date=${formatDate(endDate)}` // 查使用量
+    const headers = {
+      Authorization: "Bearer " + key,
+      "Content-Type": "application/json"
+    }
+
+    // 获取API限额
+    const subscriptionData = await fetch(urlSubscription, { headers }).then(r =>
+      r.json()
+    )
+    if (subscriptionData.error?.message)
+      throw new Error(subscriptionData.error.message)
+    const totalGranted = subscriptionData.hard_limit_usd
+    // 获取已使用量
+    const usageData = await fetch(urlUsage, { headers }).then(r => r.json())
+    const totalUsed = usageData.total_usage / 100
+    // 计算剩余额度
+    const totalAvailable = totalGranted - totalUsed
+    return {
+      totalGranted,
+      totalUsed,
+      totalAvailable,
+      key,
+      rate: totalAvailable / totalGranted
+    }
+  } catch (e) {
+    console.error(e)
+    return {
+      key,
+      rate: 0,
+      totalGranted: 0,
+      totalUsed: 0,
+      totalAvailable: 0
+    }
+  }
+}
+
+export async function genBillingsTable(billings: Billing[]) {
+  const table = billings
+    .sort((m, n) => (m.totalGranted === 0 ? -1 : n.rate - m.rate))
+    .map((k, i) => {
+      if (k.totalGranted === 0)
+        return `| ${k.key.slice(0, 8)} | 不可用 | —— | —— |`
+      return `| ${k.key.slice(0, 8)} | ${k.totalAvailable.toFixed(4)}(${(
+        k.rate * 100
+      ).toFixed(1)}%) | ${k.totalUsed.toFixed(4)} | ${k.totalGranted} |`
+    })
+    .join("\n")
+
+  return `| Key  | 剩余 | 已用 | 总额度 |
+| ---- | ---- | ---- | ------ |
+${table}
+`
 }

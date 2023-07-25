@@ -419,7 +419,7 @@ export default function () {
     }
 
     let sessionId = localStorage.getItem('sessionId')
-    let response = await fetch('/api', {
+    let response = await fetch('/api/gpt4', {
       method: "POST",
       body: JSON.stringify({
         messages: messagesCopy,
