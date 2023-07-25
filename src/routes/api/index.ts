@@ -73,7 +73,6 @@ export async function POST({ request }: APIEvent) {
     } = await request.json()
 
     if (body.model.includes('gpt-4')) {
-
       /**
       let gp4Qualify = await isGPT4Qualify(body.sessionId)
       if (!gp4Qualify) {
