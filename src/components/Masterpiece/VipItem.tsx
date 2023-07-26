@@ -24,7 +24,7 @@ export default function VipItem(props: {
         mergeGPT4MJ: 74,
         mergeALL: 97
       },
-      gpt4Desc: '每月600次',
+      gpt4Desc: '每月300次',
       imgbg: '/svg/vip-ordinary-bg.svg',
       btnClass: 'button-ordinary',
       divFontColorClass: 'ordinary',
@@ -43,7 +43,7 @@ export default function VipItem(props: {
         mergeGPT4MJ: 748,
         mergeALL: 950
       },
-      gpt4Desc: '每年7200次',
+      gpt4Desc: '每年3600次',
       imgbg: '/svg/vip-annual-bg.svg',
       btnClass: 'button-annual',
       divFontColorClass: 'annual',
@@ -62,7 +62,7 @@ export default function VipItem(props: {
         mergeGPT4MJ: 200,
         mergeALL: 260
       },
-      gpt4Desc: '每季度1800次',
+      gpt4Desc: '每季度900次',
       imgbg: '/svg/vip-monthly-bg.svg',
       btnClass: 'button-monthly',
       divFontColorClass: 'monthly',
