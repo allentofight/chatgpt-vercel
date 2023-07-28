@@ -367,8 +367,9 @@ export default function Draw(props: {
     const versionRegex = /--(v|version) (1|2|3|4|5|5\.1|5\.2)/;
     const nijiRegex = /--niji( (4|5))?/;
     const iwRegex = /--iw\s+(-?\d+(\.\d+)?)/
+    const styleRegex = /--style( (cute|scenic|original|expressive|raw))?/;
 
-    const allParametersRegex = [aspectRegex, chaosRegex, noRegex, qualityRegex, repeatRegex, seedRegex, stopRegex, stylizeRegex, tileRegex, versionRegex, nijiRegex, iwRegex];
+    const allParametersRegex = [aspectRegex, chaosRegex, noRegex, qualityRegex, repeatRegex, seedRegex, stopRegex, stylizeRegex, tileRegex, versionRegex, nijiRegex, iwRegex, styleRegex];
 
     let replacedPrompt = allParametersRegex.reduce((currentPrompt, regex) => {
       return currentPrompt.replace(regex, '');
@@ -402,7 +403,7 @@ export default function Draw(props: {
 
   const rearrangePrompt = (prompt: string): string => {
     // Define parameters that should have values
-    const paramsWithValue: string[] = ['--aspect', '--ar', '--chaos', '--quality', '--q', '--repeat', '--r', '--seed', '--stop', '--stylize', '--s', '--v', '--version', '--no', '--niji'];
+    const paramsWithValue: string[] = ['--aspect', '--ar', '--chaos', '--quality', '--q', '--repeat', '--r', '--seed', '--stop', '--stylize', '--s', '--v', '--version', '--no', '--niji', '--style'];
 
     // Define valid values for the parameters
     const validValues: PromptParams = {
@@ -419,6 +420,7 @@ export default function Draw(props: {
       '--s': /^(?:[0-9]+)$/,
       '--v': /^(?:1|2|3|4|5|5.1|5.2)$/,
       '--niji': /^(?:4|5)$/,
+      '--style': /^(?:cute|scenic|original|expressive|raw)$/,
       '--version': /^(?:1|2|3|4|5|5.1|5.2)$/,
       '--no': /^(?:\w+)$/
     };
