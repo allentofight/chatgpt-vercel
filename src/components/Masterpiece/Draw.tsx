@@ -353,48 +353,41 @@ export default function Draw(props: {
     return true
   }
 
-  function isPromptValid(prompt: string) {
-    // Define the regular expression for each parameter with their arguments included
-    const aspectRegex = /--(aspect|ar) \d+:\d+/;
-    const chaosRegex = /--chaos \d{1,3}/;
-    const noRegex = /--no [a-zA-Z]+/;
-    const qualityRegex = /--(quality|q) (0?\.25|0\.5|1)/;
-    const repeatRegex = /--(repeat|r) [1-9]\d?|40/;
-    const seedRegex = /--seed \d{1,10}/;
-    const stopRegex = /--stop [1-9]\d?|100/;
-    const stylizeRegex = /--(stylize|s) \d+/;
-    const tileRegex = /--tile/;
-    const versionRegex = /--(v|version) (1|2|3|4|5|5\.1|5\.2)/;
-    const nijiRegex = /--niji( (4|5))?/;
-    const iwRegex = /--iw\s+(-?\d+(\.\d+)?)/
-    const styleRegex = /--style( (cute|scenic|original|expressive|raw))?/;
+  function isPromptValid(prompt: string): boolean {
+    const parameterRegex: RegExp = /--(aspect|ar|chaos|no|quality|q|repeat|r|seed|stop|stylize|s|tile|v|version|niji|iw|s|style)( (\d{1,10}(:\d{1,10})?|[a-zA-Z]+|\d(\.\d+)?))?/;
+    const seedRegex: RegExp = /--seed \d{1,10}/;
+    const repeatRegex: RegExp = /--repeat ([1-9]\d?|40)/;
 
-    const allParametersRegex = [aspectRegex, chaosRegex, noRegex, qualityRegex, repeatRegex, seedRegex, stopRegex, stylizeRegex, tileRegex, versionRegex, nijiRegex, iwRegex, styleRegex];
+    const promptElements: string[] = prompt.split(' ');
 
-    let replacedPrompt = allParametersRegex.reduce((currentPrompt, regex) => {
-      return currentPrompt.replace(regex, '');
-    }, prompt);
+    let isValid: boolean = true;
+    let seedMatch: boolean = false;
+    let repeatMatch: boolean = false;
 
-    // Additional cleanup for any remaining "--no " 
-    replacedPrompt = replacedPrompt.replace(/--no /g, '');
-
-    // Trim leading and trailing spaces, then check if there are still any '--' left in the replacedPrompt, which indicates invalid parameters
-    const trimmedReplacedPrompt = replacedPrompt.trim();
-    if (trimmedReplacedPrompt.includes('--')) {
-      toast.error('参数错误，请修改后再试')
-      return false;
-    }
-
-    // Now we check the mutual exclusion of --seed and --repeat
-    const seedMatch = seedRegex.test(prompt);
-    const repeatMatch = repeatRegex.test(prompt);
+    promptElements.forEach((element: string) => {
+      if (element.startsWith('--')) {
+        if (!parameterRegex.test(element)) {
+          isValid = false;
+        }
+        if (seedRegex.test(element)) {
+          seedMatch = true;
+        }
+        if (repeatRegex.test(element)) {
+          repeatMatch = true;
+        }
+      }
+    });
 
     if (seedMatch && repeatMatch) {
-      toast.error('--seed 不能与 --repeat 一起用')
-      return false;
-    } else {
-      return true;
+      toast.error('--seed 不能与 --repeat 一起用');
+      isValid = false;
     }
+
+    if (!isValid) {
+      toast.error('参数错误，请修改后再试');
+    }
+
+    return isValid;
   }
 
   type PromptParams = {
@@ -403,7 +396,7 @@ export default function Draw(props: {
 
   const rearrangePrompt = (prompt: string): string => {
     // Define parameters that should have values
-    const paramsWithValue: string[] = ['--aspect', '--ar', '--chaos', '--quality', '--q', '--repeat', '--r', '--seed', '--stop', '--stylize', '--s', '--v', '--version', '--no', '--niji', '--style'];
+    const paramsWithValue: string[] = ['--aspect', '--ar', '--chaos', '--quality', '--q', '--repeat', '--r', '--seed', '--stop', '--stylize', '--s', '--v', '--version', '--no', '--niji', '--style', '--iw'];
 
     // Define valid values for the parameters
     const validValues: PromptParams = {
@@ -422,7 +415,8 @@ export default function Draw(props: {
       '--niji': /^(?:4|5)$/,
       '--style': /^(?:cute|scenic|original|expressive|raw)$/,
       '--version': /^(?:1|2|3|4|5|5.1|5.2)$/,
-      '--no': /^(?:\w+)$/
+      '--no': /^(?:\w+)$/,
+      '--iw': /^\d+(\.\d+)?$/  // Matches integer or float numbers
     };
 
     // Split prompt into an array of words
@@ -459,6 +453,7 @@ export default function Draw(props: {
     rearrangedPrompt = rearrangedPrompt.trim().replace(/\s\s+/g, ' ');
     return rearrangedPrompt;
   }
+
 
 
   const queryDrawingProcess = async (messageId: string) => {
