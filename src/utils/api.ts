@@ -378,6 +378,29 @@ export const requestPayment = async (productId: string, options: string) => {
   }
 };
 
+export const createPrompt = async (body: string) => {
+  let sessionId = localStorage.getItem('sessionId')
+  return await fetch(`${apiHost}/api/mj/createPrompt`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`
+    },
+    body,
+  }).then((response) => {
+    console.log('response = ', response)
+    // Check if the response status is OK (200)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    // Parse the response as JSON
+    return true;
+  }).catch((error) => {
+    console.error('Error delete chat:', error);
+    return false
+  });
+}
+
 export const queryPaymentStatus = async (outTradeNo: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
