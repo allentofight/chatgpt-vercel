@@ -143,7 +143,7 @@ export default function MyWorks() {
           id: item._id,
           prompt: item.prompt,
           imageUrl: imageSizeRes.previewUrl,
-          originUrl: imageSizeRes.originUrl,
+          originUrl: item.cloudUrl ?? imageSizeRes.originUrl,
           gmtCreate: item.gmtCreate,
         } as Item
       }).filter(item => {

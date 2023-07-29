@@ -653,7 +653,7 @@ export default function Draw(props: {
           errorMessage: item.errorMessage,
           imageUrl: imageSizeRes.previewUrl,
           imageSize: item.imageSize,
-          originImageUrl: imageSizeRes.originUrl,
+          originImageUrl: item.cloudUrl ?? imageSizeRes.originUrl,
         } as MjChatMessage
       })
 
