@@ -6,6 +6,8 @@ import axios, { AxiosResponse } from 'axios';
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
+const token = import.meta.env.CLIENT_IMAGE_TOKEN;
+
 interface MjPromptBody {
   // Define the properties and their types here
   prompt?: string;
