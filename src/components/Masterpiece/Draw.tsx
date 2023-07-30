@@ -14,7 +14,7 @@ import LoginGuideDialog from '../LoginGuideDialog'
 import VipChargeDialog from '../VipChargeDialog'
 import ImageViewer from './ImageViewer'
 import { fetchUserInfo, queryPromptStatus } from "~/utils/api"
-import { sendMjTranslate } from "~/utils/api"
+import { sendMjTranslate, uploadImage } from "~/utils/api"
 
 import {
   delMjMessage,
@@ -496,6 +496,7 @@ export default function Draw(props: {
         }
         setType(isUpscaling ? 2 : 1)
         setShowErrorHint(false)
+        uploadImage(res.id, imageSizeRes.originUrl)
       } else if (res?.status === 'FAILURE') {
         setIsMjWorking(false)
         processQueryCount = 0

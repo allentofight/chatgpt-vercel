@@ -1,6 +1,7 @@
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { RootStore } from "~/store"
 const { store, setStore } = RootStore
+import axios, { AxiosResponse } from 'axios';
 
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
@@ -377,6 +378,52 @@ export const requestPayment = async (productId: string, options: string) => {
     throw error;
   }
 };
+
+export const uploadImage = async (messageId: string, imageUrl: string) => {
+  // Fetch the image
+  const response = await axios({
+    method: 'get',
+    url: imageUrl,
+    responseType: 'arraybuffer',
+  });
+
+  // Create form data
+  let form = new FormData();
+
+  let blob = new Blob([response.data], { type: 'image/png' });
+
+  // Append the image stream to the form data
+  form.append('file', blob, 'demo3.png');
+  // Send to the third-party API
+  const uploadResponse = await axios.post(`https://api.superbed.cn/upload?token=${token}`, form)
+
+  let sessionId = localStorage.getItem('sessionId')
+  fetch(`${apiHost}/api/mj/updateCloudUrl`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`
+    },
+    body: JSON.stringify({
+      cloudUrl: uploadResponse.data.url,
+      messageId
+    }),
+  }).then((response) => {
+    console.log('response = ', response)
+    // Check if the response status is OK (200)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    // Parse the response as JSON
+    return true;
+  }).catch((error) => {
+    console.error('Error delete chat:', error);
+    return false
+  });
+
+
+  console.log('url = ', uploadResponse.data.url)
+}
 
 export const createPrompt = async (body: string) => {
   let sessionId = localStorage.getItem('sessionId')
