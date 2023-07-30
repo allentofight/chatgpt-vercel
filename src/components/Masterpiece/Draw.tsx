@@ -485,7 +485,7 @@ export default function Draw(props: {
             type: isUpscaling ? 2 : 1,
             imageSize: res.imageSize,
             imageUrl: imageSizeRes.previewUrl,
-            originImageUrl: imageSizeRes.originUrl,
+            originImageUrl: res.cloudUrl ?? imageSizeRes.originUrl,
           } as MjChatMessage,
           ...prev,
         ]);
