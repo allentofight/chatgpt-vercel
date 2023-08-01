@@ -470,7 +470,6 @@ export default function Draw(props: {
       }
 
       if (res?.status === 'SUCCESS') {
-        setCommand('')
         processQueryCount = 0
         clearInterval(queryIntervalId)
         let imageSizeRes = getRequestImageSize(res.imageUrl, '358x358')
@@ -495,6 +494,7 @@ export default function Draw(props: {
         if (activeIndex() === -1) {
           setActiveIndex(0)
         }
+        setCommand('')
         setType(isUpscaling ? 2 : 1)
         setShowErrorHint(false)
         uploadImage(res.id, imageSizeRes.originUrl)
