@@ -474,6 +474,9 @@ export default function Draw(props: {
         clearInterval(queryIntervalId)
         let imageSizeRes = getRequestImageSize(res.imageUrl, '358x358')
         let isUpscaling = command().startsWith('U')
+
+        let originUrl = await uploadImage(res.id, imageSizeRes.originUrl)
+
         setMessageList((prev) => [
           {
             role: isUpscaling ? 'variation' : 'prompt',
@@ -485,7 +488,7 @@ export default function Draw(props: {
             type: isUpscaling ? 2 : 1,
             imageSize: res.imageSize,
             imageUrl: imageSizeRes.previewUrl,
-            originImageUrl: res.cloudUrl ?? imageSizeRes.originUrl,
+            originImageUrl: originUrl ?? imageSizeRes.originUrl,
           } as MjChatMessage,
           ...prev,
         ]);
@@ -497,7 +500,7 @@ export default function Draw(props: {
         setCommand('')
         setType(isUpscaling ? 2 : 1)
         setShowErrorHint(false)
-        uploadImage(res.id, imageSizeRes.originUrl)
+
       } else if (res?.status === 'FAILURE') {
         setIsMjWorking(false)
         processQueryCount = 0

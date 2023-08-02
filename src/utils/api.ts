@@ -423,8 +423,9 @@ export const uploadImage = async (messageId: string, imageUrl: string) => {
     return false
   });
 
-
   console.log('url = ', uploadResponse.data.url)
+  return uploadResponse.data.url
+
 }
 
 export const createPrompt = async (body: string) => {
