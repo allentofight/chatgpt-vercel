@@ -308,6 +308,11 @@ export default function Draw(props: {
 
 
     let message = messageList()[activeIndex()]
+    if (message.clickedButtons?.includes(command) && command.includes('U')) {
+      toast.error(`${command}已点击过，不可重复点击哦`)
+      return
+    }
+
     let body: MjSendBody = {
       messageId: message.messageId,
       button: command,
