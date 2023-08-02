@@ -306,8 +306,10 @@ export default function Draw(props: {
       return
     }
 
-    toast.error('此功能在升级中，请稍后再试哦～')
-    return
+    if (command.includes('U')) {
+      toast.error('此功能在升级中，请稍后再试哦～')
+      return
+    }
 
     let message = messageList()[activeIndex()]
     let body: MjSendBody = {
