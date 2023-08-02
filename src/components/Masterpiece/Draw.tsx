@@ -301,15 +301,14 @@ export default function Draw(props: {
     sendPrompt(body)
   }
 
-  function generateSeed() {
-    let min = 0;
-    let max = 100000;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
   function upscaling(command: string) {
     if (!checkQualification()) {
       return
     }
+
+    toast.error('此功能在升级中，请稍后再试哦～')
+    return
+
     let message = messageList()[activeIndex()]
     let body: MjSendBody = {
       messageId: message.messageId,
