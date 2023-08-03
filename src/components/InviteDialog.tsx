@@ -22,6 +22,24 @@ const InviteDialog = (props: {
       await navigator.clipboard.writeText(inviteLink);
     } catch (err) {
       console.error("复制失败：", err);
+      // 如果失败，则尝试使用旧方法
+      const textArea = document.createElement('textarea');
+      textArea.value = inviteLink;
+      textArea.style.position = 'fixed';  // 防止滚动到页面底部
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (!successful) {
+          throw new Error('使用document.execCommand也复制失败');
+        }
+      } catch (err) {
+        console.error("复制失败：", err);
+      } finally {
+        document.body.removeChild(textArea);
+      }
     }
   };
 
