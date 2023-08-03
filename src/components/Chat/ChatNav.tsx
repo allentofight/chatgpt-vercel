@@ -16,17 +16,20 @@ export default function (props: {
           <div class={`chat-nav-left-item ${store.chatType == 1 ? 'active' : ''}`} onClick={() => {
             props.clickChat()
             setStore("chatType", 1)
+            setStore('showMindMap', false)
           }}>
             聊天
           </div>
           <div class={`chat-nav-left-item ${store.chatType == 2 ? 'active' : ''}`} onClick={() => {
             props.clickPromptCategory()
             setStore("chatType", 2)
+            setStore('showMindMap', false)
           }}>
             提示
           </div>
           <div class="chat-nav-left-item" onClick={(event) => {
             setStore("showChatList", !store.showChatList)
+            setStore('showMindMap', false)
             event.stopPropagation()
           }}>
             记录

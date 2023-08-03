@@ -68,6 +68,7 @@ function Store() {
     chatType: 1,  // 1聊天，2选择 prompt, 3 弹出记录
     inputContent: "",
     useWebSearch: false,
+    showMindMap: false,
     leftGPT4Cnt: 0,
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",

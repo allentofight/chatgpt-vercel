@@ -165,7 +165,7 @@ export default function ({
         "background-color": "var(--c-bg)",
         width: width() === "init" ? "100%" : width()
       }}
-    >``
+    >
       <div
         style={{
           transition: "opacity 1s ease-in-out",

@@ -108,8 +108,8 @@ export default function (props: {
         color: 'rgb(239, 68, 68)',
       },
       {
-        icon: 'icon-a-6',
-        color: 'rgb(59, 130, 246)'
+        icon: 'icon-a-11',
+        color: 'rgb(217, 70, 239)'
       }]
 
     FZFData.promptOptions = parsePrompts().map(
@@ -211,10 +211,15 @@ export default function (props: {
             </div>
             <div class="mask-hr"></div>
             <div class="mask-scroll">
-
               <For each={candidateOptions()}>
                 {(option, index) => (
                   <div class="mask-scroll-item" onClick={e => {
+                    if (option.title === '思维导图') {
+                      setStore('showMindMap', true)
+                      return
+                    }
+                    setStore('showMindMap', false)
+
                     setSelectedIndex(index)
                     setShowPromptEdit(true)
                     e.stopPropagation()

@@ -26,6 +26,13 @@ export default function MasterPiece() {
 
   return (
     <>
+      <style>
+        {`
+            .custom-padding-bottom {
+              padding-bottom: 123px;
+            }
+        `}
+      </style>
       <div id="page" class="flex items-center flex-col h-full w-screen" style="padding-top: constant(safe-area-inset-top); padding-bottom: constant(safe-area-inset-bottom);">
         <PageNav
           chatListClicked={(showChat: boolean) => {
@@ -33,15 +40,15 @@ export default function MasterPiece() {
           }}
         ></PageNav>
         <Layout>
-          <div class="flex items-center flex-col">
-              <Chat />
-              <Aside />
-            </div>
+          <div class="flex items-center flex-col h-full custom-padding-bottom">
+            <Chat />
+            <Aside />
+          </div>
         </Layout>
         <Show when={store.hasAiDrawClicked}>
           <Draw showMoreClick={() => {
-              setStore('menuTitle', '收藏管理')
-            }} />
+            setStore('menuTitle', '收藏管理')
+          }} />
         </Show>
         <Show when={store.menuTitle === 'AI广场'}>
           <MjTemplate />

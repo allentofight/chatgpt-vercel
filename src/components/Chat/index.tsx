@@ -22,6 +22,7 @@ import { fetchUserInfo, incrGPT4Cnt } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import Login from "~/components/Login"
+import MarkmapView from "../MarkmapView"
 
 let modelMap = {
   [ModelEnum.GPT_3]: "gpt-3.5-turbo-16k" as Model,
@@ -184,16 +185,8 @@ export default function () {
     clientId: string;
     invocationId: string;
   }
-  function archiveCurrentMessage(response: IResponse | null = null) {
+  function archiveCurrentMessage() {
     let extractInfo = {}
-    if (response) {
-      extractInfo = {
-        conversationSignature: response.conversationSignature,
-        conversationId: response.conversationId,
-        clientId: response.clientId,
-        invocationId: response.invocationId,
-      }
-    }
     if (store.currentAssistantMessage) {
       batch(() => {
         setStore("messageList", k => [
@@ -314,8 +307,13 @@ export default function () {
 
     fetchUserInfoAsync()
 
-    const inputValue = value ?? store.inputContent
+    let inputValue = value ?? store.inputContent
     if (!inputValue) return
+
+    if (store.showMindMap) {
+      inputValue = `你是一个思维导图专家，请根据我提供的如下内容:${inputValue}
+        做一个思维导图，要求高质量,详细,多层级,多分支,清晰,直接生成并用中文回复markDown格式的思维导图，不要有除markdown之外的任何其它描述`
+    }
 
     if (!isLocalStorageAvailable()) {
       return
@@ -368,7 +366,7 @@ export default function () {
       setStore("loading", true)
       controller = new AbortController()
       // 在关闭连续对话时，有效上下文只包含了锁定的对话。
-      result = await fetchGPT(
+      await fetchGPT(
         store.sessionSettings.continuousDialogue
           ? store.validContext
           : [
@@ -398,7 +396,13 @@ export default function () {
       }
     }
 
-    archiveCurrentMessage(result)
+    if (!store.showMindMap) {
+      archiveCurrentMessage()
+    } else {
+      setStore('messageList', [])
+      setStore("loading", false)
+      setStore("currentAssistantMessage", "")
+    }
   }
 
   async function fetchGPT(messages: ChatMessage[], inputVal: string) {
@@ -473,10 +477,12 @@ export default function () {
           setShowPromptCategory(true)
         }} />
       <main ref={containerRef!} id="mainContainer" class="mt-4 w-full flex justify-center" style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
-        <MessageContainer
-          sendMessage={sendMessage}
-          inputBoxHeight={inputBoxHeight}
-        />
+        <Show when={!store.showMindMap}>
+          <MessageContainer
+            sendMessage={sendMessage}
+            inputBoxHeight={inputBoxHeight}
+          />
+        </Show>
         <InputBox
           height={inputBoxHeight}
           width={containerWidth}
@@ -519,6 +525,9 @@ export default function () {
         </Show>
         <Toaster position="top-center" />
       </main>
+      <Show when={store.showMindMap}>
+        <MarkmapView />
+      </Show>
       <Show when={showPromptCategory()}>
         <PromptCategory clickPrompt={() => {
           setShowPromptCategory(false)

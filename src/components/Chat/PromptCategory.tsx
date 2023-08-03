@@ -192,6 +192,17 @@ export default function PromptCategory(props: {
       collectClass: 'icon-a-13',
       collectIconColor: 'color: rgb(244, 63, 94)'
     }]
+  }, {
+    title: '其他格式',
+    subtitle: '提升效率',
+    icons: [{
+      title: '思维导图',
+      iconClass: 'icon-a-11',
+      backgroundColor: 'background: rgba(217, 70, 239, 0.2)',
+      iconClassColor: 'rgb(217, 70, 239)',
+      collectClass: 'icon-a-13',
+      collectIconColor: 'color: rgb(217, 70, 239)'
+    }]
   }]
 
   onMount(() => {
@@ -275,10 +286,19 @@ export default function PromptCategory(props: {
                       <For each={prompt.icons}>
                         {(iconInfo, index) => (
                           <div class="chat-tips-list-item" style={`${iconInfo.backgroundColor};`} onClick={() => {
+
+                            if (iconInfo.title === '思维导图') {
+                              setStore('showMindMap', true)
+                              setShowPromptEdit(false)
+                              setStore("chatType", 1)
+                              props.clickPrompt()
+                              return
+                            }
+                            setStore('showMindMap', false)
+
                             let filteredItems = promptOptions.filter(item => {
                               return item.title === iconInfo.title
                             })
-                            console.log('promptOptions = ', promptOptions, 'iconInfo = ', iconInfo)
                             setSelectedOption({
                               title: iconInfo.title,
                               desc: filteredItems[0].desc,
