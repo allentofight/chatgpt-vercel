@@ -62,13 +62,23 @@ export default function MarkmapView() {
     }
 
     return (
-        <div class="w-full h-full relative sm:px-12">
-            <svg class="flex-1 w-full h-full text-white" ref={el => { svg = el; }} />
-            <div class="absolute left-1/2 transform -translate-x-1/2 bottom-4 text-white" onClick={downloadPng}>
-                <i class="iconfont icon-download-one icon text-4xl cursor-pointer">
-                </i>
-            </div>
-        </div >
+        <>
+            <style>
+                {`
+                    .custom-bg {
+                        background-color:#2E2F39;
+                    }
+                `}
+            </style>
+            <div class="w-full h-full relative sm:px-12">
+                <svg class="flex-1 w-full h-full text-white custom-bg" ref={el => { svg = el; }} />
+                <div class="absolute left-1/2 transform -translate-x-1/2 bottom-4 text-white" onClick={downloadPng}>
+                    <i class="iconfont icon-download-one icon text-4xl cursor-pointer">
+                    </i>
+                </div>
+            </div >
+        </>
+
     );
 }
 
