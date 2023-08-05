@@ -40,7 +40,8 @@ export default function MasterPiece() {
           }}
         ></PageNav>
         <Layout>
-          <div class="flex items-center flex-col h-full custom-padding-bottom">
+
+          <div class={`flex items-center flex-col h-full ${store.chatType == 1 ? 'custom-padding-bottom' : ''}`}>
             <Chat />
             <Aside />
           </div>
