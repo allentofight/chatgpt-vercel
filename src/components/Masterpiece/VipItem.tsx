@@ -57,8 +57,8 @@ export default function VipItem(props: {
         GPT3: 106,
         GPT4: 135,
         Midjourney: 135,
-        mergeGPT3MJ: 180,
-        mergeGPT3And4: 180,
+        mergeGPT3MJ: 190,
+        mergeGPT3And4: 190,
         mergeGPT4MJ: 200,
         mergeALL: 260
       },
