@@ -1261,7 +1261,7 @@ export default function Draw(props: {
                     }}>
                       <Show when={index() < 5}>
                         <div >
-                          <img alt="" class="img" src={option.img} />
+                          <img alt="" class="svg-img" src={option.img} />
                         </div>
                         <div class="text text-base font-bold py-1">
                           {option.ratio}
@@ -1270,7 +1270,7 @@ export default function Draw(props: {
                       </Show>
                       <Show when={index() === 5}>
                         <div >
-                          <img alt="" class="img" src="/svg/1-1.svg" />
+                          <img alt="" class="svg-img" src="/svg/1-1.svg" />
                         </div>
                         <div class="flex flex-1 text items-center justify-center pb-2">
                           <input ref={setRatioWidthRef} class="input w-7 text-center appearance-none text-base" type="number" /> : <input ref={setRatioHeightRef} class="input w-7 text-center appearance-none text-base" type="number" />

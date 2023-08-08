@@ -883,7 +883,7 @@ input[type='number'] {
   box-shadow: inset 0 0 0 1px #ffffff1a
 }
 
-.dark .size-item .img {
+.dark .size-item .svg-img {
   max-width: 1.5rem;
   max-height: 1.5rem
 }
@@ -993,7 +993,7 @@ input[type='number'] {
   box-shadow: inset 0 0 0 1px #0000001a
 }
 
-.base .size-item .img {
+.base .size-item .svg-img {
   max-width: 1.5rem;
   max-height: 1.5rem
 }
