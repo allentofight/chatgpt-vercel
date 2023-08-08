@@ -187,7 +187,7 @@ export default function VipItem(props: {
             直推收益奖励
           </div>
           <div class="text flex-1 text-right">
-            20%
+            10%
           </div>
         </div>
         <div class="flex cell justify-between">
