@@ -45,6 +45,7 @@
     "fzf": "^0.5.1",
     "highlight.js": "^11.7.0",
     "html-to-image": "^1.11.11",
+    "i18next": "^23.4.1",
     "just-throttle": "^4.2.0",
     "katex": "^0.16.4",
     "markdown-it": "^13.0.1",
