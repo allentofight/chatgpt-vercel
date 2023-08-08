@@ -74,7 +74,7 @@ function Store() {
     gpt4ExpireDate: '',
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
-    menuTitle: i18n.t('aitalk'),
+    menuTitle: 'AI聊天',//i18n.t('aitalk'),
     showUserPopover: false,
     showChatList: false,
     curPrompt: "",
