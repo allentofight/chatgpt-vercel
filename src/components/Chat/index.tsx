@@ -23,6 +23,7 @@ const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import Login from "~/components/Login"
 import MarkmapView from "../MarkmapView"
+import InviteActivity from "../InviteActivity"
 
 let modelMap = {
   [ModelEnum.GPT_3]: "gpt-3.5-turbo-16k" as Model,
@@ -524,6 +525,7 @@ export default function () {
           <NotifyDialog />
         </Show>
         <Toaster position="top-center" />
+        <InviteActivity />
       </main>
       <Show when={store.showMindMap}>
         <MarkmapView />
