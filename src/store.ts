@@ -10,6 +10,7 @@ import {
 } from "./utils"
 import { Fzf } from "fzf"
 import type { Option } from "~/types"
+import i18n from "./utils/i18n"
 
 let globalSettings = { ...defaultEnv.CLIENT_GLOBAL_SETTINGS }
 let _ = import.meta.env.CLIENT_GLOBAL_SETTINGS
@@ -70,9 +71,10 @@ function Store() {
     useWebSearch: false,
     showMindMap: false,
     leftGPT4Cnt: 0,
+    gpt4ExpireDate: '',
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
-    menuTitle: 'AI聊天',
+    menuTitle: i18n.t('aitalk'),
     showUserPopover: false,
     showChatList: false,
     curPrompt: "",

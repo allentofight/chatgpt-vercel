@@ -231,6 +231,8 @@ export async function fetchUserInfo() {
 
     if (data.gpt4ExpireDay) {
       localStorage.setItem('gpt4ExpireDay', data.gpt4ExpireDay.toString())
+      let date = toBeijingTime(new Date(data.gpt4ExpireDay))
+      setStore('gpt4ExpireDate', date)
     }
 
     if (data.midjourneyExpireDay) {
@@ -251,6 +253,23 @@ export async function fetchUserInfo() {
   } else {
     throw new Error('LocalStorage is not available.');
   }
+}
+
+function toBeijingTime(date: Date): string {
+  // 转换为北京时间的偏移
+  const offset = 8;
+  let localTime = date.getTime();
+  let localOffset = date.getTimezoneOffset() * 60000;
+  let utc = localTime + localOffset;
+  let beijingTime = new Date(utc + (3600000 * offset));
+
+  let year = beijingTime.getFullYear();
+  let month = ("0" + (beijingTime.getMonth() + 1)).slice(-2); // 月份从0开始，所以+1
+  let day = ("0" + beijingTime.getDate()).slice(-2);
+  let hours = ("0" + beijingTime.getHours()).slice(-2);
+  let minutes = ("0" + beijingTime.getMinutes()).slice(-2);
+
+  return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
 export async function gpt4Check(sessionId: string) {
