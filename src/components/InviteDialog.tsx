@@ -1,6 +1,7 @@
 import { createEffect, createSignal } from 'solid-js';
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
+import { useAuth } from "~/utils/useAuth"
 
 const InviteDialog = (props: {
   closeDialog: () => void
@@ -11,6 +12,12 @@ const InviteDialog = (props: {
   const handleInvite = async () => {
 
     if (!isLocalStorageAvailable()) {
+      return
+    }
+
+    const { isLogin } = useAuth()
+    if (!isLogin()) {
+      window.location.href = '/login'
       return
     }
 
