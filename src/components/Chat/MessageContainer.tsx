@@ -87,12 +87,12 @@ export default function ({
             when={store.inputContentToken}
             fallback={
               <span class="mx-1 text-slate/50">
-                {`剩余次数 : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? store.gpt4ExpireDate + '到期' : ''}`}
+                {`剩余次数 : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? '，' + store.gpt4ExpireDate + '到期' : ''}`}
               </span>
             }
           >
             <span class="mx-1 text-slate/50">
-              {`剩余次数 : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? store.gpt4ExpireDate + '到期' : ''}`}
+              {`剩余次数 : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? '，' + store.gpt4ExpireDate + '到期' : ''}`}
             </span>
           </Show>
           <hr class="flex-1  border-slate/30" />
