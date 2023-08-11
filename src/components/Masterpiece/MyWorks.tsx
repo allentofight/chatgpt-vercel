@@ -48,7 +48,7 @@ export default function MyWorks() {
   let [shouldAnimate, setShouldAnimate] = createSignal(false);
 
   function downloadImage(url: string): void {
-    let filename = 'download' + getExtensionFromQueryUrl(url)
+    let filename = 'download.png'
     fetch(url)
       .then(response => response.blob())
       .then(blob => {
