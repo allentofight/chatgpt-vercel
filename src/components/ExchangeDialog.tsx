@@ -23,7 +23,7 @@ export default function ExchangeDialog(props: {
   async function sendExchangeCode() {
     setIsSubmitting(true)
     let sessionId = localStorage.getItem('sessionId')
-    let res = await fetch(`${apiHost}/api/chat/exchange`, {
+    let res = await fetch(`${apiHost}/api/mj/exchange`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,10 +49,10 @@ export default function ExchangeDialog(props: {
     if (res.errorMessage) {
       toast.error(res.errorMessage)
     } else {
-      toast.success('兑换成功，恭喜获得 1小时 VIP 体验资格', {
+      toast.success('兑换成功，恭喜获得 1个月 MJ 权益', {
         duration: 3000
       })
-      localStorage.setItem('gpt3ExpireDay', res.expiredDay.toString())
+      localStorage.setItem('midjourneyExpireDay', res.expiredDay.toString())
       setShowSuccess(true)
     }
   }
@@ -88,34 +88,14 @@ export default function ExchangeDialog(props: {
             <CloseIcon />
           </button>
           <Show when={!showSuccess()}>
-            <Show when={props.showTitle}>
-              <h2 class="text-2xl text-center mb-3 text-red-500">VIP 已过期!</h2>
-            </Show>
-            <div class="text-xl text-center mb-2">按以下3步骤领取兑换码可获得1小时的 VIP 资格</div>
-            <div class="text-lg text-red text-center font-bold mb-2">兑换码每小时更新一次哦</div>
-            <div class="max-h-96 overflow-y-auto border border-gray-300 rounded p-2 shadow-md">
-              <div>
-                <h3 class="text-lg">步骤一: 使用微信扫码打开小程序</h3>
-                <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/645201aca638c.jpg" alt="QR Code" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
-              </div>
-              <div class="mt-8">
-                <h3 class="text-lg">步骤二: 点击第三个tab，点击图中所示按钮</h3>
-                <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/645201eb72968-1.png" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
-              </div>
-              <div class="mt-8">
-                <h3 class="text-lg">步骤三: 稍等片刻之后，点击复制，即可拿到兑换码</h3>
-                <img src="https://b1.beisheng.com/common/starchain_self_image/2305/18/6452021944ea3.jpg" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
-                <img src="https://b1.beisheng.com/common/starchain_self_image/2305/24/Group.png" alt="Third Tab" class="w-3/4 object-cover rounded-md mt-4 mx-auto" />
-
-              </div>
-            </div>
+            <div class="text-xl text-center mb-2">输入兑换码可获得1个月MJ使用权益</div>
             <div class="mt-4 flex flex-col items-center">
               <input
                 type="text"
                 value={exchangeCode()}
                 onInput={(e: Event) => setExchangeCode((e.target as HTMLInputElement).value)}
                 class="border border-gray-300 p-2 rounded mb-4 w-2/3"
-                placeholder="输入兑换码，立即获得 1 小时 VIP 资格"
+                placeholder="输入兑换码，立即获得1个月MJ使用权益"
               />
               <button
                 class={`bg-blue-500 text-white px-4 py-2 rounded ${isSubmitting() ? 'opacity-50' : ''}`}
@@ -136,9 +116,7 @@ export default function ExchangeDialog(props: {
           </Show>
 
           <Show when={showSuccess()}>
-            <h2 class="text-2xl text-center mb-3 text-blue-500">恭喜你已获取 1小时 VIP 使用权限!</h2>
-            <div class="text-xl text-center mb-4">领取兑换码可获取 1 小时的 VIP 资格哦</div>
-
+            <h2 class="text-2xl text-center mb-3 text-blue-500">恭喜你已获取1个月MJ权益!</h2>
             <div class="mt-4 flex justify-center">
               <button class="bg-blue-500 text-white px-4 py-2 rounded" onClick={props.successClick}>
                 我知道了

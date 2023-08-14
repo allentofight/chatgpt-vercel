@@ -293,6 +293,21 @@ export default function AccountInfo(props: {
                             }}><span>立即提现</span></button>
                         </div>
                     </div>
+                    <div class="user-setting-item">
+                        <div class="flex-1">
+                            <div class="user-setting-item__title">
+                                Midjourney权益兑换
+                            </div>
+                            <div class="user-setting-item__desc">
+                                月会员兑换
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="gda-btn" onClick={() => {
+                                setShowExchangeDialog(true)
+                            }}><span>立即兑换</span></button>
+                        </div>
+                    </div>
            
             <div class="user-setting-item">
                 <div class="flex-1">
