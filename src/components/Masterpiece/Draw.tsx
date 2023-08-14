@@ -1338,13 +1338,26 @@ export default function Draw(props: {
                                     let prompt = textareaRef()!.value
                                     if (highlighted()) {
                                       if (prompt) {
-                                        prompt = prompt.replace(`,${selection.en}`, '')
-                                        textareaRef()!.value = prompt + `,${selection.en}`
+                                        if (selection.en.includes('--')) {
+                                          prompt = prompt.replace(` ${selection.en}`, '')
+                                          textareaRef()!.value = prompt + ` ${selection.en}`
+                                        } else {
+                                          prompt = prompt.replace(`,${selection.en}`, '')
+                                          textareaRef()!.value = prompt + `,${selection.en}`
+                                        }
                                       } else {
-                                        textareaRef()!.value = `,${selection.en}`
+                                        if (selection.en.includes('--')) {
+                                          textareaRef()!.value = ` ${selection.en}`
+                                        } else {
+                                          textareaRef()!.value = `,${selection.en}`
+                                        }
                                       }
                                     } else {
-                                      prompt = prompt.replace(`,${selection.en}`, '')
+                                      if (selection.en.includes('--')) {
+                                        prompt = prompt.replace(` ${selection.en}`, '')
+                                      } else {
+                                        prompt = prompt.replace(`,${selection.en}`, '')
+                                      }
                                       textareaRef()!.value = prompt
                                     }
                                     autoResize()
