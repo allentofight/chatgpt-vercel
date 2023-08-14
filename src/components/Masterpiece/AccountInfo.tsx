@@ -29,6 +29,8 @@ export default function AccountInfo(props: {
 
     const [phone, setPhone] = createSignal('');
 
+    const [balance, setBalance] = createSignal('0');
+
     let inviteCode = localStorage.getItem('inviteCode')
     const inviteLink = `https://www.nextaibots.com/login?inviteCode=${inviteCode}`;
 
@@ -96,6 +98,7 @@ export default function AccountInfo(props: {
           setMjEndDate(mjDate)
         }
 
+        setBalance(localStorage.getItem('balance') ?? '0')
         setPhone(localStorage.getItem('phone') ?? '')
 
     }
@@ -275,6 +278,21 @@ export default function AccountInfo(props: {
                     }}><span>立即邀请</span></button>
                 </div>
             </div>
+                    <div class="user-setting-item">
+                        <div class="flex-1">
+                            <div class="user-setting-item__title">
+                                现金余额
+                            </div>
+                            <div class="user-setting-item__desc">
+                                {balance()}
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="gda-btn" onClick={() => {
+                                toast.error('请添加微信 geekoftaste 来提现哦')
+                            }}><span>立即提现</span></button>
+                        </div>
+                    </div>
            
             <div class="user-setting-item">
                 <div class="flex-1">

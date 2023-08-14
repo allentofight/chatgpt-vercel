@@ -250,6 +250,10 @@ export async function fetchUserInfo() {
       localStorage.removeItem('isTelBinded');
     }
 
+    if (data.balance) {
+      localStorage.setItem('balance', data.balance);
+    }
+
   } else {
     throw new Error('LocalStorage is not available.');
   }
