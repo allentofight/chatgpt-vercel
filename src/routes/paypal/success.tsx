@@ -13,7 +13,7 @@ export default function () {
     })
 
     return (
-        <div>
+        <div class="flex justify-center text-white mt-5">
             <h1>Payment Successful</h1>
             <p>Your payment has been successfully processed.</p>
         </div>
