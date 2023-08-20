@@ -1,12 +1,15 @@
+import { order } from "paypal-rest-sdk";
 import { onMount } from "solid-js";
 
+import { paypalConfirm } from '~/utils/api'
+
 export default function () {
-    const getOrderId = () => {
+    const getOrderId = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get("token");
         console.log("Order ID:", orderId);
+        await paypalConfirm(orderId!)
     };
-
 
     onMount(() => {
         getOrderId();
