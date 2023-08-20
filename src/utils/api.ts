@@ -336,6 +336,25 @@ export async function createOrUpdatePrompt(body: string) {
   }
 }
 
+export async function getStripeSessionId() {
+  let sessionId = localStorage.getItem('sessionId')
+  const response = await fetch(`${apiHost}/api/stripe/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`,
+    },
+    body: JSON.stringify({}),
+  });
+
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.message);
+  } else {
+    return await response.json();
+  }
+}
+
 export async function listPrompt() {
   let sessionId = localStorage.getItem('sessionId')
   const response = await fetch(`${apiHost}/api/chat/listPrompt`, {
@@ -474,6 +493,74 @@ export const createPrompt = async (body: string) => {
   });
 }
 
+export const googleAuth = async (body: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/auth/googleCheck`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body
+    });
+
+    if (!response.ok) {
+      return await response.json()
+    }
+    return response.json();
+  } catch (error) {
+    console.log('sendMJPrompt error = ')
+    throw error;
+  }
+};
+
+export const paypalCreate = async (body: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/paypal/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body
+    });
+
+    if (!response.ok) {
+      return await response.json()
+    }
+    return response.json();
+  } catch (error) {
+    console.log('sendMJPrompt error = ')
+    throw error;
+  }
+};
+
+export const paypalConfirm = async (orderId: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/paypal/confirm`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+      body: JSON.stringify({
+        orderId
+      })
+    });
+
+    if (!response.ok) {
+      return await response.json()
+    }
+    return response.json();
+  } catch (error) {
+    console.log('sendMJPrompt error = ')
+    throw error;
+  }
+};
+
 export const queryPaymentStatus = async (outTradeNo: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
@@ -499,6 +586,28 @@ export const fetchSeed = async (messageId: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
     const response = await fetch(`${apiHost}/api/mj/getSeed?messageId=${messageId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    throw error;
+  }
+};
+
+
+export const detectIp = async () => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/auth/detectCountry`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
