@@ -112,7 +112,7 @@ export default function PromptCategory(props: {
     }]
   }, {
     title: '商业',
-    subtitle: '',
+    subtitle: '商业决策助手',
     icons: [{
       title: '社交媒体影响者',
       iconClass: 'icon-a-9',
