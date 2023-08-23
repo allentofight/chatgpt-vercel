@@ -2,6 +2,7 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { RootStore } from "~/store"
 const { store, setStore } = RootStore
 import axios, { AxiosResponse } from 'axios';
+import { fetchWithTimeout } from "~/utils"
 
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
@@ -628,12 +629,13 @@ export const detectIp = async () => {
 export const sendMjTranslate = async (body: MjPromptBody) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
-    const response = await fetch(`${apiHost}/api/mj/translate`, {
+    const response = await fetchWithTimeout(`${apiHost}/api/mj/translate`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${sessionId}`,
       },
+      timeout: 15000,
       body: JSON.stringify(body)
     });
 
