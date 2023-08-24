@@ -410,7 +410,7 @@ export default function () {
     const messagesCopy = [...messages]; // Make a copy of the array
     if (store.useWebSearch) {
       const messageCopy = { ...messagesCopy[messagesCopy.length - 1] }; // Make a copy of the last object
-      const url = `https://ddg-search-iota.vercel.app/?search_term=${encodeURIComponent(messageCopy.content)}`;
+      const url = `https://search.qiuweiai.cn/?search_term=${encodeURIComponent(messageCopy.content)}`;
       let searchResult = await fetch(url)
       let result = await searchResult.json()
       console.log('result = ', result.message)
