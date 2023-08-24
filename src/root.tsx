@@ -58,6 +58,7 @@ export default function Root() {
       <Head>
         <PrefixTitle />
         <Meta charset="utf-8" />
+        <Meta name="description" lang="en" content="Explore the endless possibilities of ChatGPT conversations and AI drawing. Our platform offers advanced chatbot experiences and innovative AI drawing tools for easy creation and interaction." />
         <Link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <Link rel="stylesheet" href="/fonts/iconfont.css" />
         <Meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
