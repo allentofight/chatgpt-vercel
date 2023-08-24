@@ -165,9 +165,8 @@ export default function SettingAction() {
             icon="i-carbon:settings-services"
             label="对话设置"
           />
-          <Show when={store.sessionSettings.APIModel !== 'gpt-4'}>
-            <WebSearch />
-          </Show>
+
+          <WebSearch />
 
         </div>
         <Switch
