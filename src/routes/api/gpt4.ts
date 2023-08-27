@@ -178,7 +178,11 @@ export async function POST({ request }: APIEvent) {
       }
     })
 
-    return new Response(stream)
+    return new Response(stream, {
+      headers: {
+        "Transfer-Encoding": "chunked",
+      },
+    })
   } catch (err: any) {
     return new Response(
       JSON.stringify({
