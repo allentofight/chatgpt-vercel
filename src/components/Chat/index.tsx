@@ -424,7 +424,7 @@ export default function () {
     }
 
     let sessionId = localStorage.getItem('sessionId')
-    let response = await fetch('/api/gpt4', {
+    let response = await fetch(`/api${currentChat().model === ModelEnum.GPT_3 ? '' : '/gpt4'}`, {
       method: "POST",
       body: JSON.stringify({
         messages: messagesCopy,
