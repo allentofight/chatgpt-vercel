@@ -55,6 +55,12 @@ export default function () {
   const { store, setStore } = RootStore
   onMount(async () => {
     fetchUserInfoAsync()
+
+    if (localStorage.getItem('phone')) {
+      localStorage.setItem('isInChina', '1')
+      setStore('inChina', true)
+    }
+
     let inChina = localStorage.getItem('isInChina')
     if (!inChina) {
       let res = await detectIp()
