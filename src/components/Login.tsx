@@ -4,7 +4,10 @@ const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import LoginSuccessDialog from './LoginSuccessDialog'
 
+import GoogleLogin from './GoogleLogin'
 import CaptchaForm from './CaptchaForm'
+
+import { detectIp } from "~/utils/api"
 
 export default function LoginDialog(props: {
   title: string,
@@ -19,6 +22,7 @@ export default function LoginDialog(props: {
   let [submitDisabled, setSubmitDisabled] = createSignal(true);
   let [showLoginSuccess, setShowLoginSuccess] = createSignal(false);
   const [inviteCode, setInviteCode] = createSignal('');
+  let [isInChina, setIsInChina] = createSignal(true);
 
   onMount(async () => {
     const queryParams = new URLSearchParams(window.location.search);
@@ -31,6 +35,24 @@ export default function LoginDialog(props: {
     if (sessionId) {
       window.location.href = '/'
     }
+
+    let res = await detectIp()
+    setIsInChina(res.isChina)
+
+
+    let inChina = localStorage.getItem('isInChina')
+    if (!inChina) {
+      let res = await detectIp()
+      setIsInChina(res.isChina)
+      localStorage.setItem('isInChina', res.isChina ? '1' : '2')
+    } else {
+      setIsInChina(inChina === '1')
+    }
+
+
+    // setIsInChina(false)
+
+    localStorage.setItem('isInChina', isInChina() ? '1' : '2')
   })
 
   function isPhoneValid() {
@@ -136,47 +158,53 @@ export default function LoginDialog(props: {
   return (
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-90">
       <div class="bg-white rounded-lg p-6 w-95">
-        <h2 class="text-center text-xl mb-6">{props.title}</h2>
-        <div class="mb-4">
-          <input
-            type="tel"
-            class="border rounded w-full py-2 px-3 text-grey-darker"
-            placeholder="手机号"
-            value={phone()}
-            onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
-          />
-        </div>
-        <div class="flex justify-between items-center mb-4">
-          <input
-            type="text"
-            class="border rounded w-2/3 py-2 px-3 text-grey-darker"
-            placeholder="验证码"
-            value={code()}
-            onInput={(e) => {
-              setCode((e.target as HTMLInputElement).value);
-              setSubmitDisabled(!(e.target as HTMLInputElement).value); // Update submitDisabled based on the input's value
-            }}
-          />
-          <button
-            class={`w-1/3 ml-4 py-2 px-1 rounded ${disabled() ? "bg-gray-300" : "bg-green-500 text-white"} whitespace-nowrap`}
-            disabled={disabled()}
-            onClick={sendCode}
-          >
-            {disabled() ? `${count()}s` : "发送验证码"}
-          </button>
-        </div>
-        <div class="flex justify-center">
-          <CaptchaForm />
-        </div>
-        <div class="flex justify-center mt-3">
-          <button
-            class={`w-full ${submitDisabled() ? 'bg-opacity-50' : ''} py-2 px-4 rounded bg-blue-500 text-white`}
-            onClick={login}
-            disabled={submitDisabled()}
-          >
-            {props.buttonTitle}
-          </button>
-        </div>
+        <Show when={isInChina()}>
+          <h2 class="text-center text-xl mb-6">{props.title}</h2>
+          <div class="mb-4">
+            <input
+              type="tel"
+              class="border rounded w-full py-2 px-3 text-grey-darker"
+              placeholder="手机号"
+              value={phone()}
+              onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
+            />
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <input
+              type="text"
+              class="border rounded w-2/3 py-2 px-3 text-grey-darker"
+              placeholder="验证码"
+              value={code()}
+              onInput={(e) => {
+                setCode((e.target as HTMLInputElement).value);
+                setSubmitDisabled(!(e.target as HTMLInputElement).value); // Update submitDisabled based on the input's value
+              }}
+            />
+            <button
+              class={`w-1/3 ml-4 py-2 px-1 rounded ${disabled() ? "bg-gray-300" : "bg-green-500 text-white"} whitespace-nowrap`}
+              disabled={disabled()}
+              onClick={sendCode}
+            >
+              {disabled() ? `${count()}s` : "发送验证码"}
+            </button>
+          </div>
+          <div class="flex justify-center">
+            <CaptchaForm />
+          </div>
+          <div class="flex justify-center mt-3">
+            <button
+              class={`w-full ${submitDisabled() ? 'bg-opacity-50' : ''} py-2 px-4 rounded bg-blue-500 text-white`}
+              onClick={login}
+              disabled={submitDisabled()}
+            >
+              {props.buttonTitle}
+            </button>
+          </div>
+        </Show>
+        <Show when={!isInChina()}>
+          <GoogleLogin />
+        </Show>
+
       </div>
       <Toaster position="top-center" />
       <Show when={showLoginSuccess()}>

@@ -7,6 +7,7 @@ import {
 import toast, { Toaster } from 'solid-toast';
 import type { MjChatMessage } from "~/types"
 import { RootStore } from "~/store"
+import i18n from '~/utils/i18n';
 const { store, setStore } = RootStore
 
 import {
@@ -138,7 +139,7 @@ export default function MyWorks() {
     fetchMjMessageList(earliestGmtCreate).then((data) => {
       data.list.sort((a: MjChatMessage, b: MjChatMessage) => new Date(b.gmtCreate!).getTime() - new Date(a.gmtCreate!).getTime());
       let result = data.list.map(item => {
-        let imageSizeRes = getRequestImageSize(item.imageUrl, '300x300')
+        let imageSizeRes = getRequestImageSize(item.imageUrl, '300x300', store.inChina)
         return {
           id: item._id,
           prompt: item.prompt,
@@ -171,25 +172,25 @@ export default function MyWorks() {
     <div class="flex flex-col flex-1 overflow-hidden w-full">
       <div class="py-6 w-full">
         <div class="text-3xl text-center pb-4">
-          <span class="logo"> 您的创作记录以及收藏都在这里啦 </span>
+          <span class="logo"> {i18n.t('yourCreationsAndCollections')} </span>
         </div>
         <div class="flex items-center justify-center">
           <div class="nav flex rounded-xl cursor-pointer">
             <div class="nav-text inline-block text-sm py-2 px-6 text-center font-medium active">
-              创作记录
+              {i18n.t('creations')}
             </div>
             <div class="nav-hr h-auto w-px"></div>
             <div class="nav-text inline-block text-sm py-2 px-6 text-center font-medium" onClick={() => {
-              toast.success('此功能即将上线，敬请期待!')
+              toast.success(i18n.t('featureComingSoon'))
             }}>
-              收藏记录
+              {i18n.t('collectionRecords')}
             </div>
           </div>
         </div>
       </div>
       <div class="w-full mx-auto max-w-screen-xl h-12 header flex items-center justify-between px-10 pb-4">
         <div class="text text-xs">
-          全部作品
+          {i18n.t('allArtworks')}
         </div>
         <div >
           <div class="w-6 h-6 rounded bor flex items-center justify-center cursor-pointer">
@@ -215,10 +216,10 @@ export default function MyWorks() {
                                 <div class="flex items-center justify-between pt-4">
                                   <div class="btn h-9 w-24 rounded-full text-sm leading-9 text-center cursor-pointer" onClick={() => {
                                     // write the same pic
-                                    setStore('menuTitle', 'AI绘画')
+                                    setStore('menuTitle', i18n.t('aidraw'))
                                     setStore('currentAssistantMessage', item.prompt)
                                   }}>
-                                    画同款
+                                    {i18n.t('sameDesign')}
                                   </div>
                                   <div class="flex items-center">
                                     <div class="icon rounded-xl w-9 h-9 flex items-center justify-center mr-3 cursor-pointer" title="下载" onClick={(event) => {
@@ -248,7 +249,7 @@ export default function MyWorks() {
               <img alt="" class="img w-40" src="/images/draw-left-empty.png" />
               <img alt="" class="img1 w-40" src="/images/draw-left-empty1.png" />
               <div class="text1 text-xs pt-3">
-                还没有绘画记录哦
+                {i18n.t('noDrawingRecordsYet')}
               </div>
             </div>
             <div class="flex flex-1 h-full items-center flex-col justify-center" style="display: none;">

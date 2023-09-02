@@ -20,6 +20,8 @@ export default function ExchangeDialog(props: {
 
   const [isSubmitting, setIsSubmitting] = createSignal(false);
 
+  const [dayRights, setDayRights] = createSignal(false);
+
   async function sendExchangeCode() {
     setIsSubmitting(true)
     let sessionId = localStorage.getItem('sessionId')
@@ -49,7 +51,8 @@ export default function ExchangeDialog(props: {
     if (res.errorMessage) {
       toast.error(res.errorMessage)
     } else {
-      toast.success('兑换成功，恭喜获得 1个月 MJ 权益', {
+      setDayRights(res.oneDay)
+      toast.success(`兑换成功，恭喜获得 ${dayRights() ? '1天' : '1个月'} MJ 权益`, {
         duration: 3000
       })
       localStorage.setItem('midjourneyExpireDay', res.expiredDay.toString())
@@ -116,7 +119,7 @@ export default function ExchangeDialog(props: {
           </Show>
 
           <Show when={showSuccess()}>
-            <h2 class="text-2xl text-center mb-3 text-blue-500">恭喜你已获取1个月MJ权益!</h2>
+            <h2 class="text-2xl text-center mb-3 text-blue-500">恭喜你已获取{dayRights() ? '一天' : '一个月'} MJ权益!</h2>
             <div class="mt-4 flex justify-center">
               <button class="bg-blue-500 text-white px-4 py-2 rounded" onClick={props.successClick}>
                 我知道了

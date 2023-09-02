@@ -3,6 +3,7 @@ import dateformat from 'dateformat';
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
+import i18n from '~/utils/i18n';
 
 interface ChargeDialogProps {
   closeDialog: () => void,
@@ -87,10 +88,10 @@ const AccountInfoDialog = (props: ChargeDialogProps) => {
             class="w-7 h-4.5 mr-3"
           />
           <Show when={isGPT3Expired()}>
-            <span class="text-lg text-red-500">GPT3 已到期!请及时续费哦~</span>
+            <span class="text-lg text-red-500">GPT3 {i18n.t('expired')}!{i18n.t('expireRemind')}~</span>
           </Show>
           <Show when={!isGPT3Expired()}>
-            <span class="text-lg">GPT3.5 到期时间：</span>
+            <span class="text-lg">GPT3.5 {i18n.t('expireTime')}：</span>
             <Show when={endDate() != null}>
               <span class="text-lg font-bold text-indigo-600">{dateformat(endDate()!, 'yyyy-mm-dd HH:MM')}</span>
             </Show>
@@ -105,10 +106,10 @@ const AccountInfoDialog = (props: ChargeDialogProps) => {
               class="w-7 h-4.5 mr-3"
             />
             <Show when={isGPT4Expired()}>
-              <span class="text-lg text-red-500">GPT4 已到期!请及时续费哦~</span>
+              <span class="text-lg text-red-500">GPT4 {i18n.t('expired')}!{i18n.t('expireRemind')}~</span>
             </Show>
             <Show when={!isGPT3Expired()}>
-              <span class="text-lg">GPT4 到期时间：</span>
+              <span class="text-lg">GPT4 {i18n.t('expireTime')}：</span>
               <Show when={endDate() != null}>
                 <span class="text-lg font-bold text-indigo-600">{dateformat(gpt4EndDate()!, 'yyyy-mm-dd HH:MM')}</span>
               </Show>
@@ -125,10 +126,10 @@ const AccountInfoDialog = (props: ChargeDialogProps) => {
               class="w-7 h-4.5 mr-3"
             />
             <Show when={isMJExpired()}>
-              <span class="text-lg text-red-500">MJ 已到期!请及时续费哦~</span>
+              <span class="text-lg text-red-500">MJ {i18n.t('expired')}!{i18n.t('expireRemind')}~</span>
             </Show>
             <Show when={!isMJExpired()}>
-              <span class="text-lg w-35">MJ 到期时间：</span>
+              <span class="text-lg w-35">MJ {i18n.t('expireTime')}：</span>
               <Show when={endDate() != null}>
                 <span class="text-lg font-bold text-indigo-600">{dateformat(mjEndDate()!, 'yyyy-mm-dd HH:MM')}</span>
               </Show>

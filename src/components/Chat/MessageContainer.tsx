@@ -10,6 +10,7 @@ import { RootStore, defaultMessage } from "~/store"
 import { scrollToBottom } from "~/utils"
 import MessageItem from "./MessageItem"
 import { defaultInputBoxHeight } from "./InputBox"
+import i18n from "~/utils/i18n"
 
 export default function ({
   sendMessage,
@@ -87,12 +88,12 @@ export default function ({
             when={store.inputContentToken}
             fallback={
               <span class="mx-1 text-slate/50">
-                {`剩余次数 : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? '，' + store.gpt4ExpireDate + '到期' : ''}`}
+                {`${i18n.t('leftCnt')} : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? '，' + store.gpt4ExpireDate + ' ' + i18n.t('expireText') : ''}`}
               </span>
             }
           >
             <span class="mx-1 text-slate/50">
-              {`剩余次数 : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? '，' + store.gpt4ExpireDate + '到期' : ''}`}
+              {`${i18n.t('leftCnt')} : ${store.leftGPT4Cnt} ${store.leftGPT4Cnt > 0 ? '，' + store.gpt4ExpireDate + ' ' + i18n.t('expireText') : ''}`}
             </span>
           </Show>
           <hr class="flex-1  border-slate/30" />

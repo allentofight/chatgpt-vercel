@@ -1,6 +1,7 @@
 import '../../styles/chat-nav.css';
 import { createSignal } from 'solid-js';
 import { RootStore, loadSession } from "~/store"
+import i18n from '~/utils/i18n';
 const { store, setStore } = RootStore
 
 
@@ -38,7 +39,7 @@ export default function (props: {
                     }}
                 >
                     <img src={`/svg/web-search-${store.useWebSearch ? 'selected' : 'empty'}.svg`} style="width:16px;height:16px;" />
-                    <label class={`label ml-3 ${isHovered() ? 'visible' : 'hidden'}`}>联网查询</label>
+                    <label class={`label ml-3 ${isHovered() ? 'visible' : 'hidden'}`}>{i18n.t('onlineQuery')}</label>
                 </div>
             </div>
         </>

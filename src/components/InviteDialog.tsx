@@ -1,4 +1,5 @@
 import { createEffect, createSignal } from 'solid-js';
+import i18n from '~/utils/i18n';
 const apiHost = import.meta.env.CLIENT_API_HOST;
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { useAuth } from "~/utils/useAuth"
@@ -72,7 +73,7 @@ const InviteDialog = (props: {
               class="font-bold py-2 px-4 rounded-md w-full bg-indigo-500 text-white"
               onClick={handleInvite}
             >
-              立即邀请
+              {i18n.t('inviteImmediately')}
             </button>
           )}
           {inviteSuccess() && (

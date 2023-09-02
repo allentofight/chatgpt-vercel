@@ -17,7 +17,7 @@ export default function PaymentSuccess() {
         const orderId = getOrderIdFromUrl();
         console.log("Order ID:", orderId);
         // Uncomment the following line to confirm the payment with the API
-        // await paypalConfirm(orderId!);
+        await paypalConfirm(orderId!);
         setPaySuccess(true);
     };
 

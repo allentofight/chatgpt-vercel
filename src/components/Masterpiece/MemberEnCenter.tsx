@@ -6,11 +6,11 @@ import Swiper, { EffectCoverflow } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow'
 
-import VipItem from './VipItem';
+import VipEnItem from './VipEnItem';
 import i18n from '~/utils/i18n';
 
 
-export default function MemberCenter() {
+export default function MemberEnCenter() {
 
   onMount(() => {
     Swiper.use([EffectCoverflow]);
@@ -79,26 +79,26 @@ export default function MemberCenter() {
       <div class="mt-6">
         <div class="vip vip-width flex pc">
           <div class="px-4 py-4 flex-1 flex-shrink">
-            <VipItem type={2} />
+            <VipEnItem type={2} />
           </div>
           <div class="px-4 py-4 flex-1 flex-shrink">
-            <VipItem type={3} />
+            <VipEnItem type={3} />
           </div>
           <div class="px-4 py-4 flex-1 flex-shrink">
-            <VipItem type={1} />
+            <VipEnItem type={1} />
           </div>
         </div>
         <div class="vip vip-width flex mobile">
           <div class="swiper swiper-coverflow swiper-3d swiper-initialized swiper-horizontal swiper-watch-progress swiper">
             <div class="swiper-wrapper" style="cursor: grab; transition-duration: 0ms;">
               <div class="swiper-slide slide">
-                <VipItem type={2} />
+                <VipEnItem type={2} />
               </div>
               <div class="swiper-slide slide">
-                <VipItem type={3} />
+                <VipEnItem type={3} />
               </div>
               <div class="swiper-slide slide">
-                <VipItem type={1} />
+                <VipEnItem type={1} />
               </div>
             </div>
           </div>

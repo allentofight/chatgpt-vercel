@@ -55,8 +55,7 @@ if (_) {
 
 export const defaultMessage: ChatMessage = {
   role: "assistant",
-  content:
-    import.meta.env.CLIENT_DEFAULT_MESSAGE || defaultEnv.CLIENT_DEFAULT_MESSAGE,
+  content: i18n.t('defaultHint'),
   type: "default"
 }
 
@@ -74,7 +73,8 @@ function Store() {
     gpt4ExpireDate: '',
     messageList: [] as ChatMessage[],
     currentAssistantMessage: "",
-    menuTitle: 'AI聊天',//i18n.t('aitalk'),
+    menuTitle: i18n.t('aitalk'),
+    inChina: true,
     showUserPopover: false,
     showChatList: false,
     curPrompt: "",

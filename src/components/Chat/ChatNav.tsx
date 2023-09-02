@@ -3,6 +3,7 @@ import '../../styles/chat-nav.css';
 import { RootStore } from "~/store"
 import OptionSelector from "./OptionSelector"
 const { store, setStore } = RootStore
+import i18n from "~/utils/i18n";
 
 export default function (props: {
   clickSearch: () => void,
@@ -18,21 +19,21 @@ export default function (props: {
             setStore("chatType", 1)
             setStore('showMindMap', false)
           }}>
-            聊天
+            {i18n.t('chat')}
           </div>
           <div class={`chat-nav-left-item ${store.chatType == 2 ? 'active' : ''}`} onClick={() => {
             props.clickPromptCategory()
             setStore("chatType", 2)
             setStore('showMindMap', false)
           }}>
-            提示
+            {i18n.t('prompt')}
           </div>
           <div class="chat-nav-left-item" onClick={(event) => {
             setStore("showChatList", !store.showChatList)
             setStore('showMindMap', false)
             event.stopPropagation()
           }}>
-            记录
+            {i18n.t('history')}
           </div>
         </div>
         <div class="flex items-center">

@@ -17,6 +17,7 @@ import {
 } from "~/utils"
 import { Selector, Switch as SwitchButton } from "../Common"
 import { useNavigate } from "solid-start"
+import i18n from "~/utils/i18n"
 
 export const [actionState, setActionState] = createStore({
   showSetting: "none" as "none" | "global" | "session",
@@ -114,7 +115,7 @@ export default function SettingAction() {
                 />
               </SettingItem>
             </Show>
-            <SettingItem icon="i-carbon:data-enrichment" label="思维发散程度">
+            <SettingItem icon="i-carbon:data-enrichment" label={`${i18n.t('temperature')}`}>
               <div class="flex items-center justify-between w-150px">
                 <input
                   type="range"
@@ -135,21 +136,6 @@ export default function SettingAction() {
                 </span>
               </div>
             </SettingItem>
-            <SettingItem
-              icon="i-carbon:3d-curve-auto-colon"
-              label="开启连续对话"
-            >
-              <SwitchButton
-                checked={store.sessionSettings.continuousDialogue}
-                onChange={e => {
-                  setStore(
-                    "sessionSettings",
-                    "continuousDialogue",
-                    (e.target as HTMLInputElement).checked
-                  )
-                }}
-              />
-            </SettingItem>
           </div>
           <hr class="my-1 bg-slate-5 bg-op-15 border-none h-1px"></hr>
         </Match>
@@ -163,7 +149,7 @@ export default function SettingAction() {
               )
             }}
             icon="i-carbon:settings-services"
-            label="对话设置"
+            label={`${i18n.t('conversationSettings')}`}
           />
 
           <WebSearch />
@@ -179,10 +165,10 @@ export default function SettingAction() {
                   setTimeout(() => setActionState("genImg", "normal"), 1000)
                 }}
                 icon={imgIcons[actionState.genImg]}
-                label="导出图片"
+                label={`${i18n.t('exportImage')}`}
               />
               <ActionItem
-                label="导出MD"
+                label={`${i18n.t('exportMD')}`}
                 onClick={async () => {
                   await exportMD(store.messageList)
                   setActionState("success", "markdown")

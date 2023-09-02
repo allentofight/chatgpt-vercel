@@ -15,15 +15,17 @@ import ChatNav from './ChatNav'
 import { useAuth } from "~/utils/useAuth"
 import PromptSelection from './PromptSelection'
 import PromptCategory from './PromptCategory'
+import PromptCategoryEn from './PromptCategoryEn'
 import { setSharedStore, sharedStore } from '../MessagesStore'
 import toast, { Toaster } from 'solid-toast';
 import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { fetchUserInfo, incrGPT4Cnt } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
-import Login from "~/components/Login"
 import MarkmapView from "../MarkmapView"
 import InviteActivity from "../InviteActivity"
+import { detectIp } from "~/utils/api"
+import i18n from '~/utils/i18n'
 
 let modelMap = {
   [ModelEnum.GPT_3]: "gpt-3.5-turbo-16k" as Model,
@@ -47,13 +49,20 @@ export default function () {
   const [showPromptCategory, setShowPromptCategory] = createSignal(false)
   const [loginGuideTitle, setLoginGuideTitle] = createSignal("请登录以解锁更多功能")
   const [currentChat, setCurrentChat] = createSignal({ id: '0', title: '', body: '', model: ModelEnum.GPT_3 })
-  const [showBindTelDialog, setShowBindTelDialog] = createSignal(false)
 
   const [searchParams] = useSearchParams()
   const q = searchParams[SearchParamKey]
   const { store, setStore } = RootStore
-  onMount(() => {
+  onMount(async () => {
     fetchUserInfoAsync()
+    let inChina = localStorage.getItem('isInChina')
+    if (!inChina) {
+      let res = await detectIp()
+      localStorage.setItem('isInChina', res.isChina ? '1' : '2')
+      setStore('inChina', res.isChina)
+    } else {
+      setStore('inChina', inChina === '1')
+    }
 
     if (window.location.href.includes('codesea')) {
       setShowNotifyDialog(true)
@@ -165,11 +174,6 @@ export default function () {
   async function fetchUserInfoAsync() {
     try {
       await fetchUserInfo();
-
-      const { isLogin } = useAuth()
-      if (isLogin() && !localStorage.getItem('isTelBinded')) {
-        setShowBindTelDialog(true)
-      }
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -207,33 +211,6 @@ export default function () {
     uploadChatList()
   }
 
-  function prepareForUpload(chatMessages: ChatMessage[]): Partial<ChatMessage>[] {
-    // Find the most recent message with a conversationId, from the end
-    let lastConversationIdIndex = -1;
-    for (let i = chatMessages.length - 1; i >= 0; i--) {
-      if (chatMessages[i].hasOwnProperty('conversationId')) {
-        lastConversationIdIndex = i;
-        break;
-      }
-    }
-
-    // Map the messages to a new format
-    return chatMessages.map((msg, index) => {
-      const newMsg: Partial<ChatMessage> = {
-        role: msg.role,
-        content: msg.content,
-      };
-      // If this message is the one with the most recent conversationId, keep that property
-      if (index === lastConversationIdIndex) {
-        newMsg.conversationId = msg.conversationId;
-        newMsg.conversationSignature = msg.conversationSignature;
-        newMsg.clientId = msg.clientId;
-        newMsg.invocationId = msg.invocationId
-      }
-      return newMsg;
-    });
-  }
-
   function uploadChatList() {
 
     if (!isLocalStorageAvailable()) {
@@ -247,10 +224,6 @@ export default function () {
     let result = store.messageList.filter(
       k => k.role !== "error"
     )
-
-    if (currentChat().model === ModelEnum.GPT_New_Bing) {
-      result = prepareForUpload(result) as ChatMessage[];
-    }
 
     let isCreatingChat = currentChat().id.length < 3
     let postChat = {
@@ -302,7 +275,7 @@ export default function () {
     }
 
     if (isLogin() && isExpired() && currentChat().model === ModelEnum.GPT_3) {
-      toast.error('GPT3.5 会员已过期，请先到「会员中心」续费哦');
+      toast.error(i18n.t('gptExpireHint'));
       return
     }
 
@@ -523,28 +496,29 @@ export default function () {
             title="付费用户才能使用GPT4哦"
             onClose={closeVipDialog} />
         </Show>
-        <Show when={showBindTelDialog()}>
-          <Login title="请绑定手机号"
-            buttonTitle="绑定"
-            showBindSuccess={true}
-            successCallback={() => {
-              setShowBindTelDialog(false)
-            }}
-          />
-        </Show>
         <Show when={showNotifyDialog()}>
           <NotifyDialog />
         </Show>
         <Toaster position="top-center" />
-        <InviteActivity />
+        <Show when={store.inChina}>
+          <InviteActivity />
+        </Show>
+
       </main>
       <Show when={store.showMindMap}>
         <MarkmapView />
       </Show>
       <Show when={showPromptCategory()}>
-        <PromptCategory clickPrompt={() => {
-          setShowPromptCategory(false)
-        }} />
+        <Show when={store.inChina}>
+          <PromptCategory clickPrompt={() => {
+            setShowPromptCategory(false)
+          }} />
+        </Show>
+        <Show when={!store.inChina}>
+          <PromptCategoryEn clickPrompt={() => {
+            setShowPromptCategory(false)
+          }} />
+        </Show>
       </Show >
       <Show when={showPromptList()}>
         <PromptSelection bgClick={() => {

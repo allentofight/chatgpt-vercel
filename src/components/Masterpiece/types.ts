@@ -1,5 +1,6 @@
 // types.ts
 
+import i18n from "~/utils/i18n";
 export interface PicOption {
   ratio: string;
   desc: string;
@@ -10,33 +11,33 @@ export interface PicOption {
 export const picOptions: PicOption[] = [
   {
     ratio: '1:1',
-    desc: '头像图',
+    desc: i18n.t('avatarImage'),
     img: '/svg/1-1.svg',
   },
   {
     ratio: '1:2',
-    desc: '手机壁纸',
+    desc: i18n.t('phoneWallpaper'),
     img: '/svg/1-2.svg',
   },
   {
     ratio: '3:4',
-    desc: '文案图',
+    desc: i18n.t('copywritingImage'),
     img: '/svg/3-4.svg',
   },
   {
     ratio: '4:3',
-    desc: '社交媒体',
+    desc: i18n.t('socialMedia'),
     img: '/svg/4-3.svg',
   },
   {
     ratio: '9:16',
-    desc: '宣传海报',
+    desc: i18n.t('promotionalPoster'),
     img: '/svg/9-16.svg',
   },
   {
-    ratio: '自定义',
-    desc: '自定义',
-    img: '自定义',
+    ratio: i18n.t('custom'),
+    desc: i18n.t('custom'),
+    img: i18n.t('custom'),
   },
 ];
 
@@ -44,10 +45,10 @@ export const picOptions: PicOption[] = [
 // 关键词推荐
 export const keyWords = [
   {
-    title: '质量',
+    title: i18n.t('quality'),
     types: [
       {
-        title: '标准',
+        title: i18n.t('standard'),
         selections: [
           {
             en: 'UHD',
@@ -88,7 +89,7 @@ export const keyWords = [
         ]
       },
       {
-        title: '画质',
+        title: i18n.t('pictureQuality'),
         selections: [
           { en: '1080P' },
           { en: 'retina', ch: '视网膜屏' },
@@ -101,9 +102,9 @@ export const keyWords = [
     ]
   },
   {
-    title: '绘画',
+    title: i18n.t('drawing'),
     types: [{
-      title: '风格',
+      title: i18n.t('style'),
       selections: [
         {
           en: 'Surrealism',
@@ -349,9 +350,9 @@ export const keyWords = [
     }]
   },
   {
-    title: '画面',
+    title: i18n.t('picture'),
     types: [{
-      title: '效果',
+      title: i18n.t('effect'),
       selections: [
         {
           en: "Chiaroscuro",
@@ -482,9 +483,9 @@ export const keyWords = [
     }]
   },
   {
-    title: '容貌',
+    title: i18n.t('appearance'),
     types: [{
-      title: '眼睛',
+      title: i18n.t('eyes'),
       selections: [
         {
           en: "mole under eye",
@@ -512,7 +513,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '头发',
+      title: i18n.t('hair'),
       selections: [
         { en: "streaked hair", ch: "条染" },
         { en: "multicolored hair", ch: "多彩头发" },
@@ -791,9 +792,9 @@ export const keyWords = [
     }]
   },
   {
-    title: '构图',
+    title: i18n.t('composition'),
     types: [{
-      title: '形式',
+      title: i18n.t('form'),
       selections: [
         {
           en: "afterimage",
@@ -958,7 +959,7 @@ export const keyWords = [
       ]
 
     }, {
-      title: '镜头',
+      title: i18n.t('lens'),
       selections: [
         {
           en: "lens flare",
@@ -1070,7 +1071,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '视角',
+      title: i18n.t('perspective'),
       selections: [
         {
           en: "first-person view",
@@ -1173,15 +1174,15 @@ export const keyWords = [
     }]
   },
   {
-    title: '命令',
+    title: i18n.t('command'),
     types: [{
-      title: '摄影测试模型',
+      title: i18n.t('photographyTestModel'),
       selections: [{
         en: '--testp',
         ch: '摄影测试模型'
       }]
     }, {
-      title: '风格化',
+      title: i18n.t('stylization'),
       selections: [
         {
           en: "--stylize 0",
@@ -1197,7 +1198,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '版本',
+      title: i18n.t('version'),
       selections: [
         {
           en: "--version 4",
@@ -1213,7 +1214,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '停止',
+      title: i18n.t('stop'),
       selections: [
         {
           en: "--stop",
@@ -1221,7 +1222,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '动漫模型',
+      title: i18n.t('animeModel'),
       selections: [
         {
           en: "--niji",
@@ -1229,7 +1230,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '多样性',
+      title: i18n.t('diversity'),
       selections: [
         {
           en: "--chaos 0",
@@ -1246,7 +1247,7 @@ export const keyWords = [
       ]
 
     }, {
-      title: '负面',
+      title: i18n.t('negative'),
       selections: [
         {
           en: "--no xxx",
@@ -1254,7 +1255,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '重复',
+      title: i18n.t('repetition'),
       selections: [
         {
           en: "--repeat 1",
@@ -1267,7 +1268,7 @@ export const keyWords = [
       ]
 
     }, {
-      title: '质量',
+      title: i18n.t('quality'),
       selections: [
         {
           en: "--quality .25",
@@ -1283,7 +1284,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '高清模式',
+      title: i18n.t('highDefinitionMode'),
       selections: [
         {
           en: "--hd",
@@ -1291,7 +1292,7 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '风格',
+      title: i18n.t('style'),
       selections: [
         {
           en: "Surrealism",
@@ -1531,19 +1532,19 @@ export const keyWords = [
         }
       ]
     }, {
-      title: '图像权重',
+      title: i18n.t('imageWeight'),
       selections: [{
         en: "--iw",
         ch: "图像权重"
       }]
     }, {
-      title: '测试模型',
+      title: i18n.t('testModel'),
       selections: [{
         en: "--test",
         ch: "测试模型"
       }]
     }, {
-      title: '轻量放大器',
+      title: i18n.t('lightweightAmplifier'),
       selections: [{
         en: "--uplight",
         ch: "轻量放大器"

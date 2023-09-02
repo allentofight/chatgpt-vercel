@@ -1,7 +1,6 @@
 import { Show, onMount, For, createSignal, batch, createEffect } from "solid-js"
 import { makeEventListener } from "@solid-primitives/event-listener"
-import axios, { AxiosResponse } from 'axios';
-
+import i18n from '~/utils/i18n';
 import '../../styles/prompt-dialog.css';
 import toast, { Toaster } from 'solid-toast';
 import { Spinner, SpinnerType } from 'solid-spinner';
@@ -224,7 +223,7 @@ export default function (props: {
         }
 
         if (!title().length || !selectedColor().length) {
-            toast.error('标题和颜色必选')
+            toast.error(i18n.t('colorTitleMust'))
             return
         }
 
@@ -258,28 +257,28 @@ export default function (props: {
             <div class="mask-info">
                 <div class="mask-content">
                     <div class="mask-title">
-                        创建新提示
+                        {i18n.t('createNewTip')}
                     </div>
                     <div class="mask-subtitle">
-                        这里输入您要创建的角色，如中国律师，爆款短视频创作者
+                        {i18n.t('enterRoleCreation')}
                     </div>
                     <div class="mask-putcell">
                         <div class="mask-putcell-label">
-                            角色：
+                            {i18n.t('role')}：
                         </div>
                         <div class="mask-putcell-input">
                             <div class="el-input el-input--suffix input">
                                 <div class="el-input__wrapper">
                                     <input class="el-input__inner" value={title()}
                                         onInput={(event) => setTitle(event.target.value)}
-                                        placeholder-class="placeholder" type="text" autocomplete="off" tabindex="0" placeholder="请输入您要创建的角色" id="el-id-4506-11" />
+                                        placeholder-class="placeholder" type="text" autocomplete="off" tabindex="0" placeholder={`${i18n.t('enterRoleYouWant')}`} id="el-id-4506-11" />
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="mask-putcell hidden md:block">
                         <div class="mask-putcell-label">
-                            图标：
+                            {i18n.t('icon')}：
                         </div>
                         <div class="relative inline-block z-99"
                             onMouseEnter={() => setIsHovered(true)}
@@ -313,7 +312,7 @@ export default function (props: {
                     <div class="mask-putcell">
                         <div class="flex justify-between">
                             <div class="mask-putcell-label">
-                                自定义提示：
+                                {i18n.t('customHint')}：
                             </div>
                             <div class="flex items-center" style="padding-top: 14px;">
                                 <Show when={isGeneratingPrompt()}>
@@ -323,7 +322,7 @@ export default function (props: {
                                     <div class="mask-putcell-label mask-putcell-btn" onClick={() => {
                                         generatePrompt()
                                     }}>
-                                        点击生成
+                                        {i18n.t('clickToGenerate')}
                                     </div>
                                 </Show>
 
@@ -335,7 +334,7 @@ export default function (props: {
                                 <textarea class="el-textarea__inner"
                                     ref={el => inputRef = el}
                                     onInput={handleInput}
-                                    maxlength="500" placeholder-class="placeholder" rows="3" tabindex="0" autocomplete="off" placeholder="请输入您的提示" id="el-id-4506-13" style="resize: none; min-height: 41px;"></textarea>
+                                    maxlength="500" placeholder-class="placeholder" rows="3" tabindex="0" autocomplete="off" placeholder={`${i18n.t('enterYourHint')}`} id="el-id-4506-13" style="resize: none; min-height: 41px;"></textarea>
                             </div>
                             <div class="textarea-span">
                                 {textWordCnt()}/500
@@ -344,14 +343,14 @@ export default function (props: {
                     </div>
                     <div class="mask-putcell">
                         <div class="mask-putcell-label">
-                            颜色：
+                            {i18n.t('color')}：
                         </div>
                         <div class="mask-putcell-input">
                             <div class="el-select input">
                                 <div class="select-trigger el-tooltip__trigger el-tooltip__trigger">
                                     <div class="el-input el-input--suffix">
                                         <div class="el-input__wrapper" onClick={() => setDropdownVisible(!isDropdownVisible())}>
-                                            <input class="el-input__inner" value={selectedColor()} type="text" autocomplete="off" tabindex="0" placeholder="请选择您喜欢的颜色" id="el-id-4506-14" readOnly />
+                                            <input class="el-input__inner" value={selectedColor()} type="text" autocomplete="off" tabindex="0" placeholder={`${i18n.t('chooseYourColor')}`} id="el-id-4506-14" readOnly />
                                             <span class="el-input__suffix"><span class="el-input__suffix-inner"><i class="el-icon el-select__caret el-select__icon">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
                                                     <path fill="currentColor" d="M831.872 340.864 512 652.672 192.128 340.864a30.592 30.592 0 0 0-42.752 0 29.12 29.12 0 0 0 0 41.6L489.664 714.24a32 32 0 0 0 44.672 0l340.288-331.712a29.12 29.12 0 0 0 0-41.728 30.592 30.592 0 0 0-42.752 0z"></path>
@@ -380,10 +379,10 @@ export default function (props: {
                     </div>
                     <div class="mask-buttons">
                         <div class="cancel bottom-button" onClick={props.cancelClick}>
-                            取消
+                            {i18n.t('cancel')}
                         </div>
                         <div class="confirm bottom-button" onClick={confirmClick}>
-                            完成
+                            {i18n.t('done')}
                         </div>
                     </div>
                 </div>

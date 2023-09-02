@@ -3,7 +3,7 @@ import { onMount, createSignal, For, Show, Setter, Accessor, onCleanup, createEf
 import { RootStore, loadSession } from "~/store"
 import { isMobile } from "~/utils"
 import CourseDialog from "./CourseDialog"
-
+import i18n from "~/utils/i18n";
 import { createPopper } from '@popperjs/core';
 
 export default function PageNav(props: {
@@ -19,7 +19,7 @@ export default function PageNav(props: {
 
   const { store, setStore } = RootStore
 
-  let optionTitles = isMobile() ? ['AI聊天', 'AI绘画', 'AI广场', '收藏管理', '会员中心'] : ['AI聊天', 'AI绘画', 'AI广场', '会员中心']
+  let optionTitles = isMobile() ? [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('collectionManage'), i18n.t('memberCenter')] : [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('memberCenter')]
 
   function clickOption(index: number) {
     setSelectedIndex(index)
@@ -81,7 +81,7 @@ export default function PageNav(props: {
           <span ></span>
         </div>
         <div class="pc ml-4 w-36 flex items-center cursor-pointer">
-          <img alt="" class="w-full" src="/images/logo.png" />
+          <img alt="" class="w-full" src={`/images/${i18n.t('logopng')}`} />
         </div>
         <div class="pc flex items-center relative h-10">
           <Show when={!isMobile() && selectedIndex() > -1}>
@@ -103,10 +103,10 @@ export default function PageNav(props: {
       </div>
       <div class="flex items-center">
         <div class="pc collect flex items-center justify-center text-sm px-3 mr-4 rounded-xl cursor-pointer" onClick={() => {
-          setStore('menuTitle', '收藏管理')
+          setStore('menuTitle', i18n.t('collectionManage'))
         }}>
           <i class="iconfont  icon-guanjiancixinxi-shoucang text-sm mr-1"></i>
-          <span >收藏管理</span>
+          <span >{i18n.t('collectionManage')}</span>
         </div>
         <div class="w-8 mr-6 cursor-pointer" style="display:none">
           <i class="iconfont  icon-rijian1 icon mr-1"></i>
@@ -150,15 +150,15 @@ export default function PageNav(props: {
                       const tooltip = document.querySelector('#tooltip')!;
                       tooltip.classList.add("hidden")
                       setStore('showUserPopover', false)
-                      setStore('menuTitle', '个人中心')
+                      setStore('menuTitle', i18n.t('profile'))
                     }}>
-                      个人中心</li>
+                      {i18n.t('profile')}</li>
                     <li role="separator" class="el-dropdown-menu__item--divided"></li>
                     <li data-el-collection-item="" aria-disabled="false" class="el-dropdown-menu__item" tabindex="-1" role="menuitem" onClick={() => {
                       localStorage.clear();
                       window.location.href = '/login'
                     }}>
-                      退出登录 </li>
+                      {i18n.t('logout')} </li>
                   </ul>
                 </div>
               </div>

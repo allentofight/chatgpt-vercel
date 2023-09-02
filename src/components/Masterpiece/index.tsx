@@ -3,13 +3,15 @@ import PageNav from './PageNav';
 import Draw from './Draw'
 import MyWorks from './MyWorks'
 import MemberCenter from './MemberCenter'
+import MemberEnCenter from './MemberEnCenter'
 import AccountInfo from "./AccountInfo"
 import Layout from "~/layout"
 import MjTemplate from './MjTemplate'
 import Chat from "~/components/Chat"
-import { createSignal, Show, createEffect } from 'solid-js'
+import { createSignal, Show, createEffect, onMount } from 'solid-js'
 import Aside from "~/components/Aside";
 import { RootStore, loadSession } from "~/store"
+import i18n from '~/utils/i18n';
 
 export default function MasterPiece() {
 
@@ -19,7 +21,7 @@ export default function MasterPiece() {
   const [chatListVisible, setChatListVisible] = createSignal(false);
 
   createEffect(() => {
-    if (store.menuTitle === 'AI绘画') {
+    if (store.menuTitle === i18n.t('aidraw')) {
       setStore('hasAiDrawClicked', true)
     }
   })
@@ -48,19 +50,24 @@ export default function MasterPiece() {
         </Layout>
         <Show when={store.hasAiDrawClicked}>
           <Draw showMoreClick={() => {
-            setStore('menuTitle', '收藏管理')
+            setStore('menuTitle', i18n.t('collectionManage'))
           }} />
         </Show>
-        <Show when={store.menuTitle === 'AI广场'}>
+        <Show when={store.menuTitle === i18n.t('aisquare')}>
           <MjTemplate />
         </Show>
-        <Show when={store.menuTitle === '会员中心'}>
-          <MemberCenter />
+        <Show when={store.menuTitle === i18n.t('memberCenter')}>
+          <Show when={store.inChina}>
+            <MemberCenter />
+          </Show>
+          <Show when={!store.inChina}>
+            <MemberEnCenter />
+          </Show>
         </Show>
-        <Show when={store.menuTitle === '收藏管理'}>
+        <Show when={store.menuTitle === i18n.t('collectionManage')}>
           <MyWorks />
         </Show>
-        <Show when={store.menuTitle === '个人中心'}>
+        <Show when={store.menuTitle === i18n.t('profile')}>
           <AccountInfo />
         </Show>
       </div>

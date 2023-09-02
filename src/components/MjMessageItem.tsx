@@ -8,10 +8,13 @@ import type { MjRole } from "~/types"
 import ImageWithSpinner from "./ImageWithSpinner"
 import MjMessageAction from "./MjMessageAction"
 import { isMobile } from "~/utils"
+import { RootStore, loadSession } from "~/store"
+const { store, setStore } = RootStore
 
 import {
   getRequestImageSize
 } from "~/utils"
+import i18n from "~/utils/i18n"
 
 interface Props {
   message: MjChatMessage
@@ -70,7 +73,7 @@ export default (props: Props) => {
           setProcess('加载中')
           window.clearInterval(intervalId);
 
-          let imgRes = getRequestImageSize(res.imageUrl, res.imageSize)
+          let imgRes = getRequestImageSize(res.imageUrl, res.imageSize, store.inChina)
           setImageUrl(imgRes.previewUrl)
           setOriginImageUrl(imgRes.originUrl)
 
@@ -289,7 +292,7 @@ export default (props: Props) => {
             <div
               class="message prose prose-slate dark:prose-invert dark:text-slate break-words overflow-hidden"
               innerHTML={md
-                .render(props.message.content + `<br/><span class="text-xl text-red-500">报错：${errorMessage()}，请重试</span>`)
+                .render(props.message.content + `<br/><span class="text-xl text-red-500">报错：${errorMessage()}，${i18n.t('retryHint')}</span>`)
               }
             />
           </Match>

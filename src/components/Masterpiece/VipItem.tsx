@@ -1,10 +1,10 @@
-import { createSignal, Show } from 'solid-js';
+import { createSignal, onMount, Show } from 'solid-js';
+import i18n from '~/utils/i18n';
 
 enum VipType {
   MONTH = 1,
   SEASON = 2,
   YEAR = 3,
-
 }
 
 
@@ -14,7 +14,7 @@ export default function VipItem(props: {
 
   let vipInfo = {
     [VipType.MONTH]: {
-      title: '月度会员',
+      title: i18n.t('monthlyMembership'),
       prices: {
         GPT3: 39.9,
         GPT4: 49.9,
@@ -24,16 +24,16 @@ export default function VipItem(props: {
         mergeGPT4MJ: 74,
         mergeALL: 97
       },
-      gpt4Desc: '每月300次',
+      gpt4Desc: i18n.t('monthGPT4TotalCnt'),
       imgbg: '/svg/vip-ordinary-bg.svg',
       btnClass: 'button-ordinary',
       divFontColorClass: 'ordinary',
       logoClass: 'ordinary_logo',
       logoImg: '/images/vip-ordinary.png',
-      unit: '月'
+      unit: i18n.t('monthUnit')
     },
     [VipType.YEAR]: {
-      title: '年度会员',
+      title: i18n.t('annualMembership'),
       prices: {
         GPT3: 399,
         GPT4: 499,
@@ -43,16 +43,16 @@ export default function VipItem(props: {
         mergeGPT4MJ: 748,
         mergeALL: 950
       },
-      gpt4Desc: '每年3600次',
+      gpt4Desc: i18n.t('yearGPT4TotalCnt'),
       imgbg: '/svg/vip-annual-bg.svg',
       btnClass: 'button-annual',
       divFontColorClass: 'annual',
       logoClass: 'annual_logo',
       logoImg: '/images/vip-annual.png',
-      unit: '年'
+      unit: i18n.t('yearUnit')
     },
     [VipType.SEASON]: {
-      title: '季度会员',
+      title: i18n.t('quarterlyMembership'),
       prices: {
         GPT3: 106,
         GPT4: 135,
@@ -62,13 +62,13 @@ export default function VipItem(props: {
         mergeGPT4MJ: 200,
         mergeALL: 260
       },
-      gpt4Desc: '每季度900次',
+      gpt4Desc: i18n.t('seasonGPT4TotalCnt'),
       imgbg: '/svg/vip-monthly-bg.svg',
       btnClass: 'button-monthly',
       divFontColorClass: 'monthly',
       logoClass: 'monthly_logo',
       logoImg: '/images/vip-monthly.png',
-      unit: '季度',
+      unit: i18n.t('quarterUnit'),
     }
   }
 
@@ -127,7 +127,7 @@ export default function VipItem(props: {
             {vipInfo[props.type].title}
           </div>
           <div class="text0 text-sm pt-2">
-            享受无限次问答权益和无限张绘画
+            {i18n.t('enjoyUnlimitedQA')}
           </div>
         </div>
       </div>
@@ -138,37 +138,37 @@ export default function VipItem(props: {
           </div></span>
         <span class="pb-1"> &nbsp;/{vipInfo[props.type].unit}</span>
         <Show when={calculatePrice().itemsCnt > 1}>
-          <span class="text-sm text-red-500 ml-2 font-bold">已省 ¥{calculatePrice().saved.toFixed(1)}</span>
+          <span class="text-sm text-red-500 ml-2 font-bold">{i18n.t('saved')} ¥{calculatePrice().saved.toFixed(1)}</span>
         </Show>
       </div>
       <div class="mt-2 ml-6 mb-3 text-white">
-        <label class="inline-flex items-center w-full"><input type="checkbox" class="form-checkbox w-4 h-4" checked={checkedServices().GPT3} onChange={() => handleCheckboxChange('GPT3')} /><span class="ml-2">AI聊天&nbsp;&nbsp;&nbsp;&yen;
+        <label class="inline-flex items-center w-full"><input type="checkbox" class="form-checkbox w-4 h-4" checked={checkedServices().GPT3} onChange={() => handleCheckboxChange('GPT3')} /><span class="ml-2">{i18n.t('aitalk')}&nbsp;&nbsp;&nbsp;&yen;
           {vipInfo[props.type].prices.GPT3}
         </span></label>
         <label class="inline-flex items-center w-full"><input type="checkbox" class="form-checkbox w-4 h-4" checked={checkedServices().GPT4} onChange={() => handleCheckboxChange('GPT4')} /><span class="ml-2">GPT4&nbsp;&nbsp;&nbsp;&yen;
           {vipInfo[props.type].prices.GPT4}
         </span></label>
-        <label class="inline-flex items-center w-full"><input type="checkbox" class="form-checkbox w-4 h-4" checked={checkedServices().Midjourney} onChange={() => handleCheckboxChange('Midjourney')} /><span class="ml-2">AI绘画&nbsp;&nbsp;&nbsp;&yen;
+        <label class="inline-flex items-center w-full"><input type="checkbox" class="form-checkbox w-4 h-4" checked={checkedServices().Midjourney} onChange={() => handleCheckboxChange('Midjourney')} /><span class="ml-2">{i18n.t('aidraw')}&nbsp;&nbsp;&nbsp;&yen;
           {vipInfo[props.type].prices.Midjourney}
         </span></label>
       </div>
       <div class={`${vipInfo[props.type].btnClass}`} onClick={() => {
         handleBuy()
       }}>
-        立即开通
+        {i18n.t('subscribeNow')}
       </div>
       <div class="py-2">
         <div class="flex cell justify-between">
           <div class="text">
-            超级问答
+            {i18n.t('superQA')}
           </div>
           <div class="text flex-1 text-right">
-            无限次
+            {i18n.t('unLimitedTimes')}
           </div>
         </div>
         <div class="flex cell justify-between">
           <div class="text">
-            GPT4问答
+            GPT4
           </div>
           <div class="text flex-1 text-right">
             {vipInfo[props.type].gpt4Desc}
@@ -176,10 +176,10 @@ export default function VipItem(props: {
         </div>
         <div class="flex cell justify-between">
           <div class="text">
-            创意绘画模式
+            {i18n.t('creativeDrawing')}
           </div>
           <div class="text flex-1 text-right">
-            无限/月
+            {i18n.t('unLimitedTimes')}/{i18n.t('monthUnit')}
           </div>
         </div>
         <div class="flex cell justify-between">
@@ -188,14 +188,6 @@ export default function VipItem(props: {
           </div>
           <div class="text flex-1 text-right">
             10%
-          </div>
-        </div>
-        <div class="flex cell justify-between">
-          <div class="text">
-            人工智能2.0必修课
-          </div>
-          <div class="text flex-1 text-right">
-            9折
           </div>
         </div>
       </div>

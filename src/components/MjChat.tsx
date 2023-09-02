@@ -12,6 +12,8 @@ import { useAuth } from "~/utils/useAuth"
 import type { MjRole } from "~/types"
 import toast, { Toaster } from 'solid-toast'
 import VipChargeDialog from './VipChargeDialog'
+import { RootStore, loadSession } from "~/store"
+const { store, setStore } = RootStore
 
 import {
   getRequestImageSize
@@ -155,7 +157,7 @@ export default function (props: {
     let earliestGmtCreate = messageList().length > 0 ? messageList()[0].gmtCreate : ""
     fetchMjMessageList(earliestGmtCreate).then((data) => {
       let result = data.list.map(item => {
-        let imageSizeRes = getRequestImageSize(item.imageUrl, item.imageSize)
+        let imageSizeRes = getRequestImageSize(item.imageUrl, item.imageSize, store.inChina)
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,

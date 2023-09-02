@@ -2,11 +2,13 @@ import type { Prompt } from "~/types"
 
 import rolemd from "/roleprompts.md?raw"
 
+import rolemdEn from "/roleprompts_en.md?raw"
+
 import mjmd from "/mjprompts.md?raw"
 
 export function parsePrompts() {
-
-  let content = rolemd
+  let inChina = localStorage.getItem('isInChina')
+  let content = inChina === '1' ? rolemd : rolemdEn
   return content
     .split(/^## (.+)$/m)
     .filter(k => k.trim())

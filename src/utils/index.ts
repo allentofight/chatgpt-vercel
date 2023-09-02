@@ -129,7 +129,7 @@ export function isEmoji(character: string) {
   return regex.test(character)
 }
 
-export function getRequestImageSize(originImageUrl: string, imageSize: string) {
+export function getRequestImageSize(originImageUrl: string, imageSize: string, inChina: boolean) {
   if (!originImageUrl) {
     return {
       previewUrl: '',
@@ -169,11 +169,17 @@ export function getRequestImageSize(originImageUrl: string, imageSize: string) {
     let previewUrl = encodeURIComponent(`${url}?width=${newWidth}&height=${newHeight}`)
     let originUrl = encodeURIComponent(originImageUrl)
 
-    let prefix = `https://api-node.makechat.help/api/image/fetch?img=`
-
-    return {
-      previewUrl: `${prefix}${previewUrl}`,
-      originUrl: `${prefix}${originUrl}`,
+    if (inChina) {
+      let prefix = `https://api-node.makechat.help/api/image/fetch?img=`
+      return {
+        previewUrl: `${prefix}${previewUrl}`,
+        originUrl: `${prefix}${originUrl}`,
+      }
+    } else {
+      return {
+        previewUrl: `${url}?width=${newWidth}&height=${newHeight}`,
+        originUrl: originImageUrl,
+      }
     }
   }
 

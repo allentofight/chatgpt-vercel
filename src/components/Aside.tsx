@@ -16,6 +16,7 @@ import VipChargeDialog from './VipChargeDialog'
 import AccountInfoDialog from './AccountInfoDialog'
 import { RootStore, loadSession } from "~/store"
 import toast from 'solid-toast';
+import i18n from "~/utils/i18n";
 const { store, setStore } = RootStore
 
 interface Chat {
@@ -542,7 +543,7 @@ export default function Aside() {
                     <svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
                       <path d="M6 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2"></path>
                       <path d="M16 9l-7 7m0 -7l7 7"></path>
-                    </svg>清空所有会话 </a>
+                    </svg> {i18n.t('clearAllConversations')}</a>
                 </Show>
               </nav>
             </div>

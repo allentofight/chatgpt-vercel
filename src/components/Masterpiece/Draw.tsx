@@ -24,6 +24,7 @@ import {
 } from "~/utils/api"
 import { isMobile } from "~/utils"
 import { useAuth } from "~/utils/useAuth"
+import i18n from '~/utils/i18n';
 
 export default function Draw(props: {
   showMoreClick: () => void
@@ -452,6 +453,22 @@ export default function Draw(props: {
     return rearrangedPrompt;
   }
 
+  function downloadImage(url: string): void {
+    let filename = 'download.png'
+    fetch(url)
+      .then(response => response.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const element = document.createElement('a');
+        element.href = blobUrl;
+        element.download = filename;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        URL.revokeObjectURL(blobUrl);
+      })
+      .catch(err => console.error(err));
+  }
 
 
   const queryDrawingProcess = async (messageId: string) => {
@@ -463,17 +480,17 @@ export default function Draw(props: {
         let fiveMinutes = 5 * 60 * 1000
         if (processQueryCount * 5000 > fiveMinutes) {
           res.status = 'FAILURE'
-          res.failReason = '任务超时，请重试'
+          res.failReason = `${i18n.t('taskTimeOut')}，${i18n.t('retryHint')}`
         }
       }
 
       if (res?.status === 'SUCCESS') {
         processQueryCount = 0
         clearInterval(queryIntervalId)
-        let imageSizeRes = getRequestImageSize(res.imageUrl, '358x358')
+        let imageSizeRes = getRequestImageSize(res.imageUrl, '358x358', store.inChina)
         let isUpscaling = command().startsWith('U')
 
-        let originUrl = await uploadImage(res.id, imageSizeRes.originUrl)
+        let originUrl = store.inChina ? await uploadImage(res.id, imageSizeRes.originUrl) : null
 
         setMessageList((prev) => [
           {
@@ -642,7 +659,14 @@ export default function Draw(props: {
     let earliestGmtCreate = messageList().length > 0 ? messageList()[messageList().length - 1].gmtCreate : ""
     fetchMjMessageList(earliestGmtCreate).then((data) => {
       let result = data.list.map(item => {
-        let imageSizeRes = getRequestImageSize(item.imageUrl, '600x600')
+        let imageSizeRes = getRequestImageSize(item.imageUrl, '600x600', store.inChina)
+
+        if (item.errorMessage?.includes('可能包含敏感词:')) {
+          item.errorMessage = item.errorMessage.replace('可能包含敏感词:', '')
+          item.errorMessage = i18n.t('sensitiveWords') + ':' + item.errorMessage
+        }
+
+
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,
@@ -816,7 +840,7 @@ export default function Draw(props: {
     if (!store.hasAiDrawClicked) {
       setClassName('flex')
     } else {
-      setClassName(store.menuTitle === 'AI绘画' ? 'flex' : 'hidden')
+      setClassName(store.menuTitle === i18n.t('aidraw') ? 'flex' : 'hidden')
     }
   })
 
@@ -825,7 +849,7 @@ export default function Draw(props: {
       <div class={`_draw flex-1 w-full overflow-hidden ${className()}`}>
         <div class="left-container left flex flex-col w-56">
           <div class="left-top h-14 flex items-center justify-between px-4 cursor-pointer">
-            <span class="span text-sm">绘画记录</span>
+            <span class="span text-sm">{i18n.t('drawingRecords')}</span>
             <div class="w-5 h-5 rounded bor flex items-center justify-center" title="选择删除">
               <i class="iconfont  icon-huihuajilu-xuanze span text-sm"></i>
             </div>
@@ -861,7 +885,7 @@ export default function Draw(props: {
                         </Show>
                         <Show when={!message.imageUrl?.length}>
                           <div class="w-full flex items-center justify-center flex-col py-4">
-                            <img alt="绘制失败，请重试" class="w-1/3" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
+                            <img alt={`${i18n.t('drawFailed')},${i18n.t('retryHint')}`} class="w-1/3" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
                             <div class="text px-4 text-center text-xs pt-2 leading-relaxed">{message.errorMessage}
                             </div>
                           </div>
@@ -889,7 +913,7 @@ export default function Draw(props: {
                 <img alt="" class="img w-1/2" src="/images/draw-left-empty.png" />
                 <img alt="" class="img1 w-1/2" src="/images/draw-left-empty1.png" />
                 <div class="empty-draw-text text-xs pt-3">
-                  还没有绘画记录哦
+                  {i18n.t('noDrawingRecordsYet')}
                 </div>
               </div>
             </div>
@@ -897,7 +921,7 @@ export default function Draw(props: {
 
           <div class="left-bottom h-14 flex items-center justify-between px-4 cursor-pointer" >
             <div class="w-full text-center" onClick={props.showMoreClick}>
-              <span class="span text-sm">更多创作记录</span>
+              <span class="span text-sm">{i18n.t('moreCreativeRecords')}</span>
               <i class="iconfont  icon-xiayiyeqianjinchakangengduo span text-sm ml-2"></i>
             </div>
           </div>
@@ -922,7 +946,7 @@ export default function Draw(props: {
                   </div>
                   <div class="right w-1/3 max-w-lg rounded-2xl px-4 flex flex-col overflow-y-auto">
                     <div class="top flex py-4 items-end justify-between">
-                      <div class="text text-lg font-semibold"> 英文关键词 <i class={`iconfont ${showEnPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
+                      <div class="text text-lg font-semibold"> {i18n.t('englishKeywords')} <i class={`iconfont ${showEnPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
                         setShowEnPromptCopy(false)
                         await copyToClipboard(
                           mjWorkingPrompt()
@@ -932,9 +956,9 @@ export default function Draw(props: {
                         }, 1000)
 
                       }}></i></div>
-                      <div class="text1 text-xs font-normal py-1 px-2 rounded-full flex items-center justify-center">
+                      {/* <div class="text1 text-xs font-normal py-1 px-2 rounded-full flex items-center justify-center">
                         几秒前
-                      </div>
+                      </div> */}
                     </div>
                     <div class="keyword w-full rounded-xl py-3 pl-3 pr-2">
                       <div class="keyword-text text-sm max-h-60 overflow-y-auto pr-1 leading-normal">
@@ -942,7 +966,7 @@ export default function Draw(props: {
                       </div>
                     </div>
                     <div class="top flex py-4 items-end justify-between">
-                      <div class="text text-lg font-semibold"> 原始关键词 <i class={`iconfont ${showOriginPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
+                      <div class="text text-lg font-semibold"> {i18n.t('originalKeywords')} <i class={`iconfont ${showOriginPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
                         setShowOriginPromptCopy(false)
                         await copyToClipboard(
                           mjWorkingPrompt()
@@ -973,7 +997,7 @@ export default function Draw(props: {
                     <img alt="" class="w-full" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-center-empty-4f4ca3ef.png" />
                   </div>
                   <div class="text text-xs text-center tracking-wider pt-6">
-                    <div >探索AI世界的奥秘，释放您无限的创造潜能！
+                    <div >{i18n.t('exploreAIWorld')}
                     </div>
                   </div>
                 </div>
@@ -1005,14 +1029,14 @@ export default function Draw(props: {
                         <img alt="" class="w-full" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
                       </div>
                       <div class="left-error text-xs text-center">
-                        <div class="pt-2">{messageList()[activeIndex()].errorMessage}，请重试</div>
+                        <div class="pt-2">{messageList()[activeIndex()].errorMessage}，{i18n.t('retryHint')}</div>
                       </div>
                     </div>
                   </Show>
 
                   <div class="right w-1/3 max-w-lg rounded-2xl px-4 flex flex-col overflow-y-auto">
                     <div class="top flex py-4 items-end justify-between">
-                      <div class="text text-lg font-semibold"> 英文关键词 <i class={`iconfont ${showEnPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
+                      <div class="text text-lg font-semibold"> {i18n.t('englishKeywords')} <i class={`iconfont ${showEnPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
                         setShowEnPromptCopy(false)
                         await copyToClipboard(
                           messageList()[activeIndex()].content
@@ -1022,9 +1046,9 @@ export default function Draw(props: {
                         }, 1000)
 
                       }}></i></div>
-                      <div class="text1 text-xs font-normal py-1 px-2 rounded-full flex items-center justify-center">
+                      {/* <div class="text1 text-xs font-normal py-1 px-2 rounded-full flex items-center justify-center">
                         2天前
-                      </div>
+                      </div> */}
                     </div>
                     <div class="keyword w-full rounded-xl py-3 pl-3 pr-2">
                       <div class="keyword-text text-sm max-h-60 overflow-y-auto pr-1 leading-normal">
@@ -1032,7 +1056,7 @@ export default function Draw(props: {
                       </div>
                     </div>
                     <div class="top flex py-4 items-end justify-between">
-                      <div class="text text-lg font-semibold"> 原始关键词 <i class={`iconfont ${showOriginPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
+                      <div class="text text-lg font-semibold"> {i18n.t('originalKeywords')} <i class={`iconfont ${showOriginPromptCopy() ? 'icon-fuzhi cursor-pointer' : 'icon-duihao active'} text-lg mr-1`} onClick={async () => {
                         setShowOriginPromptCopy(false)
                         await copyToClipboard(
                           messageList()[activeIndex()].content
@@ -1042,9 +1066,9 @@ export default function Draw(props: {
                         }, 1000)
 
                       }}></i></div>
-                      <div class="text1 text-xs font-normal py-1 px-2 rounded-full flex items-center justify-center">
+                      {/* <div class="text1 text-xs font-normal py-1 px-2 rounded-full flex items-center justify-center">
                         2天前
-                      </div>
+                      </div> */}
                     </div>
                     <div class="keyword w-full rounded-xl py-3 pl-3 pr-2">
                       <div class="keyword-text text-sm max-h-60 overflow-y-auto pr-1 leading-normal">
@@ -1054,47 +1078,47 @@ export default function Draw(props: {
                     <Show when={type() == 1}>
                       <div class="top py-4">
                         <div class="text text-lg font-semibold">
-                          放大图片
+                          {i18n.t('enlargeImage')}
                         </div>
                         <div class="text1 text-xs pt-1">
-                          对左侧的其中一张图片进行放大
+                          {i18n.t('enlargeImageLeft')}
                         </div>
                       </div>
                       <div class="cell flex justify-between mb-4 h-10">
                         <div class="text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" onClick={() => upscaling('U1')}>
-                          左上
+                          {i18n.t('topLeft')}
                         </div>
                         <div class="text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" onClick={() => upscaling('U2')} >
-                          右上
+                          {i18n.t('topRight')}
                         </div>
                         <div class="text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" onClick={() => upscaling('U3')} >
-                          左下
+                          {i18n.t('bottomLeft')}
                         </div>
                         <div class="text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" onClick={() => upscaling('U4')} >
-                          右下
+                          {i18n.t('bottomRight')}
                         </div>
                       </div>
                       <Show when={true}>
                         <div class="top py-4">
                           <div class="text text-lg font-semibold">
-                            变体图片
+                            {i18n.t('variantImage')}
                           </div>
                           <div class="text1 text-xs pt-1">
-                            对左侧的其中一张图片进行多样化修改
+                            {i18n.t('modifyImageLeft')}
                           </div>
                         </div>
                         <div class="cell flex justify-between mb-4 h-10">
                           <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
-                            左上
+                            {i18n.t('topLeft')}
                           </div>
                           <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V2')}>
-                            右上
+                            {i18n.t('topRight')}
                           </div>
                           <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V3')}>
-                            左下
+                            {i18n.t('bottomLeft')}
                           </div>
                           <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V4')}>
-                            右下
+                            {i18n.t('bottomRight')}
                           </div>
                         </div>
                       </Show>
@@ -1105,16 +1129,22 @@ export default function Draw(props: {
                         <div class="text text-lg font-semibold">更多操作</div>
                       </div>
                     </Show>
-                    <div class="cell flex justify-between mb-4 h-10">
+                    <div class="cell flex mb-4 h-10">
                       <div class="new_text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" style="display:none;">
                         <i class="iconfont  icon-guanjiancixinxi-shuaxin span text-lg"></i>
                         <span class="span pl-1 text-base">重新生成</span>
                       </div>
-                      <div class="del_text text-base flex items-center justify-center rounded-xl h-10 cursor-pointer" onClick={() => {
+                      <div class="del_text text-base flex items-center justify-center rounded-xl h-10 cursor-pointer mr-2" onClick={() => {
                         deleteMj()
                       }}>
                         <i class="iconfont  icon-guanjiancixinxi-shanchu span text-lg"></i>
-                        <span class="span pl-1 text-base">删除</span>
+                        <span class="span pl-1 text-base">{i18n.t('delete')}</span>
+                      </div>
+                      <div class="del_text text-base flex items-center justify-center rounded-xl h-10 cursor-pointer" onClick={() => {
+                        downloadImage(originImageUrl())
+                      }}>
+                        <i class="iconfont icon-baisexiazai span text-lg"></i>
+                        <span class="span pl-1 text-base">{i18n.t('download')}</span>
                       </div>
                       <div class="split_text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" style="display:none;">
                         <i class="iconfont  icon-shoushudao span text-sm font-bold"></i>
@@ -1135,7 +1165,7 @@ export default function Draw(props: {
                   <div class="el-textarea flex-1">
                     <textarea
                       ref={setTextareaRef}
-                      class="el-textarea__inner" placeholder-class="placeholder" tabindex="0" autocomplete="off" placeholder={`请输入您的绘画描述，${isMobile() ? '' : 'enter发送、shift+enter换行'}`} id="input"
+                      class="el-textarea__inner" placeholder-class="placeholder" tabindex="0" autocomplete="off" placeholder={`${i18n.t('enterDrawingDescription')}${isMobile() ? '' : `，${i18n.t('enterDrawingDescriptionDetailedEnd')}`}`} id="input"
                       style="resize: none; min-height: 49px; height: 49px;"
                       onKeyDown={handleKeyDown}
                     ></textarea>
@@ -1153,7 +1183,7 @@ export default function Draw(props: {
                     <Show when={!isOptimizePrompt()}>
                       <>
                         <i class="iconfont  icon-huihua-youhuaguanjianci text text-base"></i>
-                        <span class="text pl-2">优化关键词</span>
+                        <span class="text pl-2">{i18n.t('optimizeKeywords')}</span>
                       </>
                     </Show>
                     <Show when={isOptimizePrompt()}>
@@ -1185,7 +1215,7 @@ export default function Draw(props: {
                 <img alt="" class="w-full" src="/svg/draw-right-logo.svg" />
               </div>
               <div class="logotext text-3xl pl-4">
-                AI绘画
+                {i18n.t('aidraw')}
               </div>
             </div>
             <div class="flex-1 overflow-x-hidden overflow-y-auto flex flex-col pr-4">
@@ -1226,10 +1256,10 @@ export default function Draw(props: {
                   <div class="upload-empty pl-6 py-2">
                     <div class="h-16 flex flex-col justify-around">
                       <div class="text-base">
-                        上传参考图(选填)
+                        {i18n.t('uploadReferenceImageOptional')}
                       </div>
                       <div class="text-xs">
-                        支持JPG、PNG、10M以内
+                        {i18n.t('supportFormats')}
                       </div>
                     </div>
                   </div>
@@ -1247,10 +1277,10 @@ export default function Draw(props: {
               </div>
               <div class="title flex pt-6 pb-4 items-end">
                 <div class="text text-sm font-medium">
-                  尺寸
+                  {i18n.t('size')}
                 </div>
                 <div class="text1 text-xs pl-2 pb-px font-normal">
-                  可在输入框自行输入尺寸
+                  {i18n.t('inputSize')}
                 </div>
               </div>
               <div class="size flex flex-wrap justify-between">
@@ -1275,7 +1305,7 @@ export default function Draw(props: {
                         <div class="flex flex-1 text items-center justify-center pb-2">
                           <input ref={setRatioWidthRef} class="input w-7 text-center appearance-none text-base" type="number" /> : <input ref={setRatioHeightRef} class="input w-7 text-center appearance-none text-base" type="number" />
                         </div>
-                        <div class="text1 text-xs font-normal">自定义</div>
+                        <div class="text1 text-xs font-normal">{i18n.t('custom')}</div>
                       </Show>
                     </div>
                   )}
@@ -1284,10 +1314,10 @@ export default function Draw(props: {
               </div>
               <div class="title flex pt-6 pb-4 items-end">
                 <div class="text text-sm font-medium">
-                  关键词推荐
+                  {i18n.t('keywordRecommendations')}
                 </div>
                 <div class="text1 text-xs pl-2 pb-px font-normal">
-                  非必选
+                  {i18n.t('notMandatory')}
                 </div>
               </div>
               <div class="keywords-nav py-1 px-2 flex rounded-lg mb-2">
@@ -1365,7 +1395,7 @@ export default function Draw(props: {
                                     <div class="text text-xs px-1.5 py-1 rounded-l-md">
                                       {selection.en}
                                     </div>
-                                    <Show when={selection.ch}>
+                                    <Show when={selection.ch && store.inChina}>
                                       <div class="text1 text-xs px-1.5 py-1 rounded-r-md">
                                         {selection.ch}
                                       </div>

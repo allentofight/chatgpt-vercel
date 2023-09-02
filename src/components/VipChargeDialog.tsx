@@ -3,6 +3,7 @@ import { createSignal, Show, createMemo } from 'solid-js';
 import CloseIcon from './CloseIcon'
 import { isMobile } from "~/utils"
 
+
 interface Props {
   title: string,
   onClose: () => void;
@@ -145,7 +146,7 @@ const VipChargeDialog = (props: Props) => {
                 <div class={`${isMobile() ? 'mt-6' : 'mt-4'}`}>
                   <span class="text-lg font-bold text-blue-500">¥{calculatePrice(index).price}</span>
                   <Show when={calculatePrice(index).itemsCnt > 1}>
-                    <span class="text-sm text-red-500 ml-2">已省 ¥{calculatePrice(index).saved.toFixed(1)}</span>
+                    <span class="text-sm text-red-500 ml-2">{i18n.t('saved')} ¥{calculatePrice(index).saved.toFixed(1)}</span>
                   </Show>
                 </div>
 

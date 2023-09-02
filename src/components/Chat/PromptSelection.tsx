@@ -9,6 +9,7 @@ import throttle from "just-throttle"
 import type { Option } from "~/types"
 import { FZFData } from "~/store"
 import { RootStore, loadSession } from "~/store"
+import i18n from '~/utils/i18n';
 
 export default function (props: {
   bgClick: () => void
@@ -201,7 +202,7 @@ export default function (props: {
                       placeholder-class="placeholder"
                       type="text"
                       autocomplete="off"
-                      tabindex="0" placeholder="请输入您的提示标题" />
+                      tabindex="0" placeholder={`${i18n.t('enterYourHint')}`} />
                   </div>
                 </div>
                 <div class="mask-putcell-input-search">
