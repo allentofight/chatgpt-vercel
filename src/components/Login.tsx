@@ -8,6 +8,7 @@ import GoogleLogin from './GoogleLogin'
 import CaptchaForm from './CaptchaForm'
 
 import { detectIp } from "~/utils/api"
+import i18n from '~/utils/i18n';
 
 export default function LoginDialog(props: {
   title: string,
@@ -49,8 +50,6 @@ export default function LoginDialog(props: {
       setIsInChina(inChina === '1')
     }
 
-
-    // setIsInChina(false)
 
     localStorage.setItem('isInChina', isInChina() ? '1' : '2')
   })
@@ -158,13 +157,15 @@ export default function LoginDialog(props: {
   return (
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-90">
       <div class="bg-white rounded-lg p-6 w-95">
-        <Show when={isInChina()}>
-          <h2 class="text-center text-xl mb-6">{props.title}</h2>
+
+        <h2 class="text-center text-xl mb-6">{props.title}</h2>
+        <div class="border p-2">
+          <div class="p-2 pt-0">{i18n.t('methodOne')}:</div>
           <div class="mb-4">
             <input
               type="tel"
               class="border rounded w-full py-2 px-3 text-grey-darker"
-              placeholder="手机号"
+              placeholder={`${i18n.t('chinesePhoneNum')}`}
               value={phone()}
               onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
             />
@@ -173,7 +174,7 @@ export default function LoginDialog(props: {
             <input
               type="text"
               class="border rounded w-2/3 py-2 px-3 text-grey-darker"
-              placeholder="验证码"
+              placeholder={`${i18n.t('verifyCodeNum')}`}
               value={code()}
               onInput={(e) => {
                 setCode((e.target as HTMLInputElement).value);
@@ -185,10 +186,10 @@ export default function LoginDialog(props: {
               disabled={disabled()}
               onClick={sendCode}
             >
-              {disabled() ? `${count()}s` : "发送验证码"}
+              {disabled() ? `${count()}s` : i18n.t('sendSmsCode')}
             </button>
           </div>
-          <div class="flex justify-center">
+          <div class="flex justify-center pr-2">
             <CaptchaForm />
           </div>
           <div class="flex justify-center mt-3">
@@ -200,11 +201,12 @@ export default function LoginDialog(props: {
               {props.buttonTitle}
             </button>
           </div>
-        </Show>
-        <Show when={!isInChina()}>
-          <GoogleLogin />
-        </Show>
+        </div>
 
+        <div class="border p-2 mt-6">
+          <div class="pb-2 px-2">{i18n.t('methodTwo')}:</div>
+          <GoogleLogin />
+        </div>
       </div>
       <Toaster position="top-center" />
       <Show when={showLoginSuccess()}>
