@@ -156,7 +156,7 @@ export default function LoginDialog(props: {
 
   return (
     <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-90">
-      <div class="bg-white rounded-lg p-6 w-95">
+      <div class="bg-white rounded-lg p-6 w-103">
 
         <h2 class="text-center text-xl mb-6">{props.title}</h2>
         <div class="border p-2">
