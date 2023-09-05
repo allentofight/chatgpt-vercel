@@ -189,7 +189,13 @@ i18n.init({
                 taskTimeOut: 'Timeout',
                 drawFailed: 'Draw Failed',
                 colorTitleMust: 'title and color is required',
-                gptExpireHint: 'GPT3.5 expired，please subscribe in Pricing'
+                gptExpireHint: 'GPT3.5 expired，please subscribe in Pricing',
+                logIn: 'Log in',
+                chinesePhoneNum: 'Chinese Phone Number',
+                verifyCodeNum: 'verification code',
+                sendSmsCode: 'Send Code',
+                methodOne: 'Method 1',
+                methodTwo: 'Method 2'
             },
         },
         zh: {
@@ -362,8 +368,13 @@ i18n.init({
                 taskTimeOut: '任务超时',
                 drawFailed: '绘制失败',
                 colorTitleMust: '标题和颜色必选',
-                gptExpireHint: 'GPT3.5 会员已过期，请先到「会员中心」续费哦'
-
+                gptExpireHint: 'GPT3.5 会员已过期，请先到「会员中心」续费哦',
+                logIn: '登录',
+                chinesePhoneNum: '手机号',
+                verifyCodeNum: '验证码',
+                sendSmsCode: '发送验证码',
+                methodOne: '方式一',
+                methodTwo: '方式二'
             },
         },
     },
