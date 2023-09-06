@@ -160,7 +160,7 @@ export default function LoginDialog(props: {
 
         <h2 class="text-center text-xl mb-6">{props.title}</h2>
         <div class="border p-2">
-          <div class="p-2 pt-0">{i18n.t('methodOne')}:</div>
+          <div class="p-2 pt-0 text-lg font-bold text-blue-600">{i18n.t('methodOne')}:</div>
           <div class="mb-4">
             <input
               type="tel"
@@ -204,7 +204,7 @@ export default function LoginDialog(props: {
         </div>
 
         <div class="border p-2 mt-6">
-          <div class="pb-2 px-2">{i18n.t('methodTwo')}:</div>
+          <div class="pb-2 px-2 text-lg font-bold text-blue-600">{i18n.t('methodTwo')}:</div>
           <GoogleLogin />
         </div>
       </div>
