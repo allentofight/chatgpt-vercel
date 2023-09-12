@@ -24,7 +24,6 @@ export default function PageNav(props: {
   function clickOption(index: number) {
 
     if (optionTitles[index] === i18n.t('AINavigation')) {
-      window.open("http://ainavtech.com/", "_blank");
       return
     }
 
@@ -100,13 +99,20 @@ export default function PageNav(props: {
             {(title, index) => {
               return (
                 <div class={`text text-center cursor-pointer ${selectedIndex() === index() ? 'active' : ''}`} onClick={() => clickOption(index())}>
-                  {title}
+                  <Show when={title === i18n.t('AINavigation')}>
+                    <a href="http://ainavtech.com/" target="_blank" style={{ "background": 'transparent', 'color': 'white' }}>
+                      {title}
+                    </a>
+                  </Show>
+                  <Show when={title !== i18n.t('AINavigation')}>
+                    {title}
+                  </Show>
                 </div>
               )
             }}
           </For>
         </div>
-      </div>
+      </div >
       <div class="flex items-center">
         <div class="pc collect flex items-center justify-center text-sm px-3 mr-4 rounded-xl cursor-pointer" onClick={() => {
           setStore('menuTitle', i18n.t('collectionManage'))
