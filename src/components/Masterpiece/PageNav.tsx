@@ -19,9 +19,15 @@ export default function PageNav(props: {
 
   const { store, setStore } = RootStore
 
-  let optionTitles = isMobile() ? [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('collectionManage'), i18n.t('memberCenter')] : [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('memberCenter')]
+  let optionTitles = isMobile() ? [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('collectionManage'), i18n.t('memberCenter'), i18n.t('AINavigation')] : [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('memberCenter'), i18n.t('AINavigation')]
 
   function clickOption(index: number) {
+
+    if (optionTitles[index] === i18n.t('AINavigation')) {
+      window.open("http://ainavtech.com/", "_blank");
+      return
+    }
+
     setSelectedIndex(index)
     setStore('menuTitle', optionTitles[index])
     setShowMenu(false)

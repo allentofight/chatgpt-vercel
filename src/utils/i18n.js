@@ -195,7 +195,8 @@ i18n.init({
                 verifyCodeNum: 'verification code',
                 sendSmsCode: 'Send Code',
                 methodOne: 'Method 1',
-                methodTwo: 'Method 2'
+                methodTwo: 'Method 2',
+                AINavigation: 'AI Nav'
             },
         },
         zh: {
@@ -374,7 +375,8 @@ i18n.init({
                 verifyCodeNum: '验证码',
                 sendSmsCode: '发送验证码',
                 methodOne: '方式一',
-                methodTwo: '方式二'
+                methodTwo: '方式二',
+                AINavigation: 'AI导航'
             },
         },
     },
