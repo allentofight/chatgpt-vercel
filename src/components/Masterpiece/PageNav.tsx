@@ -100,7 +100,7 @@ export default function PageNav(props: {
               return (
                 <div class={`text text-center cursor-pointer ${selectedIndex() === index() ? 'active' : ''}`} onClick={() => clickOption(index())}>
                   <Show when={title === i18n.t('AINavigation')}>
-                    <a href="http://ainavtech.com/" target="_blank" style={{ "background": 'transparent', 'color': 'white' }}>
+                    <a href="https://ainavtech.com/" target="_blank" style={{ "background": 'transparent', 'color': 'white' }}>
                       {title}
                     </a>
                   </Show>
