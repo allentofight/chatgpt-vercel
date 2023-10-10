@@ -65,6 +65,10 @@ export default function AccountInfo(props: {
     });
 
     onMount(async () => {
+        if (localStorage.getItem('phone')) {
+            localStorage.setItem('isInChina', '1')
+            setStore('inChina', true)
+        }
         let inChina = localStorage.getItem('isInChina')
         if (!inChina) {
             let res = await detectIp()
