@@ -291,6 +291,7 @@ export default function () {
     if (!inputValue) return
 
     if (store.showMindMap) {
+      setStore('messageList', [])
       inputValue = `你是一个思维导图专家，请根据我提供的如下内容:${inputValue}
         做一个思维导图，要求高质量,详细,多层级,多分支,清晰,直接生成并用中文回复markDown格式的思维导图，不要有除markdown之外的任何其它描述`
     }
