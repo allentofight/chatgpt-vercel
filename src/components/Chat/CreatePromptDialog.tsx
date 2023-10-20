@@ -130,8 +130,8 @@ export default function (props: {
         batch(() => {
             if (!compositionend()) return
             const value = inputRef?.value
-            if (value.length > 500) {
-                inputRef.value = value.slice(0, 500);
+            if (value.length > 1000) {
+                inputRef.value = value.slice(0, 1000);
             }
             setTextWordCnt(inputRef.value.length)
         })
@@ -334,10 +334,10 @@ export default function (props: {
                                 <textarea class="el-textarea__inner"
                                     ref={el => inputRef = el}
                                     onInput={handleInput}
-                                    maxlength="500" placeholder-class="placeholder" rows="3" tabindex="0" autocomplete="off" placeholder={`${i18n.t('enterYourHint')}`} id="el-id-4506-13" style="resize: none; min-height: 41px;"></textarea>
+                                    maxlength="1000" placeholder-class="placeholder" rows="3" tabindex="0" autocomplete="off" placeholder={`${i18n.t('enterYourHint')}`} id="el-id-4506-13" style="resize: none; min-height: 41px;"></textarea>
                             </div>
                             <div class="textarea-span">
-                                {textWordCnt()}/500
+                                {textWordCnt()}/1000
                             </div>
                         </div>
                     </div>
