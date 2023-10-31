@@ -113,7 +113,7 @@ export default function AccountInfo(props: {
                     {i18n.t('accountSettings')}
                 </div>
                 <div class="user-info">
-                    <span class="el-avatar el-avatar--circle el-tooltip__trigger" style="--el-avatar-size: 70px;"><img src="http://tc.cos.cdn.jchdnet.cn/tables/24@3x_1682756184038.png?imageMogr2/thumbnail/70x70" style="object-fit: scale-down;" /></span>
+                    <span class="el-avatar el-avatar--circle el-tooltip__trigger" style="--el-avatar-size: 70px;"><img src="https://b1.beisheng.com/common/starchain_self_image/2310/28/09_33_26/ai-logo.png" style="object-fit: scale-down;" /></span>
                     <div class="el-popper is-light el-popover popper" tabindex="-1" aria-hidden="true" role="tooltip" id="el-id-9846-5" data-popper-reference-hidden="false" data-popper-escaped="false" data-popper-placement="bottom" style="z-index: 2002; position: absolute; inset: 181px auto auto 185.5px; width: 386px; display: none;">
                         <div class="avatar-list hidden">
                             <div class="avatar-item">
