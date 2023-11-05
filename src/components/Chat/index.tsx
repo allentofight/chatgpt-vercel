@@ -22,6 +22,7 @@ import { isLocalStorageAvailable } from "~/utils/localStorageCheck"
 import { fetchUserInfo, incrGPT4Cnt } from "~/utils/api"
 const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
+const gptHost = import.meta.env.CLIENT_GPT_HOST;
 import MarkmapView from "../MarkmapView"
 import InviteActivity from "../InviteActivity"
 import { detectIp } from "~/utils/api"
@@ -415,7 +416,7 @@ export default function () {
     }
 
     let sessionId = localStorage.getItem('sessionId')
-    let response = await fetch(`/api${currentChat().model === ModelEnum.GPT_3 ? '' : '/gpt4'}`, {
+    let response = await fetch(`${gptHost}/api/openai`, {
       method: "POST",
       body: JSON.stringify({
         messages: messagesCopy,
