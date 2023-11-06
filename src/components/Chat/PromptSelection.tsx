@@ -111,6 +111,17 @@ export default function (props: {
       {
         icon: 'icon-a-11',
         color: 'rgb(217, 70, 239)'
+      }, {
+        icon: 'icon-a-6',
+        color: 'rgb(19, 184, 166)',
+      },
+      {
+        icon: 'icon-a-8',
+        color: 'rgb(34, 197, 94)',
+      },
+      {
+        icon: 'icon-a-10',
+        color: 'rgb(234, 179, 8)',
       }]
 
     FZFData.promptOptions = parsePrompts().map(
@@ -119,6 +130,7 @@ export default function (props: {
 
     for (let index = 0; index < FZFData.promptOptions.length; index++) {
       const element = FZFData.promptOptions[index];
+      console.log('icons[index]= ', icons[index])
       element.icon = icons[index].icon
       element.color = icons[index].color
 
