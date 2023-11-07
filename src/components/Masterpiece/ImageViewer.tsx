@@ -1,5 +1,6 @@
 import '../../styles/pageNav.css';
 import { createSignal, Show } from 'solid-js';
+import { Spinner, SpinnerType } from 'solid-spinner';
 
 export default function ImageViewer(props: {
   imageUrl: string,
@@ -9,6 +10,7 @@ export default function ImageViewer(props: {
   const [scale, setScale] = createSignal(1);
   const [isMaxSize, setIsMaxSize] = createSignal(false);
   const [rotate, setRotate] = createSignal(0);
+  let [isLoading, setIsLoading] = createSignal(true);
 
   const zoomIn = () => {
     let newScale = scale() / 1.2;
@@ -56,9 +58,8 @@ export default function ImageViewer(props: {
           .el-image-viewer__close {
               width: 44px;
               height: 44px;
-              top: 40px;
-              right: 40px;
               font-size: 24px;
+              margin: 10px 0 0 10px;
               color: #fff;
               background-color: #606266;
               border-color: #fff;
@@ -76,8 +77,8 @@ export default function ImageViewer(props: {
               border-radius: 22px !important;
           }
 
-          .el-image-viewer__btn {
-            position: absolute;
+
+          .el-image-viewer-close__btn, .el-image-viewer__btn {
             z-index: 1;
             display: flex;
             align-items: center;
@@ -128,8 +129,6 @@ export default function ImageViewer(props: {
       </style>
       <div tabindex="-1" class="el-image-viewer__wrapper" style="z-index: 2003;">
         <div class="el-image-viewer__mask"></div>
-        <span class="el-image-viewer__btn el-image-viewer__close" onClick={props.closeDialog}><i class="el-icon">
-          <img class="w-full" src="/svg/close.svg" /></i></span>
         <div class="el-image-viewer__btn el-image-viewer__actions">
           <div class="el-image-viewer__actions__inner">
             <i class="el-icon" onClick={() => {
@@ -163,9 +162,18 @@ export default function ImageViewer(props: {
           </div>
         </div>
         <div class="el-image-viewer__canvas">
-          <img src={props.imageUrl} class="el-image-viewer__img" style={`transform: scale(${scale()}) rotate(${rotate()}deg) translate(0px, 0px); transition: transform 0.3s ease 0s; ${isMaxSize() ? '' : 'max-height: 100%; max-width: 100%;'}`}
+          <div class="flex h-full">
+            <img src={props.imageUrl}
+              class="el-image-viewer__img"
+              onLoad={() => setIsLoading(false)}
+              style={`transform: scale(${scale()}) rotate(${rotate()}deg) translate(0px, 0px); transition: transform 0.3s ease 0s; ${isMaxSize() ? '' : 'max-height: 100%; max-width: 100%;'}`} />
+            <span class="el-image-viewer-close__btn el-image-viewer__close" onClick={props.closeDialog}><i class="el-icon">
+              <img class="w-full" src="/svg/close.svg" /></i></span>
+          </div>
 
-          />
+          <Show when={isLoading()}>
+            <Spinner class="w-1/3 absolute" type={SpinnerType.tailSpin} width="20%" height="20%" color="#bd69ff" />
+          </Show>
         </div>
       </div>
     </>

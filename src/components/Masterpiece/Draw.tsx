@@ -14,7 +14,7 @@ import LoginGuideDialog from '../LoginGuideDialog'
 import VipChargeDialog from '../VipChargeDialog'
 import ImageViewer from './ImageViewer'
 import { fetchUserInfo, queryPromptStatus } from "~/utils/api"
-import { sendMjTranslate, uploadImage } from "~/utils/api"
+import { sendMjTranslate, uploadImage, queryMJCloudUrl, queryMJCloudPreviewUrl, uploadToCloud } from "~/utils/api"
 
 import {
   delMjMessage,
@@ -123,7 +123,6 @@ export default function Draw(props: {
     if (!messageList().length || activeIndex() === -1) {
       return
     }
-    setIsLoading(true)
     handleResize()
   })
 
@@ -214,6 +213,7 @@ export default function Draw(props: {
 
     let updatedList = [...messageList()] // Create a copy of the current list
     updatedList.splice(activeIndex(), 1) // Remove the item from the copied list
+
     setMessageList(updatedList) // Update the signal with the new list
 
     setActiveIndex(-1)
@@ -292,9 +292,6 @@ export default function Draw(props: {
       scrollToTop(previewListRef()!)
     }
 
-    // if (prompt.indexOf('--seed') < 0) {
-    //   prompt = `${prompt} --seed ${generateSeed()}`
-    // }
     setMjWorkingPrompt(prompt)
     let body: MjSendBody = {
       prompt
@@ -307,8 +304,8 @@ export default function Draw(props: {
       return
     }
 
-
     let message = messageList()[activeIndex()]
+
     if (message.clickedButtons?.includes(command) && command.includes('U')) {
       toast.error(`${command}已点击过，不可重复点击哦`)
       return
@@ -343,8 +340,8 @@ export default function Draw(props: {
 
     let storageKey = 'mj_try_cnt'
     let mjCnt = parseInt(localStorage.getItem(storageKey) || '0');
-    if (isMjExpired() && mjCnt > 5) {
-      toast.error('AI绘画会员已过期，请先到会员中心续费哦');
+    if (isLogin() && isMjExpired() && mjCnt > 5) {
+      toast.error('MJ 会员已过期，请点击会员中心及时充值哦');
       return false
     }
     mjCnt++
@@ -470,7 +467,6 @@ export default function Draw(props: {
       .catch(err => console.error(err));
   }
 
-
   const queryDrawingProcess = async (messageId: string) => {
     try {
       const res = await queryPromptStatus(messageId)
@@ -485,13 +481,20 @@ export default function Draw(props: {
       }
 
       if (res?.status === 'SUCCESS') {
+        uploadToCloud()
+        let cloudPreviewUrl = ''
+        try {
+          let previewRes = await queryMJCloudPreviewUrl(res.id)
+          cloudPreviewUrl = previewRes.url
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+
         processQueryCount = 0
         clearInterval(queryIntervalId)
         let imageSizeRes = getRequestImageSize(res.imageUrl, '358x358', store.inChina)
         let isUpscaling = command().startsWith('U')
-
-        let originUrl = store.inChina ? await uploadImage(res.id, imageSizeRes.originUrl) : null
-
+        //let originUrl = await uploadImage(res.id, imageSizeRes.originUrl)
         setMessageList((prev) => [
           {
             role: isUpscaling ? 'variation' : 'prompt',
@@ -502,8 +505,8 @@ export default function Draw(props: {
             clickedButtons: [],
             type: isUpscaling ? 2 : 1,
             imageSize: res.imageSize,
-            imageUrl: imageSizeRes.previewUrl,
-            originImageUrl: originUrl ?? imageSizeRes.originUrl,
+            imageUrl: cloudPreviewUrl ?? imageSizeRes.previewUrl,
+            originImageUrl: imageSizeRes.originUrl,
           } as MjChatMessage,
           ...prev,
         ]);
@@ -512,9 +515,9 @@ export default function Draw(props: {
         if (activeIndex() === -1) {
           setActiveIndex(0)
         }
-        setCommand('')
         setType(isUpscaling ? 2 : 1)
         setShowErrorHint(false)
+        setCommand('')
 
       } else if (res?.status === 'FAILURE') {
         setIsMjWorking(false)
@@ -571,6 +574,12 @@ export default function Draw(props: {
   })
 
   const handleKeyDown = (event: KeyboardEvent) => {
+
+    if (event.isComposing) {
+      // Ignore key events that are part of IME input
+      return;
+    }
+
     if (event.key === 'Enter') {
       if (event.shiftKey) {
         // Shift+Enter was pressed
@@ -578,6 +587,8 @@ export default function Draw(props: {
       } else {
         // Enter was pressed
         event.preventDefault();  // Prevent the newline
+        console.log('开始绘画')
+
         beginDrawing()
       }
     }
@@ -630,6 +641,7 @@ export default function Draw(props: {
 
     if (!response.ok) {
       const res = await response.json()
+      setIsOptimizePrompt(false)
       throw new Error(res.error.message)
     }
     const data = response.body
@@ -660,13 +672,6 @@ export default function Draw(props: {
     fetchMjMessageList(earliestGmtCreate).then((data) => {
       let result = data.list.map(item => {
         let imageSizeRes = getRequestImageSize(item.imageUrl, '600x600', store.inChina)
-
-        if (item.errorMessage?.includes('可能包含敏感词:')) {
-          item.errorMessage = item.errorMessage.replace('可能包含敏感词:', '')
-          item.errorMessage = i18n.t('sensitiveWords') + ':' + item.errorMessage
-        }
-
-
         return {
           role: item.errorMessage?.length ? 'error' : (item.type == 1 ? 'prompt' : 'variation'),
           prompt: item.prompt,
@@ -678,7 +683,7 @@ export default function Draw(props: {
           clickedButtons: item.clickedEvent ? JSON.parse(item.clickedEvent) : [],
           type: item.type,
           errorMessage: item.errorMessage,
-          imageUrl: imageSizeRes.previewUrl,
+          imageUrl: item.cloudPreviewUrl ?? imageSizeRes.previewUrl,
           imageSize: item.imageSize,
           originImageUrl: item.cloudUrl ?? imageSizeRes.originUrl,
         } as MjChatMessage
@@ -701,11 +706,7 @@ export default function Draw(props: {
       if (onComplete) {
         onComplete();
       }
-      console.log('error.message = ', error.message)
-      if (error.message.includes('401')) {
-        setShowLoginDirectDialog(true)
-      }
-      console.error('fetch messageList error:', error)
+      toast.error(`${error.message}`);
     })
   }
 
@@ -804,6 +805,13 @@ export default function Draw(props: {
   const handleImageUpload = async (file: File) => {
     setIsUploading(true);
 
+    const fileSizeInMB = file.size / (1024 * 1024);
+    if (fileSizeInMB > 10) {
+      toast.error('图片不能大于 10M， 请重新选择');
+      setIsUploading(false);
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -875,6 +883,12 @@ export default function Draw(props: {
                   <div class="px-4 py-2">
                     <div class={`noactive w-full rounded-lg ${activeIndex() === index() ? 'active' : ''}`}>
                       <div class="w-full rounded-lg overflow-hidden flex relative cursor-pointer left-item" onClick={() => {
+
+                        if (index() === activeIndex()) {
+                          return
+                        }
+
+                        setIsLoading(true)
                         setActiveIndex(index())
                         setType(messageList()[index()].type)
                         let errorMessage = messageList()[index()].errorMessage?.length ?? 0
@@ -1007,11 +1021,21 @@ export default function Draw(props: {
                   <Show when={!showErrorHint()}>
                     <div ref={setImageContainerRef} class="left flex-1 rounded-2xl flex items-center justify-center overflow-hidden mr-2 relative">
                       <Show when={messageList().length}>
-                        <div ref={setLargeImageRef} class="el-image rounded-xl mx-auto" onClick={() => {
-                          setShowImageViewer(!showImageViewer())
+                        <div ref={setLargeImageRef} class="el-image rounded-xl mx-auto" onClick={async () => {
+                          if (!showImageViewer()) {
+                            setShowImageViewer(!showImageViewer())
+                            if (messageList()[activeIndex()].originImageUrl.includes('discord')) {
+                              let result = await queryMJCloudUrl(messageList()[activeIndex()].messageId)
+                              if (result.cloudUrl) {
+                                messageList()[activeIndex()].originImageUrl = result.cloudUrl
+                              }
+                            }
+                          } else {
+                            setShowImageViewer(!showImageViewer())
+                          }
                         }}>
                           <img
-                            src={originImageUrl()}
+                            src={messageList()[activeIndex()].imageUrl}
                             class="w-full h-full"
                             style={{ visibility: isLoading() ? 'hidden' : 'visible' }}
                             onLoad={() => setIsLoading(false)}
@@ -1023,7 +1047,7 @@ export default function Draw(props: {
                       </Show>
                     </div>
                   </Show>
-                  <Show when={showErrorHint() && messageList().length}>
+                  <Show when={showErrorHint() && messageList().length > 0}>
                     <div class="left flex-1 rounded-2xl flex items-center justify-center flex-col">
                       <div class="w-20">
                         <img alt="" class="w-full" src="https://b1.beisheng.com/common/starchain_self_image/2307/11/draw-error.png" />
@@ -1098,30 +1122,29 @@ export default function Draw(props: {
                           {i18n.t('bottomRight')}
                         </div>
                       </div>
-                      <Show when={true}>
-                        <div class="top py-4">
-                          <div class="text text-lg font-semibold">
-                            {i18n.t('variantImage')}
-                          </div>
-                          <div class="text1 text-xs pt-1">
-                            {i18n.t('modifyImageLeft')}
-                          </div>
+
+                      <div class="top py-4">
+                        <div class="text text-lg font-semibold">
+                          {i18n.t('variantImage')}
                         </div>
-                        <div class="cell flex justify-between mb-4 h-10">
-                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
-                            {i18n.t('topLeft')}
-                          </div>
-                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V2')}>
-                            {i18n.t('topRight')}
-                          </div>
-                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V3')}>
-                            {i18n.t('bottomLeft')}
-                          </div>
-                          <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V4')}>
-                            {i18n.t('bottomRight')}
-                          </div>
+                        <div class="text1 text-xs pt-1">
+                          {i18n.t('modifyImageLeft')}
                         </div>
-                      </Show>
+                      </div>
+                      <div class="cell flex justify-between mb-4 h-10">
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V1')}>
+                          {i18n.t('topLeft')}
+                        </div>
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V2')}>
+                          {i18n.t('topRight')}
+                        </div>
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V3')}>
+                          {i18n.t('bottomLeft')}
+                        </div>
+                        <div class="text text-base flex items-center justify-center rounded-xl cursor-pointer h-10" onClick={() => upscaling('V4')}>
+                          {i18n.t('bottomRight')}
+                        </div>
+                      </div>
 
                     </Show>
                     <Show when={type() == 2}>
@@ -1129,12 +1152,12 @@ export default function Draw(props: {
                         <div class="text text-lg font-semibold">更多操作</div>
                       </div>
                     </Show>
-                    <div class="cell flex mb-4 h-10">
+                    <div class="cell flex justify-between mb-4 h-10">
                       <div class="new_text h-10 text-base flex items-center justify-center rounded-xl cursor-pointer" style="display:none;">
                         <i class="iconfont  icon-guanjiancixinxi-shuaxin span text-lg"></i>
-                        <span class="span pl-1 text-base">重新生成</span>
+                        <span class="span pl-1 text-base">{i18n.t('regenerate')}</span>
                       </div>
-                      <div class="del_text text-base flex items-center justify-center rounded-xl h-10 cursor-pointer mr-2" onClick={() => {
+                      <div class="del_text text-base flex items-center justify-center rounded-xl h-10 cursor-pointer" onClick={() => {
                         deleteMj()
                       }}>
                         <i class="iconfont  icon-guanjiancixinxi-shanchu span text-lg"></i>

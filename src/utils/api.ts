@@ -649,3 +649,66 @@ export const sendMjTranslate = async (body: MjPromptBody) => {
     throw error;
   }
 };
+
+export const queryMJCloudUrl = async (messageId: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/mj/fetchCloudUrl?messageId=${messageId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    throw error;
+  }
+};
+
+export const queryMJCloudPreviewUrl = async (messageId: string) => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/auth/uploadCloudPreview?messageId=${messageId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    throw error;
+  }
+};
+
+export const uploadToCloud = async () => {
+  try {
+    let sessionId = localStorage.getItem('sessionId')
+    const response = await fetch(`${apiHost}/api/auth/helloworld`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionId}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    throw error;
+  }
+};

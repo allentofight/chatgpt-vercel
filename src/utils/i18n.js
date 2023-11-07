@@ -196,7 +196,8 @@ i18n.init({
                 sendSmsCode: 'Send Code',
                 methodOne: 'Method 1',
                 methodTwo: 'Method 2',
-                AINavigation: 'AI Nav'
+                AINavigation: 'AI Nav',
+                regenerate: 'Regenerate',
             },
         },
         zh: {
@@ -376,7 +377,8 @@ i18n.init({
                 sendSmsCode: '发送验证码',
                 methodOne: '方式一',
                 methodTwo: '方式二',
-                AINavigation: 'AI导航'
+                AINavigation: 'AI导航',
+                regenerate: '重新生成'
             },
         },
     },
