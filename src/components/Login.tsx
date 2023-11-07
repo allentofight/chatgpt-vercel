@@ -68,7 +68,7 @@ export default function LoginDialog(props: {
 
     const captchaResponse = (window as any).hcaptcha.getResponse();
     if (!captchaResponse) {
-      toast.error('请先点击下方验证');
+      toast.error('请先点击“我是人类”验证');
       return
     }
 
