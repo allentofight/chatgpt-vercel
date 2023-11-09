@@ -432,7 +432,8 @@ export default function () {
 
     if (!response.ok) {
       const res = await response.json()
-      throw new Error(res.error?.message ?? '当前请求繁忙，请稍后再试')
+      throw new Error('由于 Openai 官网崩溃，GPT4 暂不可用，请稍后再试')
+      //throw new Error(res.error?.message ?? '当前请求繁忙，请稍后再试')
     }
     const data = response.body
     if (!data) {
