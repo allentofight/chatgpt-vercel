@@ -80,7 +80,7 @@ export default function ({
         </Show>
       </div>
       <Show
-        when={!store.loading && store.sessionSettings.APIModel === 'gpt-4'}
+        when={!store.loading && (store.sessionSettings.APIModel === 'gpt-4' || store.sessionSettings.APIModel === 'gpt-4-32k')}
       >
         <div class="flex items-center px-1em text-0.8em">
           <hr class="flex-1 border-slate/40" />
