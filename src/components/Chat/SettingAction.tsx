@@ -152,7 +152,7 @@ export default function SettingAction() {
             label={`${i18n.t('conversationSettings')}`}
           />
 
-          <WebSearch />
+          {/* <WebSearch /> */}
 
         </div>
         <Switch
