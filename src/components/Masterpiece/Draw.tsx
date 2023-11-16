@@ -304,6 +304,13 @@ export default function Draw(props: {
       return
     }
 
+    if (isMjWorking()) {
+      toast.error('正在绘画中，请稍后再试')
+      return
+    }
+
+    clearInterval(queryIntervalId)
+
     let message = messageList()[activeIndex()]
 
     if (message.clickedButtons?.includes(command) && command.includes('U')) {
