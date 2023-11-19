@@ -450,7 +450,9 @@ export default function () {
         if (char === "\n" && store.currentAssistantMessage.endsWith("\n")) {
           continue
         }
+
         if (char) {
+          char = char.replace('null', '')
           setStore("currentAssistantMessage", k => k + char)
         }
       }
