@@ -42,10 +42,10 @@ export default function ({
 
   const handleWheel = (event: WheelEvent) => {
     if (event.deltaY > 0) {
-      console.log('滚动方向：向下');
+      // console.log('滚动方向：向下');
       setAutoScroll(false)
     } else {
-      console.log('滚动方向：向上');
+      // console.log('滚动方向：向上');
     }
   };
 
@@ -57,9 +57,9 @@ export default function ({
     const touchEndY = event.touches[0].clientY;
 
     if (touchEndY > touchStartY) {
-      console.log('滚动方向：向上');
+      // console.log('滚动方向：向上');
     } else if (touchEndY < touchStartY) {
-      console.log('滚动方向：向下');
+      // console.log('滚动方向：向下');
       setAutoScroll(false)
     }
   };
