@@ -87,7 +87,7 @@ export function randomKey(keys: string[]) {
 
 export const scrollToBottom = throttle(
   () => {
-    const rootEle = document.getElementById('mainContainer');
+    const rootEle = document.getElementById('root');
     rootEle!.scrollTo({
       top: rootEle!.scrollHeight,
       behavior: "smooth"
