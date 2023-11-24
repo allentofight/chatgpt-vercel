@@ -30,11 +30,12 @@ export default function ({
   )
 
   createEffect((prev: number | undefined) => {
-    if (prev !== undefined && store.messageList.length > prev) {
+    if (prev !== undefined && store.messageList.length > prev && autoScroll()) {
       scrollToBottom()
     }
     return store.messageList.length
   })
+
 
   const [autoScroll, setAutoScroll] = createSignal(true)
 
@@ -55,7 +56,6 @@ export default function ({
 
   const handleTouchMove = (event: TouchEvent) => {
     const touchEndY = event.touches[0].clientY;
-
     if (touchEndY > touchStartY) {
       // console.log('滚动方向：向上');
       setAutoScroll(false)
@@ -65,9 +65,7 @@ export default function ({
   };
 
   createEffect(() => {
-    if (!store.loading) {
-      setAutoScroll(true)
-    }
+    setAutoScroll(store.loading)
   })
 
   onMount(() => {
