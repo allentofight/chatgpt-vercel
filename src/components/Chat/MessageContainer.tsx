@@ -4,7 +4,9 @@ import {
   Show,
   createEffect,
   createSignal,
-  createMemo
+  createMemo,
+  onMount,
+  onCleanup
 } from "solid-js"
 import { RootStore, defaultMessage } from "~/store"
 import { scrollToBottom } from "~/utils"
@@ -34,8 +36,57 @@ export default function ({
     return store.messageList.length
   })
 
+  const [autoScroll, setAutoScroll] = createSignal(true)
+
+  let touchStartY = 0;
+
+  const handleWheel = (event: WheelEvent) => {
+    if (event.deltaY > 0) {
+      console.log('滚动方向：向下');
+      setAutoScroll(false)
+    } else {
+      console.log('滚动方向：向上');
+    }
+  };
+
+  const handleTouchStart = (event: TouchEvent) => {
+    touchStartY = event.touches[0].clientY;
+  };
+
+  const handleTouchMove = (event: TouchEvent) => {
+    const touchEndY = event.touches[0].clientY;
+
+    if (touchEndY > touchStartY) {
+      console.log('滚动方向：向上');
+    } else if (touchEndY < touchStartY) {
+      console.log('滚动方向：向下');
+      setAutoScroll(false)
+    }
+  };
+
+  createEffect(() => {
+    if (!store.loading) {
+      setAutoScroll(true)
+    }
+  })
+
+  onMount(() => {
+    const container = document.getElementById('root');
+    if (container) {
+      container.addEventListener('wheel', handleWheel);
+      container.addEventListener('touchstart', handleTouchStart);
+      container.addEventListener('touchmove', handleTouchMove);
+
+      onCleanup(() => {
+        container.removeEventListener('wheel', handleWheel);
+        container.removeEventListener('touchstart', handleTouchStart);
+        container.removeEventListener('touchmove', handleTouchMove);
+      });
+    }
+  })
+
   createEffect(prev => {
-    if (store.currentAssistantMessage) scrollToBottom()
+    if (store.currentAssistantMessage && autoScroll()) scrollToBottom()
   })
 
   createEffect(prev => {
