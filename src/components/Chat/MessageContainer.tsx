@@ -43,9 +43,9 @@ export default function ({
   const handleWheel = (event: WheelEvent) => {
     if (event.deltaY > 0) {
       // console.log('滚动方向：向下');
-      setAutoScroll(false)
     } else {
       // console.log('滚动方向：向上');
+      setAutoScroll(false)
     }
   };
 
@@ -58,9 +58,9 @@ export default function ({
 
     if (touchEndY > touchStartY) {
       // console.log('滚动方向：向上');
+      setAutoScroll(false)
     } else if (touchEndY < touchStartY) {
       // console.log('滚动方向：向下');
-      setAutoScroll(false)
     }
   };
 
