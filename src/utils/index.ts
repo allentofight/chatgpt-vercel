@@ -89,7 +89,7 @@ export const scrollToBottom = throttle(
   () => {
     const rootEle = document.getElementById('mainContainer');
     rootEle!.scrollTo({
-      top: document.body.scrollHeight,
+      top: rootEle!.scrollHeight,
       behavior: "smooth"
     })
   },
