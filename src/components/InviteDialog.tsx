@@ -24,7 +24,7 @@ const InviteDialog = (props: {
 
     setInviteSuccess(true);
     let inviteCode = localStorage.getItem('inviteCode')
-    const inviteLink = `https://www.nextaibots.com/login?inviteCode=${inviteCode}`;
+    const inviteLink = `https://${window.location.host}/login?inviteCode=${inviteCode}`;
     try {
       // 复制链接到剪贴板
       await navigator.clipboard.writeText(inviteLink);

@@ -78,7 +78,7 @@ export default function () {
       let sid = queryParams.get('sid')
       if (sid) {
         localStorage.setItem('sessionId', sid)
-        window.location.href = 'https://www.nextaibots.com'
+        window.location.href = `https://${window.location.host}`
       }
     }
 

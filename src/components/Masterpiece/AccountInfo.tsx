@@ -37,7 +37,7 @@ export default function AccountInfo(props: {
     const [balance, setBalance] = createSignal('0');
 
     let inviteCode = localStorage.getItem('inviteCode')
-    const inviteLink = `https://www.nextaibots.com/login?inviteCode=${inviteCode}`;
+    const inviteLink = `https://${window.location.host}/login?inviteCode=${inviteCode}`;
 
     const [inviteUrl, setInviteUrl] = createSignal(inviteLink);
 
