@@ -633,7 +633,7 @@ export default function Draw(props: {
   async function fetchPrompt() {
 
     let inputVal = textareaRef()?.value as string;
-    let response = await fetch('/api/prompt', {
+    let response = await fetch('/api', {
       method: 'POST',
       body: JSON.stringify({
         messages: [{

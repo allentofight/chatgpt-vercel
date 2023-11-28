@@ -191,12 +191,6 @@ export default function () {
     }
   }
 
-  interface IResponse {
-    conversationSignature: string;
-    conversationId: string;
-    clientId: string;
-    invocationId: string;
-  }
   function archiveCurrentMessage() {
     let extractInfo = {}
     if (store.currentAssistantMessage) {
