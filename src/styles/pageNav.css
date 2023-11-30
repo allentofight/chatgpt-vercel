@@ -22,19 +22,20 @@
   border-radius: 4px
 }
 
-.base ._pages_nav {
-  box-shadow: inset 0 -.06rem #ffffff1a
+.light ._pages_nav {
+  box-shadow: 5px 1px 9px #4181ff4d;
+  min-height: 56px;
 }
 
-.base ._pages_nav .text {
+.light ._pages_nav .text {
   color: #fff
 }
 
-.base ._pages_nav .text:hover {
+.light ._pages_nav .text:hover {
   color: #14b8a6
 }
 
-.base ._pages_nav .active {
+.light ._pages_nav .active {
   background: linear-gradient(42deg, #E0CE80 0%, #B5C34F 19%, #3CC46D 56%, #56C59F 76%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -42,18 +43,19 @@
   color: #14b8a6
 }
 
-.base ._pages_nav .line-line {
+.light ._pages_nav .line-line {
   height: 2px;
   background: linear-gradient(42deg, #E0CE80 0%, #B5C34F 19%, #3CC46D 56%, #56C59F 76%)
 }
 
-.base ._pages_nav .collect {
+.light ._pages_nav .collect {
   box-shadow: 0 0 0 .5px #2a713f inset;
-  color: #fff
+  color: #334155;
 }
 
-.dark ._pages_nav {
-  box-shadow: inset 0 -.06rem #ffffff1a
+
+._pages_nav {
+  box-shadow: 5px 1px 9px #4181ff4d;
 }
 
 .dark ._pages_nav .text {
@@ -83,10 +85,14 @@
 }
 
 ._pages_nav {
+  background: white;
+}
+
+.dark ._pages_nav {
   background-image: url(https://b1.beisheng.com/common/starchain_self_image/2307/11/bg.png);
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  min-height: 56px
+  min-height: 56px;
 }
 
 ._pages_nav * {
@@ -122,7 +128,7 @@
 
 @media (max-width: 768px) {
   ._pages_nav {
-    min-height: 44px
+    min-height: 44px !important;
   }
 
   ._pages_nav .text {

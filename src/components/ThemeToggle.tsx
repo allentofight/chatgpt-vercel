@@ -23,6 +23,7 @@ export default function ThemeToggle() {
       ?.querySelector('meta[name="theme-color"]')
       ?.setAttribute("content", isDark ? "#2E2F39" : "#f6f8fa")
     localStorage.setItem(LocalStorageKey.THEME, isDark ? "dark" : "light")
+    document.documentElement.setAttribute('class', isDark ? "dark" : "light");
   }
 
   return (

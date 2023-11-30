@@ -5,6 +5,7 @@ import { isMobile } from "~/utils"
 import CourseDialog from "./CourseDialog"
 import i18n from "~/utils/i18n";
 import { createPopper } from '@popperjs/core';
+import ThemeToggle from '../ThemeToggle';
 
 export default function PageNav(props: {
   chatListClicked: (showChat: boolean) => void,
@@ -98,7 +99,7 @@ export default function PageNav(props: {
           <For each={optionTitles}>
             {(title, index) => {
               return (
-                <div class={`text text-center cursor-pointer ${selectedIndex() === index() ? 'active' : ''}`} onClick={() => clickOption(index())}>
+                <div class={`nav-text text text-center cursor-pointer ${selectedIndex() === index() ? 'active' : ''}`} onClick={() => clickOption(index())}>
                   <Show when={title === i18n.t('AINavigation')}>
                     <a href="https://ainavtech.com/" target="_blank" style={{ "background": 'transparent', 'color': 'white' }}>
                       {title}
@@ -114,6 +115,7 @@ export default function PageNav(props: {
         </div>
       </div >
       <div class="flex items-center">
+        <ThemeToggle />
         <div class="pc collect flex items-center justify-center text-sm px-3 mr-4 rounded-xl cursor-pointer" onClick={() => {
           setStore('menuTitle', i18n.t('collectionManage'))
         }}>

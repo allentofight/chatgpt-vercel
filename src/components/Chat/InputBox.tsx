@@ -160,9 +160,9 @@ export default function ({
 
   return (
     <div
-      class="pb-2em px-2em fixed bottom-0 z-10"
+      class="input-box-pos pb-2em px-2em fixed bottom-0 z-10"
       style={{
-        "background-color": "var(--c-bg)",
+        "background-color": "var(--main-bg)",
         width: width() === "init" ? "100%" : width()
       }}
     >

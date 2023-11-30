@@ -466,7 +466,8 @@ export default function () {
         clickPromptCategory={() => {
           setShowPromptCategory(true)
         }} />
-      <main ref={containerRef!} id="mainContainer" class="mt-4 w-full flex justify-center" style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
+      <div class="bg-mask absolute left-195px right-20px bottom-20px bg-white" style="top: 64px;"></div>
+      <main ref={containerRef!} id="mainContainer" class="mt-4 w-full h-full flex justify-center overflow-y-auto" style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
         <Show when={!store.showMindMap}>
           <MessageContainer
             sendMessage={sendMessage}

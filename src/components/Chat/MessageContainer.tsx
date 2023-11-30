@@ -100,7 +100,7 @@ export default function ({
       class="px-1em w-full"
       id="message-container"
       style={{
-        "margin-bottom": `calc(6em + ${paddingBottom() + "px"})`
+        "padding-bottom": "30px"
       }}
     >
       <div id="message-container-img" class="px-1em">

@@ -12,6 +12,7 @@ import { createSignal, Show, createEffect, onMount } from 'solid-js'
 import Aside from "~/components/Aside";
 import { RootStore, loadSession } from "~/store"
 import i18n from '~/utils/i18n';
+import { isMobile } from '~/utils';
 
 export default function MasterPiece() {
 
@@ -43,7 +44,7 @@ export default function MasterPiece() {
         ></PageNav>
         <Layout>
 
-          <div class={`flex items-center flex-col h-full ${store.chatType == 1 ? 'custom-padding-bottom' : ''}`}>
+          <div class={`flex items-center relative flex-col h-full ${store.chatType == 1 ? 'custom-padding-bottom' : ''}`} style={{ "padding-left": isMobile() ? '0px' : '175px' }}>
             <Chat />
             <Aside />
           </div>

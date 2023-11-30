@@ -28,9 +28,8 @@ export default function Root() {
   onMount(() => {
     // Your script here
     (function () {
-      const el = document.querySelector('body');
       const theme = localStorage.getItem('THEME') ?? 'dark';
-      el!.setAttribute('class', theme);
+      document.documentElement.setAttribute('class', theme);
       localStorage.setItem('THEME', theme);
       const html = document.documentElement;
 
@@ -54,7 +53,7 @@ export default function Root() {
   });
 
   return (
-    <Html lang="zh-cn" class="dark">
+    <Html lang="zh-cn">
       <Head>
         <PrefixTitle />
         <Meta charset="utf-8" />

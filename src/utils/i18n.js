@@ -198,6 +198,8 @@ i18n.init({
                 methodTwo: 'Method 2',
                 AINavigation: 'AI Nav',
                 regenerate: 'Regenerate',
+                newChat: 'New Chat',
+                loadMore: 'Load More',
             },
         },
         zh: {
@@ -378,7 +380,9 @@ i18n.init({
                 methodOne: '方式一',
                 methodTwo: '方式二',
                 AINavigation: 'AI导航',
-                regenerate: '重新生成'
+                regenerate: '重新生成',
+                newChat: '新建会话',
+                loadMore: '加载更多',
             },
         },
     },

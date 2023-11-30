@@ -18,7 +18,8 @@
 }
 
 :root {
-  --c-bg: white;
+  --c-bg: #F3F7FD;
+  --main-bg: white;
   --c-scroll-thumb: #b9b9b9;
   --c-text-slate: rgb(148, 163, 184);
 }
@@ -38,7 +39,72 @@ header,
 
 html.dark {
   --c-bg: #2E2F39;
+  --main-bg: #2E2F39;
   --c-scroll-thumb: #4c4c4c;
+}
+
+.light main {
+  background: white;
+}
+
+.light #message-container-img {
+  background: white;
+}
+
+.light #message-container {
+  background: white;
+}
+
+.light aside {
+  background: white;
+}
+
+.light .input-box-pos {
+  bottom: 20px;
+}
+
+.dark .bg-mask {
+  display: none;
+}
+
+.light a {
+  background: rgba(65, 129, 255, 0.05);
+  color: #666666 !important;
+}
+
+.light .nav-text {
+  color: #666666 !important;
+}
+
+.light a:hover {
+  background: #4181FF26;
+}
+
+.light .custom-a-bg {
+  color: #4181FF !important;
+  background: rgba(65, 129, 255, 0.19) !important;
+  border: 1px solid rgba(65, 129, 255, 1);
+}
+
+.light .selected {
+  background: #4181FF26;
+  color: #666666 !important;
+}
+
+.light .selected:hover {
+  background: #4181FF26;
+}
+
+.light .gradien-div {
+  display: none;
+}
+
+.light .load-more {
+  background-color: rgba(65, 129, 255, 1);
+}
+
+.light .input-field {
+  color: #666666;
 }
 
 /**

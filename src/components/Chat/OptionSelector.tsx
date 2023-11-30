@@ -1,4 +1,5 @@
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
+import { isMobile } from '~/utils';
 
 declare global {
   interface WindowEventMap {
@@ -76,8 +77,8 @@ function OptionSelector() {
         }
       `}
       </style>
-      <div class="w-full px-2 relative flex flex-col items-stretch justify-center gap-2 sm:items-center">
-        <div class="relative flex rounded-xl bg-gray-100 p-1 text-gray-900 dark:bg-gray-900">
+      <div class={`w-full px-2 ${isMobile() ? '' : 'pt-2'} relative flex flex-col items-stretch justify-center gap-2 sm:items-center`}>
+        <div class="relative flex rounded-xl bg-gray-100 p-1 text-gray-900 dark:bg-gray-900 light:bg-[#4181FF30]">
           <ul class="flex w-full list-none gap-1 sm:w-auto">
             <Show when={!modelConfirmed() || !isGPT4()}>
               <li class="group/toggle w-full"

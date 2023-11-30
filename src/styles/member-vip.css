@@ -430,6 +430,10 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   display: flex
 }
 
+.vip-container {
+  background: #2E2F39;
+}
+
 .vip-container .cell .label {
   width: 80px;
   color: #333
@@ -613,11 +617,11 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   border-right: 1px solid #ECECEC
 }
 
-.dark .text {
+.text {
   color: #ffffffd9
 }
 
-.dark .vip-item {
+.vip-item {
   background: #1A1E28
 }
 
@@ -625,7 +629,7 @@ swiper-container:not(.swiper-watch-progress) .swiper-lazy-preloader {
   color: #fff
 }
 
-.dark .vip-container .vip-item .cell {
+.vip-container .vip-item .cell {
   padding: 10px 24px;
   font-size: 12px
 }
