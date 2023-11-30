@@ -28,9 +28,8 @@ export default function Root() {
   onMount(() => {
     // Your script here
     (function () {
-      const theme = localStorage.getItem('THEME') ?? 'dark';
-      document.documentElement.setAttribute('class', theme);
-      localStorage.setItem('THEME', theme);
+      const theme = localStorage.getItem('gpt-theme') ?? 'light';
+      localStorage.setItem('gpt-theme', theme);
       const html = document.documentElement;
 
       function setFont() {
@@ -42,6 +41,7 @@ export default function Root() {
         let fontSize = (16 * (cliWidth / 1920) < 10 ? 10 : 16 * (cliWidth / 1920))
         fontSize = Math.max(fontSize, 14)
         html.style.fontSize = fontSize + 'px';
+        html.setAttribute('class', theme);
       }
 
       setFont();
