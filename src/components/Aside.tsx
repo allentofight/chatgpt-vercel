@@ -373,7 +373,7 @@ export default function Aside() {
             color: rgba(255,255,255,var(--tw-text-opacity))
           }
           
-          .btn-dark:hover {
+          .dark .btn-dark:hover {
             --tw-bg-opacity: 1;
             background-color: rgba(64,65,79,var(--tw-bg-opacity))
           }
