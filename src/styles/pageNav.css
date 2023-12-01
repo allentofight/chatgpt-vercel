@@ -163,6 +163,10 @@
     background-color: #fff
   }
 
+  .light .mobile-inner-header-icon span {
+    background-color: #334155;
+  }
+
   .mobile-inner-header-icon span:nth-child(1) {
     transform: translateY(4px) rotate(0)
   }
