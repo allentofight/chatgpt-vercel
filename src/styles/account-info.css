@@ -6,7 +6,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, .5);
     z-index: 2000;
     display: flex
 }
@@ -21,7 +21,7 @@
     width: 442px;
     margin: 0 auto;
     border-radius: 1rem;
-    background: linear-gradient(137deg,var(--d-button1-bor),var(--d-active-bor),var(--d-button1-bor));
+    background: linear-gradient(137deg, var(--d-button1-bor), var(--d-active-bor), var(--d-button1-bor));
     padding: 1px
 }
 
@@ -129,7 +129,7 @@
     color: var(--d-button-color);
     background: var(--d-button-bg);
     box-shadow: 0 4px 11px #0595f538;
-    border: 1px solid rgba(255,255,255,.09);
+    border: 1px solid rgba(255, 255, 255, .09);
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
@@ -140,24 +140,24 @@
     background: var(--d-button-active-bg)
 }
 
- .el-form-item {
+.el-form-item {
     margin: 0
 }
 
- .el-input__inner {
+.el-input__inner {
     color: var(--d-color)
 }
 
- .el-input__wrapper {
+.el-input__wrapper {
     border: 0;
     background: transparent;
     box-shadow: 0 0 0 0 transparent inset;
     box-shadow: 0 0 0 1px var(--d-bor) inset
 }
 
- .el-input-group__append {
+.el-input-group__append {
     background: transparent;
-    box-shadow: 0 1px 0 0 var(--d-bor) inset,0 -1px 0 0 var(--d-bor) inset,-1px 0 0 0 var(--d-bor) inset
+    box-shadow: 0 1px 0 0 var(--d-bor) inset, 0 -1px 0 0 var(--d-bor) inset, -1px 0 0 0 var(--d-bor) inset
 }
 
 @keyframes loader-spin-ecdd5528 {
@@ -171,7 +171,7 @@
     display: block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(1,209,167,.3215686275);
+    border: 2px solid rgba(1, 209, 167, .3215686275);
     border-top-color: #01d1a8;
     border-radius: 50%;
     animation: loader-spin-ecdd5528 1s linear infinite
@@ -179,7 +179,7 @@
 
 @media (max-width: 768px) {
     .mask-login {
-        flex:1;
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -197,7 +197,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, .5);
     z-index: 2000;
     display: flex
 }
@@ -212,7 +212,7 @@
     width: 442px;
     margin: 0 auto;
     border-radius: 1rem;
-    background: linear-gradient(137deg,var(--d-button1-bor),var(--d-active-bor),var(--d-button1-bor));
+    background: linear-gradient(137deg, var(--d-button1-bor), var(--d-active-bor), var(--d-button1-bor));
     padding: 1px
 }
 
@@ -320,7 +320,7 @@
     color: var(--d-button-color);
     background: var(--d-button-bg);
     box-shadow: 0 4px 11px #0595f538;
-    border: 1px solid rgba(255,255,255,.09);
+    border: 1px solid rgba(255, 255, 255, .09);
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
@@ -331,24 +331,24 @@
     background: var(--d-button-active-bg)
 }
 
- .el-form-item {
+.el-form-item {
     margin: 0
 }
 
- .el-input__inner {
+.el-input__inner {
     color: var(--d-color)
 }
 
- .el-input__wrapper {
+.el-input__wrapper {
     border: 0;
     background: transparent;
     box-shadow: 0 0 0 0 transparent inset;
     box-shadow: 0 0 0 1px var(--d-bor) inset
 }
 
- .el-input-group__append {
+.el-input-group__append {
     background: transparent;
-    box-shadow: 0 1px 0 0 var(--d-bor) inset,0 -1px 0 0 var(--d-bor) inset,-1px 0 0 0 var(--d-bor) inset
+    box-shadow: 0 1px 0 0 var(--d-bor) inset, 0 -1px 0 0 var(--d-bor) inset, -1px 0 0 0 var(--d-bor) inset
 }
 
 @keyframes loader-spin-cb7fb8c8 {
@@ -362,7 +362,7 @@
     display: block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(1,209,167,.3215686275);
+    border: 2px solid rgba(1, 209, 167, .3215686275);
     border-top-color: #01d1a8;
     border-radius: 50%;
     animation: loader-spin-cb7fb8c8 1s linear infinite
@@ -370,7 +370,7 @@
 
 @media (max-width: 768px) {
     .mask-login {
-        flex:1;
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -388,7 +388,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, .5);
     z-index: 2000;
     display: flex
 }
@@ -403,7 +403,7 @@
     width: 442px;
     margin: 0 auto;
     border-radius: 1rem;
-    background: linear-gradient(137deg,var(--d-button1-bor),var(--d-active-bor),var(--d-button1-bor));
+    background: linear-gradient(137deg, var(--d-button1-bor), var(--d-active-bor), var(--d-button1-bor));
     padding: 1px
 }
 
@@ -511,7 +511,7 @@
     color: var(--d-button-color);
     background: var(--d-button-bg);
     box-shadow: 0 4px 11px #0595f538;
-    border: 1px solid rgba(255,255,255,.09);
+    border: 1px solid rgba(255, 255, 255, .09);
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
@@ -522,24 +522,24 @@
     background: var(--d-button-active-bg)
 }
 
- .el-form-item {
+.el-form-item {
     margin: 0
 }
 
- .el-input__inner {
+.el-input__inner {
     color: var(--d-color)
 }
 
- .el-input__wrapper {
+.el-input__wrapper {
     border: 0;
     background: transparent;
     box-shadow: 0 0 0 0 transparent inset;
     box-shadow: 0 0 0 1px var(--d-bor) inset
 }
 
- .el-input-group__append {
+.el-input-group__append {
     background: transparent;
-    box-shadow: 0 1px 0 0 var(--d-bor) inset,0 -1px 0 0 var(--d-bor) inset,-1px 0 0 0 var(--d-bor) inset
+    box-shadow: 0 1px 0 0 var(--d-bor) inset, 0 -1px 0 0 var(--d-bor) inset, -1px 0 0 0 var(--d-bor) inset
 }
 
 @keyframes loader-spin-54f4f278 {
@@ -553,7 +553,7 @@
     display: block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(1,209,167,.3215686275);
+    border: 2px solid rgba(1, 209, 167, .3215686275);
     border-top-color: #01d1a8;
     border-radius: 50%;
     animation: loader-spin-54f4f278 1s linear infinite
@@ -561,7 +561,7 @@
 
 @media (max-width: 768px) {
     .mask-login {
-        flex:1;
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -579,7 +579,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,.5);
+    background: rgba(0, 0, 0, .5);
     z-index: 2000;
     display: flex
 }
@@ -594,7 +594,7 @@
     width: 442px;
     margin: 0 auto;
     border-radius: 1rem;
-    background: linear-gradient(137deg,var(--d-button1-bor),var(--d-active-bor),var(--d-button1-bor));
+    background: linear-gradient(137deg, var(--d-button1-bor), var(--d-active-bor), var(--d-button1-bor));
     padding: 1px
 }
 
@@ -702,7 +702,7 @@
     color: var(--d-button-color);
     background: var(--d-button-bg);
     box-shadow: 0 4px 11px #0595f538;
-    border: 1px solid rgba(255,255,255,.09);
+    border: 1px solid rgba(255, 255, 255, .09);
     border-radius: 4px;
     font-size: 14px;
     font-weight: 500;
@@ -745,24 +745,24 @@
     font-size: 26px
 }
 
- .el-form-item {
+.el-form-item {
     margin: 0
 }
 
- .el-input__inner {
+.el-input__inner {
     color: var(--d-color)
 }
 
- .el-input__wrapper {
+.el-input__wrapper {
     border: 0;
     background: transparent;
     box-shadow: 0 0 0 0 transparent inset;
     box-shadow: 0 0 0 1px var(--d-bor) inset
 }
 
- .el-input-group__append {
+.el-input-group__append {
     background: transparent;
-    box-shadow: 0 1px 0 0 var(--d-bor) inset,0 -1px 0 0 var(--d-bor) inset,-1px 0 0 0 var(--d-bor) inset
+    box-shadow: 0 1px 0 0 var(--d-bor) inset, 0 -1px 0 0 var(--d-bor) inset, -1px 0 0 0 var(--d-bor) inset
 }
 
 @keyframes loader-spin-94af0f26 {
@@ -776,7 +776,7 @@
     display: block;
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(1,209,167,.3215686275);
+    border: 2px solid rgba(1, 209, 167, .3215686275);
     border-top-color: #01d1a8;
     border-radius: 50%;
     animation: loader-spin-94af0f26 1s linear infinite
@@ -784,7 +784,7 @@
 
 @media (max-width: 768px) {
     .mask-login {
-        flex:1;
+        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -832,42 +832,42 @@
     color: #14b8a6
 }
 
-.dark .user .user-title {
+.user .user-title {
     color: #ffffffd9
 }
 
-.dark .user .user-name {
+.user .user-name {
     color: #fff
 }
 
-.dark .user .user-name__input {
+.user .user-name__input {
     color: #fff;
     border-bottom: 1px solid #9da3ac
 }
 
-.dark .user .user-cell {
-    border: 1px solid rgba(255,255,255,.47)
+.user .user-cell {
+    border: 1px solid rgba(255, 255, 255, .47)
 }
 
-.dark .user .user-cell>div+div {
-    border-top: 1px solid rgba(255,255,255,.47)
+.user .user-cell>div+div {
+    border-top: 1px solid rgba(255, 255, 255, .47)
 }
 
-.dark .user .user-setting-item {
+.user .user-setting-item {
     color: #ffffff73
 }
 
-.dark .user .user-setting-item .user-setting-item__title {
+.user .user-setting-item .user-setting-item__title {
     color: #fff
 }
 
-.dark .user .user-setting-item .gda-btn {
+.user .user-setting-item .gda-btn {
     background-color: #0f131b;
-    border: 1px solid rgba(255,255,255,.45);
+    border: 1px solid rgba(255, 255, 255, .45);
     color: #ffffffd9
 }
 
-.dark .user .user-setting-item .gda-btn:hover {
+.user .user-setting-item .gda-btn:hover {
     background-color: #0f131b;
     border-color: #14b8a6;
     color: #14b8a6
@@ -888,7 +888,7 @@
     position: relative;
     text-align: center;
     touch-action: manipulation;
-    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    transition: all .3s cubic-bezier(.645, .045, .355, 1);
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
@@ -900,6 +900,10 @@
     max-width: 760px;
     margin: 0 auto;
     padding: 10px
+}
+
+.light .user {
+    background-color: gray;
 }
 
 .user-title {
@@ -1008,7 +1012,7 @@
     position: relative;
     text-align: center;
     touch-action: manipulation;
-    transition: all .3s cubic-bezier(.645,.045,.355,1);
+    transition: all .3s cubic-bezier(.645, .045, .355, 1);
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
@@ -1016,7 +1020,7 @@
 }
 
 .user-setting-item .gda-btn>span {
-    transition: margin-left .3s cubic-bezier(.645,.045,.355,1)
+    transition: margin-left .3s cubic-bezier(.645, .045, .355, 1)
 }
 
 .monthly {
@@ -1029,27 +1033,27 @@
 
 @media (max-width: 768px) {
     .icon2 {
-        font-size:.875rem
+        font-size: .875rem
     }
 }
 
 .base .popper {
     background: #FEFEFE;
-    border: 1px solid rgba(0,0,0,.05)
+    border: 1px solid rgba(0, 0, 0, .05)
 }
 
 .base .popper .el-popper__arrow:before {
-    border: 1px solid rgba(0,0,0,.05);
+    border: 1px solid rgba(0, 0, 0, .05);
     background: #FEFEFE
 }
 
-.dark .popper {
+.popper {
     background: #262626;
-    border: 1px solid rgba(255,255,255,.1)
+    border: 1px solid rgba(255, 255, 255, .1)
 }
 
-.dark .popper .el-popper__arrow:before {
-    border: 1px solid rgba(255,255,255,.1);
+.popper .el-popper__arrow:before {
+    border: 1px solid rgba(255, 255, 255, .1);
     background: #262626
 }
 
