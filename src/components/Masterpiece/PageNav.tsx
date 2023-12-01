@@ -25,6 +25,7 @@ export default function PageNav(props: {
   function clickOption(index: number) {
 
     if (optionTitles[index] === i18n.t('AINavigation')) {
+      window.location.href = 'https://ainavtech.com/'
       return
     }
 
@@ -100,14 +101,7 @@ export default function PageNav(props: {
             {(title, index) => {
               return (
                 <div class={`nav-text text text-center cursor-pointer ${selectedIndex() === index() ? 'active' : ''}`} onClick={() => clickOption(index())}>
-                  <Show when={title === i18n.t('AINavigation')}>
-                    <a href="https://ainavtech.com/" target="_blank" style={{ "background": 'transparent', 'color': 'white' }}>
-                      {title}
-                    </a>
-                  </Show>
-                  <Show when={title !== i18n.t('AINavigation')}>
-                    {title}
-                  </Show>
+                  {title}
                 </div>
               )
             }}
