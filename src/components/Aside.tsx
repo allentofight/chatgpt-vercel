@@ -363,7 +363,7 @@ export default function Aside() {
     <>
       <style>
         {`
-          .btn-dark {
+          .dark .btn-dark {
             --tw-border-opacity: 1;
             --tw-bg-opacity: 1;
             --tw-text-opacity: 1;
