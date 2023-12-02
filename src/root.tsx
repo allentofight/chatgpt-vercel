@@ -41,9 +41,9 @@ export default function Root() {
         let fontSize = (16 * (cliWidth / 1920) < 10 ? 10 : 16 * (cliWidth / 1920))
         fontSize = Math.max(fontSize, 14)
         html.style.fontSize = fontSize + 'px';
-        html.setAttribute('class', theme);
       }
 
+      html.setAttribute('class', theme);
       setFont();
 
       window.onresize = function () {
