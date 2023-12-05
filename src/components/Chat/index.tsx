@@ -474,13 +474,6 @@ export default function () {
             inputBoxHeight={inputBoxHeight}
           />
         </Show>
-        <InputBox
-          height={inputBoxHeight}
-          width={containerWidth}
-          setHeight={setInputBoxHeight}
-          sendMessage={sendMessage}
-          stopStreamFetch={stopStreamFetch}
-        />
         <Show when={showLoginDirectDialog()}>
           <LoginGuideDialog title={loginGuideTitle()} />
         </Show>
@@ -511,6 +504,13 @@ export default function () {
         </Show>
 
       </main>
+      <InputBox
+        height={inputBoxHeight}
+        width={containerWidth}
+        setHeight={setInputBoxHeight}
+        sendMessage={sendMessage}
+        stopStreamFetch={stopStreamFetch}
+      />
       <Show when={store.showMindMap}>
         <MarkmapView />
       </Show>
