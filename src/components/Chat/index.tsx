@@ -101,7 +101,7 @@ export default function () {
     });
 
     createResizeObserver(containerRef, ({ width }, el) => {
-      if (el === containerRef) setContainerWidth(`${width}px`)
+      if (el === containerRef) setContainerWidth(`${width + 8}px`)
     })
 
     if (q) sendMessage(q)
