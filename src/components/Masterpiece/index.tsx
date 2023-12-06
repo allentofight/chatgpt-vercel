@@ -34,6 +34,12 @@ export default function MasterPiece() {
             .custom-padding-bottom {
               padding-bottom: 123px;
             }
+
+            @media (max-width: 768px) {
+              .light .custom-padding-bottom {
+                background: white;
+              }
+            }
         `}
       </style>
       <div id="page" class="flex items-center flex-col h-full w-screen" style="padding-top: constant(safe-area-inset-top); padding-bottom: constant(safe-area-inset-bottom);">

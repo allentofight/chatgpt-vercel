@@ -13,7 +13,16 @@ export default function (props: {
 }) {
   return (
     <>
-      <div class="w-full fixed z-99 grid grid-cols-2 md:grid-cols-3">
+      <style>
+        {`
+            @media (max-width: 768px) {
+              .light .custom-header {
+                background: #F3F7FD;
+              }
+            }
+        `}
+      </style>
+      <div class="custom-header w-full fixed z-99 grid grid-cols-2 md:grid-cols-3">
         <div class="chat-nav-left">
           <div class="chat-nav-left-item" onClick={(event) => {
             setStore("showChatList", !store.showChatList)
