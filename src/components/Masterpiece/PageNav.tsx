@@ -20,12 +20,15 @@ export default function PageNav(props: {
 
   const { store, setStore } = RootStore
 
-  let optionTitles = isMobile() ? [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('collectionManage'), i18n.t('memberCenter'), i18n.t('AINavigation')] : [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('memberCenter'), i18n.t('AINavigation')]
+  let optionTitles = isMobile() ? [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('collectionManage'), i18n.t('memberCenter'), i18n.t('AINavigation'), i18n.t('aiCourse')] : [i18n.t('aitalk'), i18n.t('aidraw'), i18n.t('aisquare'), i18n.t('memberCenter'), i18n.t('AINavigation'), i18n.t('aiCourse')]
 
   function clickOption(index: number) {
 
     if (optionTitles[index] === i18n.t('AINavigation')) {
       window.location.href = 'https://ainavtech.com/'
+      return
+    } else if (optionTitles[index] === i18n.t('aiCourse')) {
+      window.location.href = 'https://time.geekbang.org/column/intro/100541001?code=pFP62%2FaV199UiYYdgVpGcHOdQivTKm4kPN0H6Zrk99g%3D'
       return
     }
 

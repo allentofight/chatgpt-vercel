@@ -200,6 +200,7 @@ i18n.init({
                 regenerate: 'Regenerate',
                 newChat: 'New Chat',
                 loadMore: 'Load More',
+                aiCourse: 'AI Course'
             },
         },
         zh: {
@@ -383,6 +384,7 @@ i18n.init({
                 regenerate: '重新生成',
                 newChat: '新建会话',
                 loadMore: '加载更多',
+                aiCourse: 'AI课程',
             },
         },
     },
