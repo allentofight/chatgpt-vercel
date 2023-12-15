@@ -71,7 +71,7 @@ export default function () {
       setStore('inChina', inChina === '1')
     }
 
-    if (window.location.href.includes('codesea')) {
+    if (window.location.href.includes('nextaibots.com')) {
       setShowNotifyDialog(true)
     } else if (window.location.href.includes('nextaibots')) {
       const queryParams = new URLSearchParams(window.location.search);
