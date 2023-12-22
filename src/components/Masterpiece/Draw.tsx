@@ -414,10 +414,10 @@ export default function Draw(props: {
       '--stop': /^(?:[1-9][0-9]|100)$/,
       '--stylize': /^(?:[0-9]+)$/,
       '--s': /^(?:[0-9]+)$/,
-      '--v': /^(?:1|2|3|4|5|5.1|5.2)$/,
+      '--v': /^(?:1|2|3|4|5|5.1|5.2|6.0)$/,
       '--niji': /^(?:4|5)$/,
       '--style': /^(?:cute|scenic|original|expressive|raw)$/,
-      '--version': /^(?:1|2|3|4|5|5.1|5.2)$/,
+      '--version': /^(?:1|2|3|4|5|5.1|5.2|6.0)$/,
       '--no': /^(?:\w+)$/,
       '--iw': /^\d+(\.\d+)?$/  // Matches integer or float numbers
     };
