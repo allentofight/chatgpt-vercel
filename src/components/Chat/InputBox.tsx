@@ -16,7 +16,8 @@ import { parsePrompts, scrollToBottom } from "~/utils"
 import SettingAction, { actionState, type FakeRoleUnion } from "./SettingAction"
 import SlashSelector from "./SlashSelector"
 import { useNavigate } from "solid-start"
-
+import PromptList from './PromptList'
+import i18n from '~/utils/i18n'
 // 3em
 export const defaultInputBoxHeight = 48
 export default function ({
@@ -158,6 +159,11 @@ export default function ({
     })
   }
 
+  const [placeHolder, setPlaceHolder] = createSignal('Send a message')
+  createEffect(() => {
+    setPlaceHolder(store.showMindMap ? '输入创建思维导图所需信息：如「西湖一日游」' :  i18n.t('sendMessage'))
+  })
+
   return (
     <div
       class="input-box-pos pb-2em px-2em fixed bottom-0 z-99"
@@ -166,15 +172,17 @@ export default function ({
         width: width() === "init" ? "100%" : width()
       }}
     >
+      <Show when={store.messageList.length < 2 && !store.loading && !store.showMindMap}>
+        <PromptList clickPrompt={(prompt) => {
+          sendMessage(prompt)
+        }} />
+      </Show>
       <div
         style={{
           transition: "opacity 1s ease-in-out",
           opacity: width() === "init" ? 0 : 100
         }}
       >
-        <Show when={!store.loading && !candidateOptions().length}>
-          <SettingAction />
-        </Show>
         <Show
           when={!store.loading}
           fallback={
@@ -192,7 +200,7 @@ export default function ({
             <textarea
               ref={el => setStore("inputRef", el)}
               id="input"
-              placeholder="Send a message"
+              placeholder={`${placeHolder()}`}
               autocomplete="off"
               value={store.inputContent}
               autofocus

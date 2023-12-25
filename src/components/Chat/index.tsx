@@ -288,7 +288,16 @@ export default function () {
     if (store.showMindMap) {
       setStore('messageList', [])
       inputValue = `你是一个思维导图专家，请根据我提供的如下内容:${inputValue}
-        做一个思维导图，要求高质量,详细,多层级,多分支,清晰,直接生成并用中文回复markDown格式的思维导图，不要有除markdown之外的任何其它描述`
+        做一个思维导图，要求高质量,详细,多层级,多分支,清晰,直接生成用中文回复markdown格式的思维导图，每一行都必须以 # 开头，非 # 开头的不要输出以下是输出案例:
+
+        # 西湖半日游思维导图
+        ## I. 准备阶段
+          ### A. 选择出行日期
+          ### B. 查看天气预报
+          ### C. 准备舒适的服装和鞋履
+
+        不要有 \`\`\`markdown 这样的开头，
+        `
     }
 
     if (!isLocalStorageAvailable()) {
@@ -467,7 +476,7 @@ export default function () {
           setShowPromptCategory(true)
         }} />
       <div class="bg-mask absolute left-195px right-20px bottom-20px bg-white rounded-lg" style="top: 64px;"></div>
-      <main ref={containerRef!} id="mainContainer" class="mt-4 w-full h-full flex justify-center overflow-y-auto z-99" style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
+      <main ref={containerRef!} id="mainContainer" class={`mt-4 w-full ${!store.showMindMap ? 'h-full' : ''} flex justify-center overflow-y-auto z-99`} style={{ "max-width": "72ch", "font-size": "16px", "margin-top": "64px", "display": !showPromptCategory() ? 'block' : 'none' }}>
         <Show when={!store.showMindMap}>
           <MessageContainer
             sendMessage={sendMessage}

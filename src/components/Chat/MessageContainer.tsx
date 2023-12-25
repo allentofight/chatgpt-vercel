@@ -100,7 +100,7 @@ export default function ({
       class="px-1em w-full"
       id="message-container"
       style={{
-        "padding-bottom": "30px"
+        "padding-bottom": "20px"
       }}
     >
       <div id="message-container-img" class="px-1em">

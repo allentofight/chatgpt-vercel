@@ -310,6 +310,7 @@ export default function Aside() {
       return
     }
 
+    setStore('showMindMap', false)
     setStore('useWebSearch', false)
     setSelectedChat(defaultChat)
     setSharedStore('message', { type: 'selectedChat', info: { ...selectedChat() } })

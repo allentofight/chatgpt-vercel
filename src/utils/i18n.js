@@ -200,7 +200,8 @@ i18n.init({
                 regenerate: 'Regenerate',
                 newChat: 'New Chat',
                 loadMore: 'Load More',
-                aiCourse: 'AI Course'
+                aiCourse: 'AI Course',
+                sendMessage: 'Message ChatGPT...',
             },
         },
         zh: {
@@ -385,6 +386,7 @@ i18n.init({
                 newChat: '新建会话',
                 loadMore: '加载更多',
                 aiCourse: 'AI课程',
+                sendMessage: '向 ChatGPT 提问...',
             },
         },
     },

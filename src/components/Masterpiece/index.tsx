@@ -32,7 +32,7 @@ export default function MasterPiece() {
       <style>
         {`
             .custom-padding-bottom {
-              padding-bottom: 123px;
+              padding-bottom: 96px;
             }
 
             @media (max-width: 768px) {
