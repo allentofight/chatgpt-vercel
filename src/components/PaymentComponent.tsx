@@ -104,13 +104,19 @@ export default function PaymentComponent() {
   });
 
   return (
-    <div class="flex flex-col items-center justify-center mt-10">
+    <>
+      <style>
+        {`
+            .shadow-bg {
+              box-shadow: 0px 0px 24px 0px rgba(133,193,255,0.49);
+            }
+        `}
+      </style>
+      <div class="flex flex-col items-center justify-center mt-10">
       <div class="w-full flex justify-center mb-2">
         <h2 class="text-xl text-center text-white light:text-black">ChatGPT<strong class="text-blue-500">{title()}</strong>购买</h2>
       </div>
-      <div ref={setQRCodeContainer} style={{
-        "box-shadow": "0px 0px 24px 0px rgba(133,193,255,0.49)"
-      }}>
+      <div class="shadow-bg" ref={setQRCodeContainer}>
       </div>
       <p class="mt-3 text-white text-xl light:text-black">请使用支付宝扫码付款</p>
       <p class="mt-4 bg-[#fef7ea]">{hintText()}</p>
@@ -119,5 +125,6 @@ export default function PaymentComponent() {
       </Show>
 
     </div>
+    </>
   );
 }

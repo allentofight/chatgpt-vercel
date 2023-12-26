@@ -110,8 +110,8 @@ export default function VipItem(props: {
 
 
   const handleBuy = () => {
-    let selectedItems = JSON.stringify(checkedServices())
-    let inviteCode = localStorage.getItem('inviteCode')
+    let selectedItems = encodeURIComponent(JSON.stringify(checkedServices()));
+    let inviteCode = encodeURIComponent(localStorage.getItem('inviteCode') as string);
     window.location.href = `/payment?id=${props.type}&options=${selectedItems}&inviteCode=${inviteCode}`
   };
 
