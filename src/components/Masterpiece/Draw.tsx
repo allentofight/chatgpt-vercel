@@ -1156,7 +1156,7 @@ export default function Draw(props: {
                     </Show>
                     <Show when={type() == 2}>
                       <div class="top flex py-4 items-end justify-between">
-                        <div class="text text-lg font-semibold">更多操作</div>
+                        <div class="text text-lg font-semibold">{i18n.t('moreAction')}</div>
                       </div>
                     </Show>
                     <div class="cell flex justify-between mb-4 h-10">

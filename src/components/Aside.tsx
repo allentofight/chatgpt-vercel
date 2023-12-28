@@ -544,6 +544,19 @@ export default function Aside() {
                       <path d="M16 9l-7 7m0 -7l7 7"></path>
                     </svg> {i18n.t('clearAllConversations')}</a>
                 </Show>
+                <footer class="flex justify-center mt-1" style={{
+                  "background-color": "transparent",
+                  "padding-bottom": "0"
+                }}>
+                  <div class="footer-link">
+                    <a target="_blank" href="https://beian.miit.gov.cn" style={{
+                      "background-color": "transparent",
+                      "color": "#94969a !important",
+                      "font-size": "10px"
+
+                    }}>浙ICP备2023014529号-3</a>
+                  </div>
+                </footer>
               </nav>
             </div>
           </div>

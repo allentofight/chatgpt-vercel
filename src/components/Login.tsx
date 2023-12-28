@@ -155,63 +155,70 @@ export default function LoginDialog(props: {
   };
 
   return (
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-90">
-      <div class="bg-white rounded-lg p-6 w-103">
+    <>
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-90">
+        <div class="bg-white rounded-lg p-6 w-103">
 
-        <h2 class="text-center text-xl mb-6">{props.title}</h2>
-        <div class="border p-2">
-          <div class="p-2 pt-0 text-lg font-bold text-blue-600">{i18n.t('methodOne')}:</div>
-          <div class="mb-4">
-            <input
-              type="tel"
-              class="border rounded w-full py-2 px-3 text-grey-darker"
-              placeholder={`${i18n.t('chinesePhoneNum')}`}
-              value={phone()}
-              onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
-            />
+          <h2 class="text-center text-xl mb-6">{props.title}</h2>
+          <div class="border p-2">
+            <div class="p-2 pt-0 text-lg font-bold text-blue-600">{i18n.t('methodOne')}:</div>
+            <div class="mb-4">
+              <input
+                type="tel"
+                class="border rounded w-full py-2 px-3 text-grey-darker"
+                placeholder={`${i18n.t('chinesePhoneNum')}`}
+                value={phone()}
+                onChange={(e) => setPhone((e.target as HTMLInputElement).value)}
+              />
+            </div>
+            <div class="flex justify-between items-center mb-4">
+              <input
+                type="text"
+                class="border rounded w-2/3 py-2 px-3 text-grey-darker"
+                placeholder={`${i18n.t('verifyCodeNum')}`}
+                value={code()}
+                onInput={(e) => {
+                  setCode((e.target as HTMLInputElement).value);
+                  setSubmitDisabled(!(e.target as HTMLInputElement).value); // Update submitDisabled based on the input's value
+                }}
+              />
+              <button
+                class={`w-1/3 ml-4 py-2 px-1 rounded ${disabled() ? "bg-gray-300" : "bg-green-500 text-white"} whitespace-nowrap`}
+                disabled={disabled()}
+                onClick={sendCode}
+              >
+                {disabled() ? `${count()}s` : i18n.t('sendSmsCode')}
+              </button>
+            </div>
+            <div class="flex justify-center pr-2">
+              <CaptchaForm />
+            </div>
+            <div class="flex justify-center mt-3">
+              <button
+                class={`w-full ${submitDisabled() ? 'bg-opacity-50' : ''} py-2 px-4 rounded bg-blue-500 text-white`}
+                onClick={login}
+                disabled={submitDisabled()}
+              >
+                {props.buttonTitle}
+              </button>
+            </div>
           </div>
-          <div class="flex justify-between items-center mb-4">
-            <input
-              type="text"
-              class="border rounded w-2/3 py-2 px-3 text-grey-darker"
-              placeholder={`${i18n.t('verifyCodeNum')}`}
-              value={code()}
-              onInput={(e) => {
-                setCode((e.target as HTMLInputElement).value);
-                setSubmitDisabled(!(e.target as HTMLInputElement).value); // Update submitDisabled based on the input's value
-              }}
-            />
-            <button
-              class={`w-1/3 ml-4 py-2 px-1 rounded ${disabled() ? "bg-gray-300" : "bg-green-500 text-white"} whitespace-nowrap`}
-              disabled={disabled()}
-              onClick={sendCode}
-            >
-              {disabled() ? `${count()}s` : i18n.t('sendSmsCode')}
-            </button>
-          </div>
-          <div class="flex justify-center pr-2">
-            <CaptchaForm />
-          </div>
-          <div class="flex justify-center mt-3">
-            <button
-              class={`w-full ${submitDisabled() ? 'bg-opacity-50' : ''} py-2 px-4 rounded bg-blue-500 text-white`}
-              onClick={login}
-              disabled={submitDisabled()}
-            >
-              {props.buttonTitle}
-            </button>
+
+          <div class="border p-2 mt-6">
+            <div class="pb-2 px-2 text-lg font-bold text-blue-600">{i18n.t('methodTwo')}:</div>
+            <GoogleLogin />
           </div>
         </div>
-
-        <div class="border p-2 mt-6">
-          <div class="pb-2 px-2 text-lg font-bold text-blue-600">{i18n.t('methodTwo')}:</div>
-          <GoogleLogin />
-        </div>
+        <Toaster position="top-center" />
+        <Show when={showLoginSuccess()}>
+          <LoginSuccessDialog />
+        </Show>
       </div>
-      <Toaster position="top-center" />
-      <Show when={showLoginSuccess()}>
-        <LoginSuccessDialog />
-      </Show>
-    </div>
+      <footer class="footer my-2 fixed bottom-0 flex justify-center w-full z-100" style="background-color: transparent;">
+        <div class="footer-link m-auto">
+          <a target="_blank" href="https://beian.miit.gov.cn" style="color: white !important;">浙ICP备2023014529号-3</a>
+        </div>
+      </footer>
+  </>
   );
 }

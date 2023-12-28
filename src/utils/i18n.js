@@ -202,6 +202,7 @@ i18n.init({
                 loadMore: 'Load More',
                 aiCourse: 'AI Course',
                 sendMessage: 'Message ChatGPT...',
+                moreAction: 'More Actions',
             },
         },
         zh: {
@@ -387,6 +388,7 @@ i18n.init({
                 loadMore: '加载更多',
                 aiCourse: 'AI课程',
                 sendMessage: '向 ChatGPT 提问...',
+                moreAction: '更多操作',
             },
         },
     },
