@@ -172,11 +172,6 @@ export default function ({
         width: width() === "init" ? "100%" : width()
       }}
     >
-      <Show when={store.messageList.length < 2 && !store.loading && !store.showMindMap}>
-        <PromptList clickPrompt={(prompt) => {
-          sendMessage(prompt)
-        }} />
-      </Show>
       <div
         style={{
           transition: "opacity 1s ease-in-out",

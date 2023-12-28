@@ -24,7 +24,6 @@ const SearchParamKey = "q"
 const apiHost = import.meta.env.CLIENT_API_HOST;
 const gptHost = import.meta.env.CLIENT_GPT_HOST;
 import MarkmapView from "../MarkmapView"
-import InviteActivity from "../InviteActivity"
 import { detectIp } from "~/utils/api"
 import i18n from '~/utils/i18n'
 
@@ -508,10 +507,6 @@ export default function () {
           <NotifyDialog />
         </Show>
         <Toaster position="top-center" />
-        <Show when={store.inChina}>
-          <InviteActivity />
-        </Show>
-
       </main>
       <InputBox
         height={inputBoxHeight}
