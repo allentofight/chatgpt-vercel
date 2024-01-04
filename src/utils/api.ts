@@ -7,6 +7,8 @@ import { fetchWithTimeout } from "~/utils"
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
+const alipayHost = import.meta.env.CLIENT_ALIPAY_HOST;
+
 const token = import.meta.env.CLIENT_IMAGE_TOKEN;
 
 interface MjPromptBody {
@@ -402,7 +404,7 @@ export const delPrompt = async (id: string) => {
 export const requestPayment = async (productId: string, options: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
-    const response = await fetch(`${apiHost}/api/alipay/create`, {
+    const response = await fetch(`${alipayHost}/api/alipay/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -565,7 +567,7 @@ export const paypalConfirm = async (orderId: string) => {
 export const queryPaymentStatus = async (outTradeNo: string) => {
   try {
     let sessionId = localStorage.getItem('sessionId')
-    const response = await fetch(`${apiHost}/api/alipay/query?outTradeNo=${outTradeNo}`, {
+    const response = await fetch(`${alipayHost}/api/alipay/query?outTradeNo=${outTradeNo}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
