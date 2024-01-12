@@ -2,10 +2,11 @@ import { createSignal, Show, onMount } from "solid-js";
 import toast, { Toaster } from 'solid-toast';
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
+const captchaId = import.meta.env.CLIENT_CAPTCHA_ID;
+
 import LoginSuccessDialog from './LoginSuccessDialog'
 
 import GoogleLogin from './GoogleLogin'
-import CaptchaForm from './CaptchaForm'
 
 import { detectIp } from "~/utils/api"
 import i18n from '~/utils/i18n';
@@ -26,6 +27,18 @@ export default function LoginDialog(props: {
   let [isInChina, setIsInChina] = createSignal(true);
 
   onMount(async () => {
+
+    const script = document.createElement('script');
+    script.src = 'gt4.js';
+    script.async = true;
+    script.onload = () => {
+      // 确保元素存在
+      initializeCaptcha()
+  };
+
+    // 将 script 元素添加到文档中
+    document.body.appendChild(script);
+
     const queryParams = new URLSearchParams(window.location.search);
     let inviteCode = queryParams.get('inviteCode')
     if (inviteCode) {
@@ -49,28 +62,44 @@ export default function LoginDialog(props: {
     } else {
       setIsInChina(inChina === '1')
     }
-
-
     localStorage.setItem('isInChina', isInChina() ? '1' : '2')
   })
+
+  const initializeCaptcha = () => {
+    initGeetest4({
+        captchaId: captchaId,
+        product: 'bind',
+        riskType:'slide'
+    },function (captcha) {
+      // captcha为验证码实例
+      captcha.onReady(function(){
+        }).onSuccess(function(){
+          var result = captcha.getValidate();
+          if (!result) {
+              return alert('请先完成验证');
+          }
+          //your code
+          sendCode(result)
+        }).onError(function(){
+            //your code
+        })
+        document.getElementById('sms-code').addEventListener('click', () => {
+          if (!isPhoneValid()) {
+            toast.error('手机号有误');
+            return
+          }
+
+          captcha.showCaptcha(); 
+        });
+      });
+  }
 
   function isPhoneValid() {
     var myreg = /^1[3-9]\d{9}$/;
     return myreg.test(phone())
   }
 
-  const sendCode = async () => {
-
-    if (!isPhoneValid()) {
-      toast.error('手机号有误');
-      return
-    }
-
-    const captchaResponse = (window as any).hcaptcha.getResponse();
-    if (!captchaResponse) {
-      toast.error('请先点击“我是人类”验证');
-      return
-    }
+  const sendCode = async (verifyResult: any) => {
 
     setDisabled(true);
     let response = await fetch(`${apiHost}/api/auth/sendSmsCode`, {
@@ -80,7 +109,7 @@ export default function LoginDialog(props: {
       },
       body: JSON.stringify({
         phone: phone(),
-        token: captchaResponse
+        ...verifyResult,
       })
     });
     const result = await response.json()
@@ -183,15 +212,12 @@ export default function LoginDialog(props: {
                 }}
               />
               <button
+                id="sms-code"
                 class={`w-1/3 ml-4 py-2 px-1 rounded ${disabled() ? "bg-gray-300" : "bg-green-500 text-white"} whitespace-nowrap`}
                 disabled={disabled()}
-                onClick={sendCode}
               >
                 {disabled() ? `${count()}s` : i18n.t('sendSmsCode')}
               </button>
-            </div>
-            <div class="flex justify-center pr-2">
-              <CaptchaForm />
             </div>
             <div class="flex justify-center mt-3">
               <button
