@@ -7,9 +7,9 @@ export default function LoginGuideDialog(props: {
 
   return (
     <>
-      <div class='fixed inset-0 z-100'>
-        <div class="fixed inset-0 bg-gray-900 opacity-70"></div>
-        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-md shadow-lg">
+      <div class='fixed inset-0 z-9999'>
+        <div class="fixed inset-0 bg-gray-900 opacity-70 z-9999"></div>
+        <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-md shadow-lg z-9999">
           <h2 class="text-2xl font-bold mb-4">{props.title}</h2>
           <p class="mb-4">登录后可解锁更多功能</p>
           <div class="flex justify-end">

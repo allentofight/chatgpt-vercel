@@ -2,10 +2,11 @@ import { createResizeObserver } from "@solid-primitives/resize-observer"
 import { batch, createEffect, Show, createSignal, onMount, onCleanup } from "solid-js"
 import { useSearchParams } from "solid-start"
 import { RootStore, loadSession } from "~/store"
+const { store, setStore } = RootStore
 import { LocalStorageKey, type ChatMessage, ModelEnum, Model } from "~/types"
 import { setSession, isMobile } from "~/utils"
 import MessageContainer from "./MessageContainer"
-import InputBox, { defaultInputBoxHeight } from "./InputBox"
+import InputBox from "./InputBox"
 import VipChargeDialog from '../VipChargeDialog'
 import { type FakeRoleUnion, setActionState } from "./SettingAction"
 import LoginGuideDialog from '../LoginGuideDialog'
@@ -39,7 +40,7 @@ export default function () {
   let controller: AbortController | undefined = undefined
   const [containerWidth, setContainerWidth] = createSignal("init")
   const [inputBoxHeight, setInputBoxHeight] = createSignal(
-    defaultInputBoxHeight
+    store.defaultInputBoxHeight
   )
   const [showLoginDirectDialog, setShowLoginDirectDialog] = createSignal(false)
   const [showPromptList, setShowPromptList] = createSignal(false)
@@ -52,7 +53,7 @@ export default function () {
 
   const [searchParams] = useSearchParams()
   const q = searchParams[SearchParamKey]
-  const { store, setStore } = RootStore
+
   onMount(async () => {
     fetchUserInfoAsync()
 
@@ -270,7 +271,7 @@ export default function () {
     const { showLogin, isExpired, isLogin, isGPT4Expired } = useAuth()
 
     if (showLogin()) {
-      setShowLoginDirectDialog(true)
+      window.location.href = '/login'
       return
     }
 

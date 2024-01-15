@@ -77,6 +77,7 @@ function Store() {
     inChina: true,
     showUserPopover: false,
     showChatList: false,
+    defaultInputBoxHeight: 48,
     curPrompt: "",
     loading: false,
     inputRef: null as HTMLTextAreaElement | null,
