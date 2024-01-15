@@ -274,11 +274,8 @@ export default function ({
         };
 
         // 设置请求并发送数据
-        xhr.open(
-            'POST',
-            `https://filesystem.site/api/file/upload/${FILE_KEY}`,
-            true
-        );
+        xhr.open('POST', 'https://api.gptgod.online/v1/file', true);
+        xhr.setRequestHeader('Authorization', `Bearer ${FILE_KEY}`);
         xhr.send(formData);
     };
 

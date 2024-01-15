@@ -1,5 +1,3 @@
-import 'js-circle-progress'
-
 import { Accessor, Show} from 'solid-js';
 
 import CircularProgress from './CircularProgress';
