@@ -25,7 +25,7 @@ import i18n from '~/utils/i18n';
 import UploadBtn from './UploadBtn';
 import UploadedFile from './UploadedFile';
 
-const FILE_KEY = import.meta.env.CLIENT_FILE_KEY
+const FILE_KEY = import.meta.env.CLIENT_FILE_KEY;
 
 // 3em
 export const defaultInputBoxHeight = 48;
@@ -280,26 +280,23 @@ export default function ({
     };
 
     const getMessage = () => {
-        let message = undefined
+        let message = undefined;
         if (uploadedFileUrl().length > 0) {
-            message = uploadedFileUrl()
+            message = uploadedFileUrl();
             if (store.inputContent) {
-                message = `${message} ${store.inputContent}`
-                clearFileInfo()
+                message = `${message} ${store.inputContent}`;
+                clearFileInfo();
             }
         }
-        return message
-    }
+        return message;
+    };
 
     const clearFileInfo = () => {
         setUploadedFileUrl('');
-        setStore(
-            'defaultInputBoxHeight',
-            48
-        );
+        setStore('defaultInputBoxHeight', 48);
         setUploadingProgress(0);
         setFileName('');
-    }
+    };
 
     return (
         <div
@@ -357,7 +354,7 @@ export default function ({
                                             value={20}
                                             size={uploadingProgress}
                                             close={() => {
-                                                clearFileInfo()
+                                                clearFileInfo();
                                             }}
                                         />
                                     </div>
@@ -440,7 +437,10 @@ export default function ({
                             <button
                                 title="发送"
                                 onClick={() =>
-                                    sendMessage(getMessage(), actionState.fakeRole)
+                                    sendMessage(
+                                        getMessage(),
+                                        actionState.fakeRole
+                                    )
                                 }
                                 class="i-carbon:send-filled text-1.5em text-slate-7 dark:text-slate text-op-80! hover:text-op-100!"
                             />
