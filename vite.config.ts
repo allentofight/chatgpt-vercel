@@ -5,6 +5,7 @@ import netlify from "solid-start-netlify"
 import node from "solid-start-node"
 import vercel from "solid-start-vercel"
 import cloudflare from "solid-start-cloudflare-workers"
+import legacy from '@vitejs/plugin-legacy';
 import { defineConfig } from "vite"
 import unocss from "unocss/vite"
 import {
@@ -49,6 +50,12 @@ export default defineConfig({
         "input-box":
           "max-w-150px ml-1em px-1 text-slate-7 dark:text-slate rounded-sm bg-slate bg-op-15 focus:(bg-op-20 ring-0 outline-none)"
       }
+    }),
+    legacy({
+        targets: ['defaults', 'not IE 11', 'chrome 79', 'maintained node versions'],
+        additionalLegacyPolyfills: ['regenerator-runtime/runtime'],
+        // 根据你自己需要导入相应的polyfill:  https://github.com/vitejs/vite/tree/main/packages/plugin-legacy#polyfill-specifiers
+        modernPolyfills: ['es.promise.finally', 'es/array', 'es/map', 'es/set'],
     }),
     solid({ ssr: false, adapter: adapter() }),
     VitePWA({
