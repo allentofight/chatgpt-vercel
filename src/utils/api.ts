@@ -442,7 +442,7 @@ export const uploadImage = async (messageId: string, imageUrl: string) => {
   // Append the image stream to the form data
   form.append('file', blob, 'demo3.png');
   // Send to the third-party API
-  const uploadResponse = await axios.post(`https://api.superbed.cn/upload?token=${token}`, form)
+  const uploadResponse = await axios.post(`https://api.superbed.cc/upload?token=${token}`, form)
 
   let sessionId = localStorage.getItem('sessionId')
   fetch(`${apiHost}/api/mj/updateCloudUrl`, {
