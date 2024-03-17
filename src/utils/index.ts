@@ -171,7 +171,7 @@ export function getRequestImageSize(originImageUrl: string, imageSize: string, i
     let originUrl = encodeURIComponent(originImageUrl)
 
     if (inChina) {
-      let prefix = `https://api-node.makechat.help/api/image/fetch?img=`
+      let prefix = `https://api.nextaibots.cn/api/image/fetch?img=`
       return {
         previewUrl: `${prefix}${previewUrl}`,
         originUrl: `${prefix}${originUrl}`,
