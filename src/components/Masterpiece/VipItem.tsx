@@ -69,16 +69,30 @@ export default function VipItem(props: { type: VipType }) {
     };
 
     const [checkedServices, setCheckedServices] = createSignal({
-        GPT3: true,
+        GPT3: false,
         GPT4: true,
         Midjourney: false,
     });
 
     const handleCheckboxChange = (service: 'GPT3' | 'GPT4' | 'Midjourney') => {
-        setCheckedServices({
-            ...checkedServices(),
-            [service]: !checkedServices()[service],
-        });
+        if (service === 'GPT3') {
+            setCheckedServices({
+                ...checkedServices(),
+                GPT3: true,
+                GPT4: false,
+            });
+        } else if (service === 'GPT4') {
+            setCheckedServices({
+                ...checkedServices(),
+                GPT3: false,
+                GPT4: true,
+            });
+        } else {
+            setCheckedServices({
+                ...checkedServices(),
+                [service]: !checkedServices()[service],
+            });
+        }
     };
 
     const calculatePrice = () => {
@@ -129,6 +143,18 @@ export default function VipItem(props: { type: VipType }) {
         window.location.href = `/payment?id=${props.type}&options=${selectedItems}&inviteCode=${inviteCode}`;
     };
 
+    onMount(() => {
+        var radios = document.getElementsByName('gptGroup_' + props.type);
+        for (var i = 0; i < radios.length; i++) {
+            const radio = radios[i] as HTMLInputElement;
+
+            if (radio.value === 'gpt4') {
+                radio.checked = true;
+                break;
+            }
+        }
+    });
+
     return (
         <div
             class={`vip-item h-full rounded-xl overflow-hidden ${
@@ -167,25 +193,29 @@ export default function VipItem(props: { type: VipType }) {
             <div class="mt-2 ml-6 mb-3 text-white">
                 <label class="inline-flex items-center w-full">
                     <input
-                        type="checkbox"
+                        type="radio"
+                        name={'gptGroup_' + props.type}
+                        value="gpt3"
                         class="form-checkbox w-4 h-4"
                         checked={checkedServices().GPT3}
                         onChange={() => handleCheckboxChange('GPT3')}
                     />
                     <span class="ml-2">
-                        {i18n.t('aitalk')}&nbsp;&nbsp;&nbsp;&yen;
+                        GPT 3.5&nbsp;&nbsp;&nbsp;&yen;
                         {vipInfo[props.type].prices.GPT3}
                     </span>
                 </label>
                 <label class="inline-flex items-center w-full">
                     <input
-                        type="checkbox"
+                        type="radio"
+                        name={'gptGroup_' + props.type}
+                        value="gpt4"
                         class="form-checkbox w-4 h-4"
                         checked={checkedServices().GPT4}
                         onChange={() => handleCheckboxChange('GPT4')}
                     />
                     <span class="ml-2">
-                        GPT4&nbsp;&nbsp;&nbsp;&yen;
+                        GPT 3.5 + GPT4&nbsp;&nbsp;&nbsp;&yen;
                         {vipInfo[props.type].prices.GPT4}
                     </span>
                 </label>
@@ -212,7 +242,7 @@ export default function VipItem(props: { type: VipType }) {
             </div>
             <div class="py-2">
                 <div class="flex cell justify-between">
-                    <div class="text">{i18n.t('superQA')}</div>
+                    <div class="text">GPT 3.5</div>
                     <div class="text flex-1 text-right">
                         {i18n.t('unLimitedTimes')}
                     </div>
