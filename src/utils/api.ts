@@ -714,3 +714,21 @@ export const uploadToCloud = async () => {
     throw error;
   }
 };
+
+export const extendMemberRights = async (body: string) => {
+  let sessionId = localStorage.getItem('sessionId')
+  let response = await fetch(`${apiHost}/api/auth/extendMemberRights`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionId}`
+    },
+    body,
+  })
+
+  if (!response.ok) {
+    console.log(`HTTP error! Status: ${response.status}`)
+    return false
+  }
+  return true;
+}
