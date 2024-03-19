@@ -799,7 +799,7 @@ input[type='number'] {
   }
 }
 
-.chatloader {
+.chatloader-draw {
   margin: 0;
   display: block;
   width: 16px;

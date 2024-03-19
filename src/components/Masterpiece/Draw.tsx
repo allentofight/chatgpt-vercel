@@ -1635,7 +1635,7 @@ export default function Draw(props: { showMoreClick: () => void }) {
                                             <i class="iconfont icon-shurukuangfasong text-xl"></i>
                                         </Show>
                                         <Show when={isMjWorking()}>
-                                            <div class="chatloader"></div>
+                                            <div class="chatloader-draw"></div>
                                         </Show>
                                     </div>
                                 </div>
