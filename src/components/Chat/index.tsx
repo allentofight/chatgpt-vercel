@@ -444,21 +444,21 @@ export default function () {
     }
 
     async function fetchGPT(messages: ChatMessage[], inputVal: string) {
-        const messagesCopy = [...messages]; // Make a copy of the array
+        const messagesCopy = [...messages];
         if (store.useWebSearch) {
-            const messageCopy = { ...messagesCopy[messagesCopy.length - 1] }; // Make a copy of the last object
+            const messageCopy = { ...messagesCopy[messagesCopy.length - 1] };
             const url = `https://search.qiuweiai.cn/?search_term=${encodeURIComponent(
                 messageCopy.content
             )}`;
             let searchResult = await fetch(url);
             let result = await searchResult.json();
-            console.log('result = ', result.message);
+            console.log('result1 = ', result.message);
             if (result.message) {
                 messageCopy.content = `你需要优先根据以下背景信息来回答我的问题
-          背景信息: ${result.message}
-          我的问题是:${messageCopy.content}
-        `;
-                messagesCopy[messagesCopy.length - 1] = messageCopy; // Replace the last item in the copied array
+                  背景信息: ${result.message}
+                  我的问题是:${messageCopy.content}
+                `;
+                messagesCopy[messagesCopy.length - 1] = messageCopy;
             }
         }
 
@@ -479,34 +479,40 @@ export default function () {
         if (!response.ok) {
             const res = await response.json();
             throw new Error('由于 Openai 官网崩溃，GPT4 暂不可用，请稍后再试');
-            //throw new Error(res.error?.message ?? '当前请求繁忙，请稍后再试')
         }
-        const data = response.body;
-        if (!data) {
-            throw new Error('没有返回数据');
-        }
-        const reader = data.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let done = false;
 
-        while (!done) {
-            const { value, done: readerDone } = await reader.read();
-            if (value) {
-                let char = decoder.decode(value);
-                if (
-                    char === '\n' &&
-                    store.currentAssistantMessage.endsWith('\n')
-                ) {
-                    continue;
-                }
+        const stream = new ReadableStream({
+            async start(controller) {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder('utf-8');
 
-                if (char) {
-                    char = char.replace('null', '');
-                    setStore('currentAssistantMessage', (k) => k + char);
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    let chunk = decoder.decode(value, { stream: true });
+                    if (
+                        chunk.endsWith('\n') &&
+                        store.currentAssistantMessage.endsWith('\n')
+                    ) {
+                        continue;
+                    }
+                    chunk = chunk.replace('null', '');
+                    controller.enqueue(chunk);
+                    setStore('currentAssistantMessage', (k) => k + chunk);
                 }
-            }
-            done = readerDone;
+                reader.releaseLock();
+                controller.close();
+            },
+        });
+
+        const reader = stream.getReader();
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            console.log(value); // Here you can process each chunk of data as it comes in.
         }
+        console.log('Stream complete');
     }
 
     return (
