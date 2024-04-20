@@ -7,8 +7,6 @@ import { fetchWithTimeout } from "~/utils"
 // api.js or api.ts
 const apiHost = import.meta.env.CLIENT_API_HOST;
 
-const alipayHost = import.meta.env.CLIENT_ALIPAY_HOST;
-
 const token = import.meta.env.CLIENT_IMAGE_TOKEN;
 
 interface MjPromptBody {

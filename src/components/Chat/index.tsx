@@ -463,7 +463,7 @@ export default function () {
         }
 
         let sessionId = localStorage.getItem('sessionId');
-        let response = await fetch(`/api`, {
+        let response = await fetch(`${gptHost}/api/openai`, {
             method: 'POST',
             body: JSON.stringify({
                 messages: messagesCopy,
