@@ -48,6 +48,7 @@ specifiers:
   markdown-it-highlightjs: ^4.0.1
   markdown-it-katex: ^2.0.3
   markdown-it-kbd: ^2.2.2
+  markdown-it-mathjax: ^2.0.0
   markmap-lib: ^0.15.4
   markmap-view: ^0.15.4
   midjourney: ^2.3.42
@@ -107,6 +108,7 @@ dependencies:
   markdown-it-highlightjs: 4.0.1
   markdown-it-katex: 2.0.3
   markdown-it-kbd: 2.2.2
+  markdown-it-mathjax: 2.0.0
   markmap-lib: 0.15.4_markmap-common@0.15.3
   markmap-view: 0.15.4_markmap-common@0.15.3
   midjourney: 2.3.42
@@ -8368,6 +8370,10 @@ packages:
     engines: {node: '>=6.0.0'}
     dev: false
 
+  /markdown-it-mathjax/2.0.0:
+    resolution: {integrity: sha512-Fafv7TnMENccWYTNjMZzV4BzONPxpK9Mknr1iMEK6m7PI5a5UTCOFctPzx7Nhv81fFzYEY8WHDkSu9n43fTV9g==}
+    dev: false
+
   /markdown-it/13.0.1:
     resolution: {integrity: sha512-lTlxriVoy2criHP0JKRhO2VDG9c2ypWCsT237eDiLqi09rmbKoUetyGHq2uOIRoRS//kfoJckS0eUzzkDR+k2Q==}
     hasBin: true
@@ -10641,6 +10647,7 @@ packages:
 
   /rimraf/2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3

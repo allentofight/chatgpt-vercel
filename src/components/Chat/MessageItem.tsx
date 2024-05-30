@@ -1,4 +1,4 @@
-import { Show, createEffect } from 'solid-js';
+import { Show, createEffect, onCleanup } from 'solid-js';
 import { useCopyCode } from '~/hooks';
 import md from '~/markdown-it';
 import { RootStore } from '~/store';
@@ -114,8 +114,20 @@ export default (props: Props) => {
     }
 
     createEffect(() => {
-        // Trigger MathJax rendering after content update
-        if (window.MathJax) {
+        const onMathJaxLoaded = () => {
+            if (window.MathJax) {
+                window.MathJax.typesetPromise();
+            }
+        };
+
+        document.addEventListener('MathJaxLoaded', onMathJaxLoaded);
+
+        onCleanup(() => {
+            document.removeEventListener('MathJaxLoaded', onMathJaxLoaded);
+        });
+
+        // Initial check in case MathJax is already loaded
+        if (window.MathJax && window.MathJax.typesetPromise) {
             window.MathJax.typesetPromise();
         }
     });

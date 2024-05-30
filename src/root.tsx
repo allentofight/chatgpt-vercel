@@ -71,6 +71,13 @@ export default function Root() {
                         'pre',
                     ],
                 },
+                startup: {
+                    ready: () => {
+                        window.MathJax.startup.defaultReady();
+                        // Ensure that MathJax is ready
+                        document.dispatchEvent(new Event('MathJaxLoaded'));
+                    },
+                },
             };
 
             const script = document.createElement('script');
