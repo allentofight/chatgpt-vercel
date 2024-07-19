@@ -201,7 +201,7 @@ export default function VipItem(props: { type: VipType }) {
                         onChange={() => handleCheckboxChange('GPT3')}
                     />
                     <span class="ml-2">
-                        GPT 3.5&nbsp;&nbsp;&nbsp;&yen;
+                        4o mini&nbsp;&nbsp;&nbsp;&yen;
                         {vipInfo[props.type].prices.GPT3}
                     </span>
                 </label>
@@ -215,7 +215,7 @@ export default function VipItem(props: { type: VipType }) {
                         onChange={() => handleCheckboxChange('GPT4')}
                     />
                     <span class="ml-2">
-                        GPT 3.5 + GPT4&nbsp;&nbsp;&nbsp;&yen;
+                        4o mini + GPT4&nbsp;&nbsp;&nbsp;&yen;
                         {vipInfo[props.type].prices.GPT4}
                     </span>
                 </label>
@@ -242,13 +242,13 @@ export default function VipItem(props: { type: VipType }) {
             </div>
             <div class="py-2">
                 <div class="flex cell justify-between">
-                    <div class="text">GPT 3.5</div>
+                    <div class="text">4o mini</div>
                     <div class="text flex-1 text-right">
                         {i18n.t('unLimitedTimes')}
                     </div>
                 </div>
                 <div class="flex cell justify-between">
-                    <div class="text">GPT4</div>
+                    <div class="text">GPT-4o</div>
                     <div class="text flex-1 text-right">
                         {vipInfo[props.type].gpt4Desc}
                     </div>
