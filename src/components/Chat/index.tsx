@@ -188,6 +188,13 @@ export default function () {
                 setStore('messageList', JSON.parse(chat.body));
             }
             setShowPromptCategory(false);
+
+            const optionSelectedEvent = new CustomEvent('optionSelected', {
+                detail: {
+                    index: currentChat().model,
+                },
+            });
+            window.dispatchEvent(optionSelectedEvent);
         } else if (sharedStore.message?.type === 'delChat') {
             uploadChatList();
         }
@@ -463,7 +470,7 @@ export default function () {
         }
 
         let sessionId = localStorage.getItem('sessionId');
-        let response = await fetch(`${gptHost}/api/openai`, {
+        let response = await fetch('https://gpt.nextaibots.cn/api/openai', {
             method: 'POST',
             body: JSON.stringify({
                 messages: messagesCopy,

@@ -281,7 +281,10 @@ export default function ({
 
     const getMessage = () => {
         let message = undefined;
-        if (uploadedFileUrl().length > 0) {
+        if (
+            store.sessionSettings.APIModel.includes('gpt-4') &&
+            uploadedFileUrl().length > 0
+        ) {
             message = uploadedFileUrl();
             if (store.inputContent) {
                 message = `${message} ${store.inputContent}`;
